@@ -1,38 +1,3 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-import {
-  getAuth,
-  signInWithCustomToken,
-} from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAufdH5gG1cRFUkrqZWbFqhOMZT0LWq82Y",
-  authDomain: "chat-platform-for-introv-9f70c.firebaseapp.com",
-  projectId: "chat-platform-for-introv-9f70c",
-  storageBucket: "chat-platform-for-introv-9f70c.appspot.com",
-  messagingSenderId: "137193488776",
-  appId: "1:137193488776:web:2f9d6c3f5299e5b4faba3d",
-  measurementId: "G-WYWMBLRFTR"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-
-export const firebaseApp =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-export const auth = getAuth(firebaseApp);
-export const db = getFirestore(firebaseApp);
-export const storage = getStorage(firebaseApp);
-
 export async function getAuthenticatedAppForUser(session = null) {
   if (typeof window !== "undefined") {
     // client

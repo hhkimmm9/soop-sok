@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import { getAuthenticatedAppForUser } from "@/app/lib/firebase/firebase";
 import TestHeader from "./components/TestHeader";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -17,12 +16,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { currentUser } = await getAuthenticatedAppForUser();
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TestHeader initialUser={currentUser?.toJSON()}/>
+        <TestHeader />
 
         <main>{children}</main>
       </body>

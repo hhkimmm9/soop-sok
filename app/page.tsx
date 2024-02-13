@@ -5,6 +5,7 @@
 
 export default function Home() {
 
+  // https://firebase.google.com/docs/auth/web/firebaseui?authuser=0
   // var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
   return (

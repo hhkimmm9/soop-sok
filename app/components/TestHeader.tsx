@@ -1,14 +1,13 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation' ;
-
 import {
-	signInWithGoogle,
-	signOut,
+  signInWithGoogle,
+  signOut,
 	onAuthStateChanged
 } from "@/app/lib/firebase/auth";
+import { useRouter } from 'next/navigation';
 
 function useUserSession(initialUser: any) {
   // The initialUser comes from the server through a server component
@@ -22,6 +21,7 @@ function useUserSession(initialUser: any) {
           return () => {
                   unsubscribe();
           };
+          // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -31,18 +31,13 @@ function useUserSession(initialUser: any) {
                           router.refresh();
                   }
           });
+          // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return user;
-}
+};
 
-const TestHeader = ({
-  initialUser
-} : {
-  initialUser: any
-}) => {
-  
-  const user = useUserSession(initialUser) ;
+const TestHeader = () => {
   
   const handleSignOut = (event: any) => {
 		event.preventDefault();
@@ -51,20 +46,19 @@ const TestHeader = ({
 
   const handleSignIn = (event: any) => {
 		event.preventDefault();
-		signInWithGoogle();
+    signInWithGoogle();
+
 	};
 
   return (
     <div>
-      { user.displayName }
-
-      { user ? (
+      { false ? (
           <Link href='#' onClick={handleSignOut}>Sign Out</Link>
         ) : (
           <Link href='#' onClick={handleSignIn}>Sign In with Google</Link>
       )}
     </div>
   )
-}
+};
 
-export default TestHeader
+export default TestHeader;
