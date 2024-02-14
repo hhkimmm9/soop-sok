@@ -15,23 +15,23 @@ function useUserSession(initialUser: any) {
   const router = useRouter();
 
   useEffect(() => {
-          const unsubscribe = onAuthStateChanged((authUser: any) => {
-                  setUser(authUser);
-          });
-          return () => {
-                  unsubscribe();
-          };
-          // eslint-disable-next-line react-hooks/exhaustive-deps
+    const unsubscribe = onAuthStateChanged((authUser: any) => {
+      setUser(authUser);
+    });
+    return () => {
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-          onAuthStateChanged((authUser: any) => {
-                  if (user === undefined) return;
-                  if (user?.email !== authUser?.email) {
-                          router.refresh();
-                  }
-          });
-          // eslint-disable-next-line react-hooks/exhaustive-deps
+    onAuthStateChanged((authUser: any) => {
+      if (user === undefined) return;
+      if (user?.email !== authUser?.email) {
+        router.refresh();
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return user;
