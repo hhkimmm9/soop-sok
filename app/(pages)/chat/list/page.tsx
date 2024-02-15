@@ -50,7 +50,7 @@ const ChatList = () => {
 
   return (
     <div className='
-      w-screen min-h-screen my-12 px-4
+      w-screen h-screen px-4 py-8
       flex flex-col gap-3
     '>
       <Banner />
