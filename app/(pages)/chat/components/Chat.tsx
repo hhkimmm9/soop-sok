@@ -14,13 +14,13 @@ const Chat = ({
         flex flex-col gap-1
       '>
         {/* title */}
-        <div className=''>
-          <p className='w-min truncate'>{ chat.title }</p>
+        <div>
+          <p className='line-clamp-1'>{ chat.title }</p>
         </div>
         
         {/* chat info: created_at */}
         <div className='flex justify-end'>
-          <p className='text-sm '>{ chat.createdAt } 분 전</p>
+          <p className='text-sm'>{ chat.createdAt } 분 전</p>
         </div>
 
         {/* topic, buttons */}
