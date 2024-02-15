@@ -1,13 +1,17 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import {
   ChevronDoubleLeftIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/outline';
 
-const InteractionArea = () => {
+const SearchBar = ({
+  goBack
+} : {
+  goBack: Function
+}) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -17,7 +21,8 @@ const InteractionArea = () => {
 
   return (
     <div className='flex gap-3 items-center'>
-      <button type='button' className='
+      <button onClick={() => goBack()}
+        className='
         h-9 border border-black rounded-lg px-1.5 py-1
       '>
         <ChevronDoubleLeftIcon className='h-5 w-5' />
@@ -50,4 +55,4 @@ const InteractionArea = () => {
   )
 }
 
-export default InteractionArea
+export default SearchBar

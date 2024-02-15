@@ -1,6 +1,6 @@
-import React from 'react';
+'use client';
 
-import InteractionArea from '@/app/components/InteractionArea';
+import SearchBar from '@/app/components/SearchBar';
 import DirectMessage from './components/DirectMessage';
 
 import { IMessage } from '@/app/interfaces';
@@ -25,7 +25,7 @@ const DirectMessages = () => {
       flex flex-col gap-6
     '>
       {/* interaction area */}
-      <InteractionArea />
+      <SearchBar goBack={() => { console.log('go back') }} />
       
 
       {/* DMs */}

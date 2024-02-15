@@ -1,10 +1,18 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
 import Banner from '@/app/components/Banner';
-import InteractionArea from '@/app/components/InteractionArea';
+import SearchBar from '@/app/components/SearchBar';
+import SortOptions from '@/app/components/SortOptions';
 import Chat from '@/app/(pages)/chat/components/Chat';
 
 import { IChat } from '@/app/interfaces';
 
-const page = () => {
+const ChatList = () => {
+  const [activateSearch, setActivateSearch] = useState<boolean>(false);
+  const [activateSort, setActivateSort] = useState<boolean>(false);
+
   var chats = ([
     {
       _id: '1',
@@ -47,7 +55,40 @@ const page = () => {
     '>
       <Banner />
 
-      <InteractionArea />
+      { !activateSearch && !activateSort && (
+        <div className='grid grid-cols-2 gap-2'>
+          <button onClick={() => setActivateSearch(true)}
+            className='
+              bg-white
+              border
+              border-black
+              py-2
+              rounded-lg
+              shadow-sm
+          '>검색</button>
+          <button onClick={() => setActivateSort(true)}
+            className='
+              bg-white
+              border
+              border-black
+              py-2
+              rounded-lg
+              shadow-sm
+          '>정렬</button>
+        </div>
+      )}
+
+      { activateSearch && (
+        <SearchBar goBack={() => setActivateSearch(false) }/>
+      )}
+
+      { activateSort && (
+        <SortOptions
+          goBack={() => setActivateSort(false)}
+          options={['Option A','Option B']}
+          onSelect={(selectedValue: string) => { console.log(selectedValue) }}
+        />
+      )}
 
       {/* chat list */}
       <div className='flex flex-col gap-2'>
@@ -59,4 +100,4 @@ const page = () => {
   )
 };
 
-export default page;
+export default ChatList;
