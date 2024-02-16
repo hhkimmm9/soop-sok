@@ -49,10 +49,7 @@ const ChatList = () => {
   ]);
 
   return (
-    <div className='
-      w-screen h-screen px-4 py-8
-      flex flex-col gap-3
-    '>
+    <div className='flex flex-col gap-3'>
       <Banner />
 
       { !activateSearch && !activateSort && (

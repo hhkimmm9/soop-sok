@@ -7,12 +7,7 @@ const Profile = () => {
 
   return (
     <div className='
-      min-h-screen
-      my-36
-      flex
-      flex-col
-      gap-16
-      items-center
+      pt-24 flex flex-col gap-16 items-center
     '>
       <div className=''>
         <Image
