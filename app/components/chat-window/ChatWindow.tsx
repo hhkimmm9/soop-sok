@@ -13,7 +13,7 @@ const ChatWindow = () => {
   const [showFriendList, setShowFriendList] = useState(false);
 
   return (
-    <div className='h-5/6 grow grid grid-rows-12 gap-3'>
+    <div className='h-[88vh] grid grid-rows-12 gap-3'>
       <MainComponent
         activateUserInput={activateUserInput} setActivateUserInput={setActivateUserInput}
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}

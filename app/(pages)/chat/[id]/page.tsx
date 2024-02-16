@@ -3,7 +3,7 @@ import ChatWindow from '@/app/components/chat-window/ChatWindow';
 
 const page = () => {
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-3'>
       <Banner />
 
       <ChatWindow />
