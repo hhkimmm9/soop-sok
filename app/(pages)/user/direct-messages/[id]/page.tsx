@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Banner from '@/app/components/Banner';
-import ChatWindow from '@/app/components/ChatWindow';
+import ChatWindow from '@/app/components/chat-window/ChatWindow';
 
 const DirectMessage = () => {
   return (
