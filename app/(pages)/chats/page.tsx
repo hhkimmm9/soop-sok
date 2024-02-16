@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Banner from '@/app/components/Banner';
 import SearchBar from '@/app/components/SearchBar';
 import SortOptions from '@/app/components/SortOptions';
-import Chat from '@/app/(pages)/chat/components/Chat';
+import Chat from '@/app/(pages)/chats/components/Chat';
 
 import { IChat } from '@/app/interfaces';
 
