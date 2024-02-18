@@ -14,24 +14,28 @@ const NavBar = () => {
       border-t border-black
       px-12 flex justify-between items-center
     ">
+      {/* Channels */}
       <Link href='/channels'
         className="rounded-full px-3
       ">
         <QueueListIcon className='h-5 w-5' />
       </Link>
 
-      <Link href='/chats'
+      {/* DMs */}
+      <Link href='/direct-messages'
         className="rounded-full px-3
       ">
         <ChatBubbleBottomCenterIcon className='h-5 w-5' />
       </Link>
 
+      {/* Friends List */}
       <Link href='/users'
         className="rounded-full px-3
       ">
         <UserIcon className='h-5 w-5' />
       </Link>
 
+      {/* Settings page */}
       <Link href='/settings'
         className="rounded-full px-3
       ">
