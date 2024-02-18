@@ -1,17 +1,11 @@
-'use client';
-
-import { useState } from 'react';
-
 import ChatMessage from '../ChatMessage';
 import CreateChat from '../CreateChat';
 
 const MainComponent = ({
-  activateUserInput, setActivateUserInput,
   showFeatures, setShowFeatures,
   showCreatePage, setShowCreatePage,
   showAttendantsList, setShowAttendantsList
 } : {
-  activateUserInput: boolean, setActivateUserInput: any,
   showFeatures: boolean, setShowFeatures: any,
   showCreatePage: boolean, setShowCreatePage: any,
   showAttendantsList: boolean, setShowAttendantsList: any

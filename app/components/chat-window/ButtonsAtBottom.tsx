@@ -1,18 +1,18 @@
-import React from 'react'
+import { useState } from 'react';
 
 import SearchBar from '../SearchBar';
 
 const ButtonsAtBottom = ({
-  activateUserInput, setActivateUserInput,
   showFeatures, setShowFeatures,
   showCreatePage, setShowCreatePage,
   showAttendantsList, setShowAttendantsList
 } : {
-  activateUserInput: boolean, setActivateUserInput: any,
   showFeatures: boolean, setShowFeatures: any,
   showCreatePage: boolean, setShowCreatePage: any,
   showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
+  const [activateUserInput, setActivateUserInput] = useState(false);
+
   return (
     // button(s) at bottom
     <div className='row-span-1'>
