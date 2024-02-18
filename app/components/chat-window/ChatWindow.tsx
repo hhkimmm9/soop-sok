@@ -9,25 +9,22 @@ const ChatWindow = () => {
   const [activateUserInput, setActivateUserInput] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
   const [showCreatePage, setShowCreatePage] = useState(false);
-  const [showAttendantList, setShowAttendantList] = useState(false);
-  const [showFriendList, setShowFriendList] = useState(false);
+  const [showAttendantsList, setShowAttendantsList] = useState(false);
 
   return (
-    <div className='h-[88vh] grid grid-rows-12 gap-3'>
+    <div className='h-[82vh] grid grid-rows-12 gap-3'>
       <MainComponent
         activateUserInput={activateUserInput} setActivateUserInput={setActivateUserInput}
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}
         showCreatePage={showCreatePage} setShowCreatePage={setShowCreatePage}
-        showAttendantList={showAttendantList} setShowAttendantList={setShowAttendantList}
-        showFriendList={showFriendList} setShowFriendList={setShowFriendList}
+        showAttendantsList={showAttendantsList} setShowAttendantsList={setShowAttendantsList}
       />
 
       <ButtonsAtBottom 
         activateUserInput={activateUserInput} setActivateUserInput={setActivateUserInput}
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}
         showCreatePage={showCreatePage} setShowCreatePage={setShowCreatePage}
-        showAttendantList={showAttendantList} setShowAttendantList={setShowAttendantList}
-        showFriendList={showFriendList} setShowFriendList={setShowFriendList}
+        showAttendantsList={showAttendantsList} setShowAttendantsList={setShowAttendantsList}
       />
     </div>
   )

@@ -6,14 +6,12 @@ const ButtonsAtBottom = ({
   activateUserInput, setActivateUserInput,
   showFeatures, setShowFeatures,
   showCreatePage, setShowCreatePage,
-  showAttendantList, setShowAttendantList,
-  showFriendList, setShowFriendList,
+  showAttendantsList, setShowAttendantsList
 } : {
   activateUserInput: boolean, setActivateUserInput: any,
   showFeatures: boolean, setShowFeatures: any,
   showCreatePage: boolean, setShowCreatePage: any,
-  showAttendantList: boolean, setShowAttendantList: any,
-  showFriendList: boolean, setShowFriendList: any,
+  showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
   return (
     // button(s) at bottom
@@ -47,7 +45,7 @@ const ButtonsAtBottom = ({
         </>
       ) : (
         <>
-          { !showCreatePage && !showAttendantList && !showFriendList && (
+          { !showCreatePage && !showAttendantsList && (
             <button onClick={() => setShowFeatures(false)}
               className='
               w-full py-2 bg-white
@@ -69,17 +67,9 @@ const ButtonsAtBottom = ({
               '>취소</button>
             </div>
           )}
-          
-          { showAttendantList && (
-            <button onClick={() => setShowAttendantList(false)}
-              className='
-              w-full py-2 bg-white
-              border border-black rounded-lg shadow-sm
-            '>뒤로 가기</button>
-          )}
 
-          { showFriendList && (
-            <button onClick={() => setShowFriendList(false)}
+          { showAttendantsList && (
+            <button onClick={() => setShowAttendantsList(false)}
               className='
               w-full py-2 bg-white
               border border-black rounded-lg shadow-sm

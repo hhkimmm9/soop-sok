@@ -9,14 +9,12 @@ const MainComponent = ({
   activateUserInput, setActivateUserInput,
   showFeatures, setShowFeatures,
   showCreatePage, setShowCreatePage,
-  showAttendantList, setShowAttendantList,
-  showFriendList, setShowFriendList,
+  showAttendantsList, setShowAttendantsList
 } : {
   activateUserInput: boolean, setActivateUserInput: any,
   showFeatures: boolean, setShowFeatures: any,
   showCreatePage: boolean, setShowCreatePage: any,
-  showAttendantList: boolean, setShowAttendantList: any,
-  showFriendList: boolean, setShowFriendList: any,
+  showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
   // depending on how Firestore handles it.
   var messages = [
@@ -57,24 +55,6 @@ const MainComponent = ({
       status: 0
     },
   ];
-
-  var friends = [
-    {
-      _id: '1',
-      name: 'Friend 1',
-      status: 0
-    },
-    {
-      _id: '2',
-      name: 'Friend 2',
-      status: 0
-    },
-    {
-      _id: '3',
-      name: 'Friend 3',
-      status: 1
-    },
-  ];
   
   return (
     <>
@@ -91,7 +71,7 @@ const MainComponent = ({
       ) : (
         <>
           {/* features */}
-          { !showCreatePage && !showAttendantList && !showFriendList && (
+          { !showCreatePage && !showAttendantsList && (
             <div className='
               row-span-11 p-4 overflow-y-auto
               border border-black rounded-lg bg-white
@@ -100,17 +80,15 @@ const MainComponent = ({
               <div onClick={() => setShowCreatePage(true)}
                 className='border flex justify-center items-center shadow-sm'
               >
-                create page (test)
+                create page
               </div>
-              <div onClick={() => setShowAttendantList(true)}
+              <div onClick={() => setShowAttendantsList(true)}
                 className='border flex justify-center items-center shadow-sm'
               >
-                see attendant list
+                attendants
               </div>
-              <div onClick={() => setShowFriendList(true)}
-                className='border flex justify-center items-center shadow-sm'
-              >
-                see friend list
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 3
               </div>
               <div className='border flex justify-center items-center shadow-sm'>
                 feature 4
@@ -137,7 +115,7 @@ const MainComponent = ({
             </div>
           )}
 
-          { showAttendantList && (
+          { showAttendantsList && (
             <div className='
               row-span-11 p-4 overflow-y-auto
               border border-black rounded-lg bg-white
@@ -155,26 +133,6 @@ const MainComponent = ({
               )) }
             </ul>
           </div>
-          )}
-
-          { showFriendList && (
-            <div className='
-              row-span-11 p-4 overflow-y-auto
-              border border-black rounded-lg bg-white
-              flex flex-col gap-3
-            '>
-              <ul className='flex flex-col gap-2'>
-              { friends.map((friend: any) => (
-                <li key={friend._id} className='
-                  border border-black p-2 rounded-lg
-                  flex justify-between
-                '>
-                  <p>{ friend.name }</p>
-                  <p>{ friend.status }</p>
-                </li>
-              )) }
-            </ul>
-            </div>
           )}
         </>
       )}
