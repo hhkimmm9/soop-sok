@@ -9,6 +9,8 @@ import {
 } from "@/app/lib/firebase/auth";
 import { useRouter } from 'next/navigation';
 
+import { auth } from '@/app/lib/firebase/firebase';
+
 function useUserSession(initialUser: any) {
   // The initialUser comes from the server through a server component
   const [user, setUser] = useState(initialUser);
@@ -37,8 +39,17 @@ function useUserSession(initialUser: any) {
   return user;
 };
 
-const TestHeader = () => {
-  
+const AuthTest = ({
+  initialUser
+} : {
+  initialUser: any
+}) => {
+
+  console.log(auth);
+
+  // const user = useUserSession(initialUser);
+  const user = auth.currentUser;
+
   const handleSignOut = (event: any) => {
 		event.preventDefault();
 		signOut();
@@ -47,18 +58,17 @@ const TestHeader = () => {
   const handleSignIn = (event: any) => {
 		event.preventDefault();
     signInWithGoogle();
-
 	};
 
   return (
-    <div>
-      { false ? (
+    <>
+      { user ? (
           <Link href='#' onClick={handleSignOut}>Sign Out</Link>
         ) : (
           <Link href='#' onClick={handleSignIn}>Sign In with Google</Link>
       )}
-    </div>
+    </>
   )
 };
 
-export default TestHeader;
+export default AuthTest;
