@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 const CreateChat = ({
-  showCreatePage, setShowCreatePage,
+  showCreateChat, setShowCreateChat,
 } : {
-  showCreatePage: boolean, setShowCreatePage: any,
+  showCreateChat: boolean, setShowCreateChat: any,
 }) => {
   const [title, setTitle] = useState('');
   const [capacity, setCapacity] = useState(0);
@@ -15,7 +15,7 @@ const CreateChat = ({
 
     console.log('handlesSubmit')
 
-    setShowCreatePage(false);
+    setShowCreateChat(false);
   };
 
   return (

@@ -4,11 +4,11 @@ import SearchBar from '../SearchBar';
 
 const ButtonsAtBottom = ({
   showFeatures, setShowFeatures,
-  showCreatePage, setShowCreatePage,
+  showCreateChat, setShowCreateChat,
   showAttendantsList, setShowAttendantsList
 } : {
   showFeatures: boolean, setShowFeatures: any,
-  showCreatePage: boolean, setShowCreatePage: any,
+  showCreateChat: boolean, setShowCreateChat: any,
   showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
   const [activateUserInput, setActivateUserInput] = useState(false);
@@ -45,7 +45,7 @@ const ButtonsAtBottom = ({
         </>
       ) : (
         <>
-          { !showCreatePage && !showAttendantsList && (
+          { !showCreateChat && !showAttendantsList && (
             <button onClick={() => setShowFeatures(false)}
               className='
               w-full py-2 bg-white
@@ -53,14 +53,14 @@ const ButtonsAtBottom = ({
             '>뒤로 가기</button>
           )}
 
-          { showCreatePage && (
+          { showCreateChat && (
             <div className='grid grid-cols-2 gap-2.5'>
               <button onClick={() => {}}
                 className='
                 w-full py-2 bg-white
                 border border-black rounded-lg shadow-sm
               '>만들기</button>
-              <button onClick={() => setShowCreatePage(false)}
+              <button onClick={() => setShowCreateChat(false)}
                 className='
                 w-full py-2 bg-white
                 border border-black rounded-lg shadow-sm

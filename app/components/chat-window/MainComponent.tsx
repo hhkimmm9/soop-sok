@@ -3,11 +3,11 @@ import CreateChat from '../CreateChat';
 
 const MainComponent = ({
   showFeatures, setShowFeatures,
-  showCreatePage, setShowCreatePage,
+  showCreateChat, setShowCreateChat,
   showAttendantsList, setShowAttendantsList
 } : {
   showFeatures: boolean, setShowFeatures: any,
-  showCreatePage: boolean, setShowCreatePage: any,
+  showCreateChat: boolean, setShowCreateChat: any,
   showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
   // depending on how Firestore handles it.
@@ -65,13 +65,13 @@ const MainComponent = ({
       ) : (
         <>
           {/* features */}
-          { !showCreatePage && !showAttendantsList && (
+          { !showCreateChat && !showAttendantsList && (
             <div className='
               row-span-11 p-4 overflow-y-auto
               border border-black rounded-lg bg-white
               grid grid-cols-2 gap-4
             '>
-              <div onClick={() => setShowCreatePage(true)}
+              <div onClick={() => setShowCreateChat(true)}
                 className='border flex justify-center items-center shadow-sm'
               >
                 create page
@@ -96,15 +96,15 @@ const MainComponent = ({
             </div>
           )}
 
-          { showCreatePage && (
+          { showCreateChat && (
             <div className='
               row-span-11 p-4 overflow-y-auto
               border border-black rounded-lg bg-white
               flex flex-col gap-3
             '>
               <CreateChat
-                showCreatePage={showCreatePage}
-                setShowCreatePage={setShowCreatePage}
+                showCreateChat={showCreateChat}
+                setShowCreateChat={setShowCreateChat}
               />
             </div>
           )}

@@ -7,20 +7,20 @@ import ButtonsAtBottom from './ButtonsAtBottom';
 
 const ChatWindow = () => {
   const [showFeatures, setShowFeatures] = useState(false);
-  const [showCreatePage, setShowCreatePage] = useState(false);
+  const [showCreateChat, setShowCreateChat] = useState(false);
   const [showAttendantsList, setShowAttendantsList] = useState(false);
 
   return (
     <div className='h-[82vh] grid grid-rows-12 gap-3'>
       <MainComponent
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}
-        showCreatePage={showCreatePage} setShowCreatePage={setShowCreatePage}
+        showCreateChat={showCreateChat} setShowCreateChat={setShowCreateChat}
         showAttendantsList={showAttendantsList} setShowAttendantsList={setShowAttendantsList}
       />
 
       <ButtonsAtBottom 
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}
-        showCreatePage={showCreatePage} setShowCreatePage={setShowCreatePage}
+        showCreateChat={showCreateChat} setShowCreateChat={setShowCreateChat}
         showAttendantsList={showAttendantsList} setShowAttendantsList={setShowAttendantsList}
       />
     </div>
