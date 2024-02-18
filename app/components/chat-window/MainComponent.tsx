@@ -76,8 +76,6 @@ const MainComponent = ({
     },
   ];
   
-  
-
   return (
     <>
       { !showFeatures ? (
@@ -94,37 +92,37 @@ const MainComponent = ({
         <>
           {/* features */}
           { !showCreatePage && !showAttendantList && !showFriendList && (
-              <div className='
-                row-span-11 p-4 overflow-y-auto
-                border border-black rounded-lg bg-white
-                grid grid-cols-2 gap-4
-              '>
-                <div onClick={() => setShowCreatePage(true)}
-                  className='border flex justify-center items-center shadow-sm'
-                >
-                  create page (test)
-                </div>
-                <div onClick={() => setShowAttendantList(true)}
-                  className='border flex justify-center items-center shadow-sm'
-                >
-                  see attendant list
-                </div>
-                <div onClick={() => setShowFriendList(true)}
-                  className='border flex justify-center items-center shadow-sm'
-                >
-                  see friend list
-                </div>
-                <div className='border flex justify-center items-center shadow-sm'>
-                  feature 4
-                </div>
-                <div className='border flex justify-center items-center shadow-sm'>
-                  feature 5
-                </div>
-                <div className='border flex justify-center items-center shadow-sm'>
-                  feature 6
-                </div>
+            <div className='
+              row-span-11 p-4 overflow-y-auto
+              border border-black rounded-lg bg-white
+              grid grid-cols-2 gap-4
+            '>
+              <div onClick={() => setShowCreatePage(true)}
+                className='border flex justify-center items-center shadow-sm'
+              >
+                create page (test)
               </div>
-            )}
+              <div onClick={() => setShowAttendantList(true)}
+                className='border flex justify-center items-center shadow-sm'
+              >
+                see attendant list
+              </div>
+              <div onClick={() => setShowFriendList(true)}
+                className='border flex justify-center items-center shadow-sm'
+              >
+                see friend list
+              </div>
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 4
+              </div>
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 5
+              </div>
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 6
+              </div>
+            </div>
+          )}
 
           { showCreatePage && (
             <div className='
