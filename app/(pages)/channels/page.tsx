@@ -41,7 +41,7 @@ const SelectChannel = () => {
     },
     {
       _id: '7',
-      title: '아구머나',
+      title: '아무거나',
       numAttendants: 13,
       capacity: 32
     },
