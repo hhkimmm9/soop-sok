@@ -1,5 +1,12 @@
 import Link from 'next/link';
 
+import {
+  QueueListIcon,
+  ChatBubbleBottomCenterIcon,
+  UserIcon,
+  Cog6ToothIcon
+} from '@heroicons/react/24/outline'
+
 const NavBar = () => {
   return (
     <div className="
@@ -7,18 +14,29 @@ const NavBar = () => {
       border-t border-black
       px-12 flex justify-between items-center
     ">
-      <Link href=''
-        className="bg-stone-200 rounded-full px-3
-      ">1</Link>
-      <Link href=''
-        className="bg-stone-200 rounded-full px-3
-      ">2</Link>
-      <Link href=''
-        className="bg-stone-200 rounded-full px-3
-      ">3</Link>
-      <Link href=''
-        className="bg-stone-200 rounded-full px-3
-      ">4</Link>
+      <Link href='/channels'
+        className="rounded-full px-3
+      ">
+        <QueueListIcon className='h-5 w-5' />
+      </Link>
+
+      <Link href='/chats'
+        className="rounded-full px-3
+      ">
+        <ChatBubbleBottomCenterIcon className='h-5 w-5' />
+      </Link>
+
+      <Link href='/users'
+        className="rounded-full px-3
+      ">
+        <UserIcon className='h-5 w-5' />
+      </Link>
+
+      <Link href='/settings'
+        className="rounded-full px-3
+      ">
+        <Cog6ToothIcon className='h-5 w-5' />
+      </Link>
     </div> 
   )
 }
