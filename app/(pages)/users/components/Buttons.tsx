@@ -24,13 +24,13 @@ const Buttons = ({
               text-center
           '>프로필 수정</Link>
 
-          <Link href='/direct-messages'
+          <Link href='#'
             className='
               border
               py-3
               rounded-lg
               text-center
-          '>DM 보기</Link>
+          '>something else</Link>
         </div>
       ) : (
         <div className='w-72 flex flex-col gap-8'>
