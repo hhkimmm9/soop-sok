@@ -8,6 +8,7 @@ import ButtonsAtBottom from './ButtonsAtBottom';
 const ChatWindow = () => {
   const [showFeatures, setShowFeatures] = useState(false);
   const [showCreateChat, setShowCreateChat] = useState(false);
+  const [showChatList, setShowChatList] = useState(false);
   const [showAttendantsList, setShowAttendantsList] = useState(false);
 
   return (
@@ -15,12 +16,14 @@ const ChatWindow = () => {
       <MainComponent
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}
         showCreateChat={showCreateChat} setShowCreateChat={setShowCreateChat}
+        showChatList={showChatList} setShowChatList={setShowChatList}
         showAttendantsList={showAttendantsList} setShowAttendantsList={setShowAttendantsList}
       />
 
       <ButtonsAtBottom 
         showFeatures={showFeatures} setShowFeatures={setShowFeatures}
         showCreateChat={showCreateChat} setShowCreateChat={setShowCreateChat}
+        showChatList={showChatList} setShowChatList={setShowChatList}
         showAttendantsList={showAttendantsList} setShowAttendantsList={setShowAttendantsList}
       />
     </div>
