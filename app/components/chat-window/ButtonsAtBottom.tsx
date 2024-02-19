@@ -1,20 +1,20 @@
-import React from 'react'
+import { useState } from 'react';
 
 import SearchBar from '../SearchBar';
 
 const ButtonsAtBottom = ({
-  activateUserInput, setActivateUserInput,
   showFeatures, setShowFeatures,
-  showCreatePage, setShowCreatePage,
-  showAttendantList, setShowAttendantList,
-  showFriendList, setShowFriendList,
+  showCreateChat, setShowCreateChat,
+  showChatList, setShowChatList,
+  showAttendantsList, setShowAttendantsList
 } : {
-  activateUserInput: boolean, setActivateUserInput: any,
   showFeatures: boolean, setShowFeatures: any,
-  showCreatePage: boolean, setShowCreatePage: any,
-  showAttendantList: boolean, setShowAttendantList: any,
-  showFriendList: boolean, setShowFriendList: any,
+  showCreateChat: boolean, setShowCreateChat: any,
+  showChatList: boolean,setShowChatList: any,
+  showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
+  const [activateUserInput, setActivateUserInput] = useState(false);
+
   return (
     // button(s) at bottom
     <div className='row-span-1'>
@@ -47,7 +47,7 @@ const ButtonsAtBottom = ({
         </>
       ) : (
         <>
-          { !showCreatePage && !showAttendantList && !showFriendList && (
+          { !showCreateChat && !showChatList && !showAttendantsList && (
             <button onClick={() => setShowFeatures(false)}
               className='
               w-full py-2 bg-white
@@ -55,31 +55,31 @@ const ButtonsAtBottom = ({
             '>뒤로 가기</button>
           )}
 
-          { showCreatePage && (
+          { showCreateChat && (
             <div className='grid grid-cols-2 gap-2.5'>
               <button onClick={() => {}}
                 className='
                 w-full py-2 bg-white
                 border border-black rounded-lg shadow-sm
               '>만들기</button>
-              <button onClick={() => setShowCreatePage(false)}
+              <button onClick={() => setShowCreateChat(false)}
                 className='
                 w-full py-2 bg-white
                 border border-black rounded-lg shadow-sm
               '>취소</button>
             </div>
           )}
-          
-          { showAttendantList && (
-            <button onClick={() => setShowAttendantList(false)}
-              className='
-              w-full py-2 bg-white
-              border border-black rounded-lg shadow-sm
-            '>뒤로 가기</button>
+
+          { showChatList && (
+            <button onClick={() => setShowChatList(false)}
+            className='
+            w-full py-2 bg-white
+            border border-black rounded-lg shadow-sm
+          '>뒤로 가기</button>
           )}
 
-          { showFriendList && (
-            <button onClick={() => setShowFriendList(false)}
+          { showAttendantsList && (
+            <button onClick={() => setShowAttendantsList(false)}
               className='
               w-full py-2 bg-white
               border border-black rounded-lg shadow-sm

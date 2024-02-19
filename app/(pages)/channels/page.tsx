@@ -41,7 +41,7 @@ const SelectChannel = () => {
     },
     {
       _id: '7',
-      title: '아구머나',
+      title: '아무거나',
       numAttendants: 13,
       capacity: 32
     },
@@ -54,7 +54,7 @@ const SelectChannel = () => {
   ];
 
   return (
-    <div className='pt-16 flex flex-col gap-2'>
+    <div className='flex flex-col gap-2'>
       <Channel channelInfo={channelInfo[0]} />
       <Channel channelInfo={channelInfo[1]} />
       <Channel channelInfo={channelInfo[2]} />

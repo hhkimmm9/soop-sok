@@ -5,19 +5,26 @@ import { useState } from 'react';
 import ChatMessage from '../ChatMessage';
 import CreateChat from '../CreateChat';
 
+import SearchBar from '@/app/components/SearchBar';
+import SortOptions from '@/app/components/SortOptions';
+import Chat from '@/app/components/chat-window/Chat';
+
+import { IChat } from '@/app/interfaces';
+
 const MainComponent = ({
-  activateUserInput, setActivateUserInput,
   showFeatures, setShowFeatures,
-  showCreatePage, setShowCreatePage,
-  showAttendantList, setShowAttendantList,
-  showFriendList, setShowFriendList,
+  showCreateChat, setShowCreateChat,
+  showChatList, setShowChatList,
+  showAttendantsList, setShowAttendantsList
 } : {
-  activateUserInput: boolean, setActivateUserInput: any,
   showFeatures: boolean, setShowFeatures: any,
-  showCreatePage: boolean, setShowCreatePage: any,
-  showAttendantList: boolean, setShowAttendantList: any,
-  showFriendList: boolean, setShowFriendList: any,
+  showCreateChat: boolean, setShowCreateChat: any,
+  showChatList: boolean, setShowChatList: any,
+  showAttendantsList: boolean, setShowAttendantsList: any
 }) => {
+  const [activateSearch, setActivateSearch] = useState<boolean>(false);
+  const [activateSort, setActivateSort] = useState<boolean>(false);
+  
   // depending on how Firestore handles it.
   var messages = [
     {
@@ -40,6 +47,57 @@ const MainComponent = ({
     },
   ];
 
+  var chatRooms = ([
+    {
+      _id: '1',
+      title: '이번달에는 취뽀할 수 있을까요. 빚만 쌓어가는데',
+      topic: '취업',
+      capacity: 3,
+      occupiedBy: 2,
+      createdAt: 7
+    },
+    {
+      _id: '2',
+      title: '부트캠프 출신인데 이번에 드디어 취직햇어',
+      topic: '성공',
+      capacity: 3,
+      occupiedBy: 2,
+      createdAt: 13
+    },
+    {
+      _id: '3',
+      title: '이 상황에 이직하는게 맞는가 싶다. 어떻게 해야할지 잘 모르겟어',
+      topic: '이직',
+      capacity: 3,
+      occupiedBy: 2,
+      createdAt: 3
+    },
+    {
+      _id: '4',
+      title: 'ㅅㅂ 개발 안하련다',
+      topic: '포기',
+      capacity: 3,
+      occupiedBy: 2,
+      createdAt: 1
+    },
+    {
+      _id: '5',
+      title: 'ㅅㅂㅅㅂㅅㅂㅅㅂ',
+      topic: 'ㅅㅂ',
+      capacity: 3,
+      occupiedBy: 2,
+      createdAt: 1
+    },
+    {
+      _id: '6',
+      title: 'ㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅ',
+      topic: 'ㅂㅅ',
+      capacity: 3,
+      occupiedBy: 2,
+      createdAt: 1
+    },
+  ]);
+
   var attendants = [
     {
       _id: '1',
@@ -57,27 +115,7 @@ const MainComponent = ({
       status: 0
     },
   ];
-
-  var friends = [
-    {
-      _id: '1',
-      name: 'Friend 1',
-      status: 0
-    },
-    {
-      _id: '2',
-      name: 'Friend 2',
-      status: 0
-    },
-    {
-      _id: '3',
-      name: 'Friend 3',
-      status: 1
-    },
-  ];
   
-  
-
   return (
     <>
       { !showFeatures ? (
@@ -93,53 +131,102 @@ const MainComponent = ({
       ) : (
         <>
           {/* features */}
-          { !showCreatePage && !showAttendantList && !showFriendList && (
-              <div className='
-                row-span-11 p-4 overflow-y-auto
-                border border-black rounded-lg bg-white
-                grid grid-cols-2 gap-4
-              '>
-                <div onClick={() => setShowCreatePage(true)}
-                  className='border flex justify-center items-center shadow-sm'
-                >
-                  create page (test)
-                </div>
-                <div onClick={() => setShowAttendantList(true)}
-                  className='border flex justify-center items-center shadow-sm'
-                >
-                  see attendant list
-                </div>
-                <div onClick={() => setShowFriendList(true)}
-                  className='border flex justify-center items-center shadow-sm'
-                >
-                  see friend list
-                </div>
-                <div className='border flex justify-center items-center shadow-sm'>
-                  feature 4
-                </div>
-                <div className='border flex justify-center items-center shadow-sm'>
-                  feature 5
-                </div>
-                <div className='border flex justify-center items-center shadow-sm'>
-                  feature 6
-                </div>
+          { !showCreateChat && !showChatList && !showAttendantsList && (
+            <div className='
+              row-span-11 p-4 overflow-y-auto
+              border border-black rounded-lg bg-white
+              grid grid-cols-2 gap-4
+            '>
+              <div onClick={() => setShowCreateChat(true)}
+                className='border flex justify-center items-center shadow-sm'
+              >
+                create page
               </div>
-            )}
+              <div onClick={() => setShowChatList(true)}
+                className='border flex justify-center items-center shadow-sm'>
+                chat list
+              </div>
+              <div onClick={() => setShowAttendantsList(true)}
+                className='border flex justify-center items-center shadow-sm'
+              >
+                attendants
+              </div>
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 4
+              </div>
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 5
+              </div>
+              <div className='border flex justify-center items-center shadow-sm'>
+                feature 6
+              </div>
+            </div>
+          )}
 
-          { showCreatePage && (
+          { showCreateChat && (
             <div className='
               row-span-11 p-4 overflow-y-auto
               border border-black rounded-lg bg-white
               flex flex-col gap-3
             '>
               <CreateChat
-                showCreatePage={showCreatePage}
-                setShowCreatePage={setShowCreatePage}
+                showCreateChat={showCreateChat}
+                setShowCreateChat={setShowCreateChat}
               />
             </div>
           )}
 
-          { showAttendantList && (
+          { showChatList && (
+            <>
+              { !activateSearch && !activateSort && (
+                <div className='grid grid-cols-2 gap-2'>
+                  <button onClick={() => setActivateSearch(true)}
+                    className='
+                      bg-white
+                      border
+                      border-black
+                      py-2
+                      rounded-lg
+                      shadow-sm
+                  '>검색</button>
+                  <button onClick={() => setActivateSort(true)}
+                    className='
+                      bg-white
+                      border
+                      border-black
+                      py-2
+                      rounded-lg
+                      shadow-sm
+                  '>정렬</button>
+                </div>
+              )}
+
+              { activateSearch && (
+                <SearchBar goBack={() => setActivateSearch(false) }/>
+              )}
+
+              { activateSort && (
+                <SortOptions
+                  goBack={() => setActivateSort(false)}
+                  options={['Option A','Option B']}
+                  onSelect={(selectedValue: string) => { console.log(selectedValue) }}
+                />
+              )}
+
+              {/* chat list */}
+              <div className='
+                row-span-11 p-4 overflow-y-auto
+                border border-black rounded-lg bg-white
+                flex flex-col gap-3
+              '>
+                { chatRooms.map((chat: IChat) => (
+                  <Chat key={chat._id} chat={chat} />
+                ))}
+              </div>
+            </>
+          )}
+
+          { showAttendantsList && (
             <div className='
               row-span-11 p-4 overflow-y-auto
               border border-black rounded-lg bg-white
@@ -157,26 +244,6 @@ const MainComponent = ({
               )) }
             </ul>
           </div>
-          )}
-
-          { showFriendList && (
-            <div className='
-              row-span-11 p-4 overflow-y-auto
-              border border-black rounded-lg bg-white
-              flex flex-col gap-3
-            '>
-              <ul className='flex flex-col gap-2'>
-              { friends.map((friend: any) => (
-                <li key={friend._id} className='
-                  border border-black p-2 rounded-lg
-                  flex justify-between
-                '>
-                  <p>{ friend.name }</p>
-                  <p>{ friend.status }</p>
-                </li>
-              )) }
-            </ul>
-            </div>
           )}
         </>
       )}
