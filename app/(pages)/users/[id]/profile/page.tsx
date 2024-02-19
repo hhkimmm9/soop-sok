@@ -1,7 +1,6 @@
-import React from 'react';
 import Image from 'next/image';
 
-import Buttons from './components/Buttons'
+import Buttons from '@/app/(pages)/users/components/Buttons';
 
 const Profile = () => {
 
