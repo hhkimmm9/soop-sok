@@ -1,7 +1,7 @@
 import Banner from '@/app/components/Banner';
 import ChatWindow from '@/app/components/chat-window/ChatWindow';
 
-const page = () => {
+const Chat = () => {
   return (
     <div className='flex flex-col gap-3'>
       <Banner />
@@ -11,4 +11,4 @@ const page = () => {
   )
 };
 
-export default page;
+export default Chat;
