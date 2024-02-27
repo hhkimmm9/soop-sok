@@ -1,6 +1,3 @@
-import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui';
-import 'firebaseui/dist/firebaseui.css';
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
@@ -30,26 +27,3 @@ export const firebaseApp =
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
 export const storage = getStorage(firebaseApp);
-
-// FirebaseUI configuration
-export const uiConfig = {
-  signInFlow: 'popup',
-  signInOptions: [
-    {
-      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-      signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
-      // emailSignInLink: () => {
-
-      // }
-    },
-    {
-      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID
-    }
-  ],
-  callbacks: {
-    signInSuccessWithAuthResult: () => false, // Prevent redirect after login
-  },
-};
-
-// Initialize the FirebaseUI Widget using Firebase.
-export const ui = new firebaseui.auth.AuthUI(auth);

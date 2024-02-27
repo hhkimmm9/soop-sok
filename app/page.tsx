@@ -1,17 +1,28 @@
 'use client';
 
-import { useEffect } from 'react';
-
-import { uiConfig, ui } from '@/app/lib/firebase/firebase';
+import { useRouter } from 'next/navigation';
+import { auth } from '@/app/lib/firebase/firebase';
+import {
+  useSignInWithGoogle,
+  useSignInWithApple
+} from 'react-firebase-hooks/auth';
+import SignInWithGoogle from '@/app/components/(SignInWith)/SignInWithGoogle';
 
 export default function Home() {
+  const [signInWithGoogle, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);
+  const [signInWithApple, loadingApple, errorApple] = useSignInWithApple(auth);
 
-  useEffect(() => {
-    // if (ui.isPendingRedirect() || firebase.auth().isSignInWithEmailLink(window.location.href)) {
-      // Start the FirebaseUI authentication flow
-      ui.start('#firebaseui-auth-container', uiConfig);
-    // }
-  }, []);
+  const router = useRouter();
+
+  const handleSignIn = async (signInWith: string) => {
+    if (signInWith === 'google') {
+      const result = await signInWithGoogle();
+
+      if (!errorGoogle) {
+        router.push('/channels');
+      }
+    }
+  };
 
   return (
     <div className="pt-24 flex flex-col gap-64 items-center">
@@ -20,10 +31,12 @@ export default function Home() {
         <p className=''>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus laboriosam dolor maxime suscipit tempore corrupti odit. Assumenda molestias nostrum voluptatem?</p>
       </div>
 
-      <div id='firebaseui-auth-container'
-        className='
-          border rounded-lg bg-white shadow-md
-      '/>
+      <div className='flex flex-col gap-4 text-center'>
+        <div onClick={() => handleSignIn('google')}>
+          <SignInWithGoogle />
+        </div>
+      </div>
+
     </div>
   );
 }
