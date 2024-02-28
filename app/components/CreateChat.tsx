@@ -1,9 +1,9 @@
 import { FormEvent, useState } from 'react';
 
 const CreateChat = ({
-  showCreateChat, setShowCreateChat,
+  toggleState
 } : {
-  showCreateChat: boolean, setShowCreateChat: any,
+  toggleState: any,
 }) => {
   const [title, setTitle] = useState('');
   const [capacity, setCapacity] = useState(2);
@@ -15,7 +15,7 @@ const CreateChat = ({
 
     console.log('handlesSubmit: ')
 
-    setShowCreateChat(false);
+    toggleState();
   };
 
   return (
