@@ -11,7 +11,7 @@ const DirectMessageComponent = ({
   message: IMessage
 }) => {
   return (
-    <Link href={`/chats/${1}`}>
+    <Link href={`/chats/${1}?type=dm`}>
       <div className='
         bg-white border border-black px-3 py-2 rounded-lg
         flex gap-3 items-center

@@ -18,8 +18,7 @@ interface State {
   activateSort: boolean;
 }
 
-const ChatWindow: React.FC = () => {
-
+const ChatWindow = ({ type }: { type: string | null }) => {
   const [state, setState] = useState<State>({
     showFeatures: false,
     showCreateChat: false,
@@ -134,7 +133,6 @@ const ChatWindow: React.FC = () => {
     </div>
   );
 
-
   return (
 
     <div className='h-[80vh] flex flex-col gap-4'>
@@ -177,9 +175,9 @@ const ChatWindow: React.FC = () => {
                 border border-black rounded-lg bg-white
                 grid grid-cols-2 gap-4
               '>
-                { renderToggleButton('create page', () => toggleState('showCreateChat')) }
-                { renderToggleButton('chat list', () => toggleState('showChatList')) }
-                { renderToggleButton('attendants', () => toggleState('showAttendantsList')) }
+                { type === 'lobby' && renderToggleButton('create page', () => toggleState('showCreateChat')) }
+                { type != 'dm' && renderToggleButton('chat list', () => toggleState('showChatList')) }
+                { type != 'dm' && renderToggleButton('attendants', () => toggleState('showAttendantsList')) }
                 { renderToggleButton('feature 4', () => {}) }
                 { renderToggleButton('feature 5', () => {}) }
                 { renderToggleButton('feature 6', () => {}) }
