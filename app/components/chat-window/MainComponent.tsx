@@ -163,6 +163,7 @@ const MainComponent = ({
             </div>
           )}
 
+          {/* create chat component */}
           { showCreateChat && (
             <div className='
               row-span-11 p-4 overflow-y-auto
@@ -176,6 +177,7 @@ const MainComponent = ({
             </div>
           )}
 
+          {/* chat list component */}
           { showChatList && (
             <>
               { !activateSearch && !activateSort && (
@@ -226,6 +228,7 @@ const MainComponent = ({
             </>
           )}
 
+          {/* attendant list component */}
           { showAttendantsList && (
             <div className='
               row-span-11 p-4 overflow-y-auto
