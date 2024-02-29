@@ -160,7 +160,10 @@ const ChatWindow = ({ type }: { type: string | null }) => {
               </div>
             ) : (
               <div className=''>
-                <SearchBar goBack={() => toggleState('activateUserInput')} />
+                <SearchBar
+                  goBack={() => toggleState('activateUserInput')}
+                  onSubmit={(searchQuery: string) => console.log(searchQuery) }
+                />
               </div>
             )}
           </div>
@@ -227,14 +230,17 @@ const ChatWindow = ({ type }: { type: string | null }) => {
               )}
 
               { state.activateSearch && (
-                <SearchBar goBack={() => toggleState('activateSearch') }/>
+                <SearchBar
+                  goBack={() => toggleState('activateSearch') }
+                  onSubmit={(searchQuery: string) => console.log(searchQuery) }
+                />
               )}
 
               { state.activateSort && (
                 <SortOptions
                   goBack={() => toggleState('activateSort')}
-                  options={['Option A','Option B']}
-                  onSelect={(selectedValue: string) => { console.log(selectedValue) }}
+                  options={['Option A', 'Option B']}
+                  onSelect={(selectedValue: string) => console.log(selectedValue) }
                 />
               )}
 

@@ -8,22 +8,30 @@ import {
 } from '@heroicons/react/24/outline';
 
 const SearchBar = ({
-  goBack
+  goBack,
+  onSubmit
 } : {
-  goBack: Function
+  goBack: Function,
+  onSubmit: Function
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    onSubmit(searchQuery)
   };
+
+  const inactivateSearchbar = () => {
+    console.log('inactivateSearchbar');
+    setSearchQuery('');
+    goBack();
+  }
 
   return (
     <div className='flex gap-3 items-center'>
-      <button onClick={() => goBack()}
+      <button onClick={() => inactivateSearchbar()}
         className='
-        h-9 border border-black rounded-lg px-1.5 py-1
+          h-9 border border-black rounded-lg px-1.5 py-1
       '>
         <ChevronDoubleLeftIcon className='h-5 w-5' />
       </button>
