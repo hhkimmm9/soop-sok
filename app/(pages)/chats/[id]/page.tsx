@@ -8,10 +8,10 @@ import ChatWindow from '@/app/components/chat-window/ChatWindow';
 const Chat = () => {
 
   const params = useParams();
-  console.log(params.id);
+  // console.log(params.id);
 
   const searchParams = useSearchParams();
-  console.log(searchParams.get('type'));
+  // console.log(searchParams.get('type'));
 
   return (
     <div className='flex flex-col gap-3'>
