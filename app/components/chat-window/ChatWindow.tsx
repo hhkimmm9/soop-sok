@@ -177,7 +177,7 @@ const ChatWindow = ({ type }: { type: string | null }) => {
               '>
                 { type === 'lobby' && renderToggleButton('create page', () => toggleState('showCreateChat')) }
                 { type != 'dm' && renderToggleButton('chat list', () => toggleState('showChatList')) }
-                { type != 'dm' && renderToggleButton('attendants', () => toggleState('showAttendantsList')) }
+                { renderToggleButton('attendants', () => toggleState('showAttendantsList')) }
                 { renderToggleButton('feature 4', () => {}) }
                 { renderToggleButton('feature 5', () => {}) }
                 { renderToggleButton('feature 6', () => {}) }
