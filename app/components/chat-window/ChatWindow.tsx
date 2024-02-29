@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import ChatMessage from '@/app/components/ChatMessage';
+import MessageInput from '@/app/(pages)/chats/(components)/MessageInput';
 import SearchBar from '@/app/components/SearchBar';
 import CreateChat from '@/app/components/CreateChat';
 import SortOptions from '@/app/components/SortOptions';
@@ -160,10 +161,7 @@ const ChatWindow = ({ type }: { type: string | null }) => {
               </div>
             ) : (
               <div className=''>
-                <SearchBar
-                  goBack={() => toggleState('activateUserInput')}
-                  onSubmit={(searchQuery: string) => console.log(searchQuery) }
-                />
+                <MessageInput goBack={() => toggleState('activateUserInput') } />
               </div>
             )}
           </div>
