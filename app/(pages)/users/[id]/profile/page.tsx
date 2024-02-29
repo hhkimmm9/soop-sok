@@ -3,18 +3,27 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { auth } from '@/app/lib/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const Profile = () => {
   const [signedInUser, loading, error] = useAuthState(auth);
   const [user, setUser] = useState({
+    _id: '1',
     photoURL: 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/IMG_2531.jpeg?alt=media&token=a0566f94-5879-439b-9114-193f3564d378',
     displayName: '은솔공주'
   });
+  const [isMyProfile, setIsMyProfile] = useState(false);
+
+  const params = useParams();
 
   useEffect(() => {
-    fecthUser()
+    async () => {
+      await fecthUser();
+
+      // TODO: Is it ok to expose uid? If so, compare user.uid to params.uid, and if they match setIsMyProfile to true.
+    }
   }, [])
 
   const fecthUser = async () => {
@@ -35,53 +44,45 @@ const Profile = () => {
     '>
       <div className=''>
         <Image
-          src={`${user?.photoURL}`}
-          alt=''
-          width={1324}
-          height={1827}
+          src={`${user?.photoURL}`} alt=''
+          width={1324} height={1827}
           className='
             object-cover
-            w-72 h-72
-            rounded-full
+            w-72 h-72 rounded-full
         '/>
       </div>
       <div className='
-        text-5xl
-        font-medium
+        text-5xl font-medium
       '>
         { user?.displayName }
       </div>
       
-      { signedInUser ? (
+      { isMyProfile ? (
         <div className='w-72 flex flex-col gap-8'>
           <Link href={`/users/${`test`}/profile/edit`}
             className='
-              border
-              py-3
-              rounded-lg
+              border rounded-lg py-3 bg-white
               text-center
-              bg-white
           '>프로필 수정</Link>
         </div>
       ) : (
         <div className='w-72 flex flex-col gap-8'>
-          <button  type='button'
-            onClick={addUserToFriendList}
-            className='
-              border
-              py-3
-              rounded-lg
-              text-center
-              bg-white
-          '>친구 추가</button>
+          {
+            // TODO: already friend? then ...
+            true && (
+              <button  type='button'
+                onClick={addUserToFriendList}
+                className='
+                  border rounded-lg py-3 bg-white
+                  text-center
+              '>친구 추가</button>
+            )
+          }
 
-          <Link href='/direct-messages'
+          <Link href={`/chats/${user._id}?type=dm`}
             className='
-              border
-              py-3
-              rounded-lg
+              border rounded-lg py-3 bg-white
               text-center
-              bg-white
           '>DM 보내기</Link>
         </div>
       )}
