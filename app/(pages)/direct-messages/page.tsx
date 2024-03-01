@@ -22,8 +22,10 @@ const DirectMessages = () => {
   return (
     <div className='flex flex-col gap-6'>
       {/* interaction area */}
-      <SearchBar goBack={() => { console.log('go back') }} />
-      
+      <SearchBar
+        goBack={() => { console.log('go back') }}
+        onSubmit={(searchQuery: string) => console.log(searchQuery) }
+      />
 
       {/* DMs */}
       <div className='flex flex-col gap-2'>
