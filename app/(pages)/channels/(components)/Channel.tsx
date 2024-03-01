@@ -6,7 +6,7 @@ const Channel = ({
   channelInfo: any
 }) => {
   return (
-    <Link href={`/chats/${channelInfo.id}`}className='
+    <Link href={`/chats/${channelInfo.id}?type=lobby`}className='
       border border-black p-3 bg-white rounded-lg
       flex flex-col gap-2
     '>

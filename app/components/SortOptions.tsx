@@ -18,8 +18,8 @@ const SortOptions = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
-  const handleSelectChange = (event: any) => {
-    const selectedValue = event.target.value;
+  const handleSelectChange = (e: any) => {
+    const selectedValue = e.target.value;
     setSelectedOption(selectedValue);
     onSelect(selectedValue);
   };

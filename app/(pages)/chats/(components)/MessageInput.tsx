@@ -1,35 +1,31 @@
-'use client';
-
 import { useState } from 'react';
-
 import {
   ChevronDoubleLeftIcon,
-  MagnifyingGlassIcon,
+  PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
-const SearchBar = ({
-  goBack,
-  onSubmit
-} : {
-  goBack: Function,
-  onSubmit: Function
+const MessageInput = ({
+  goBack
+}: {
+  goBack: Function
 }) => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [messageInput, setMessageInput] = useState('');
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(searchQuery)
+    console.log('handleSubmit');
+    setMessageInput('');
   };
 
-  const inactivateSearchbar = () => {
-    console.log('inactivateSearchbar');
-    setSearchQuery('');
-    goBack();
-  }
+  const inactivateMessageInput = () => {
+    console.log('inactivateMessageInput');
+    setMessageInput('');
+    goBack()
+  };
 
   return (
     <div className='flex gap-3 items-center'>
-      <button onClick={() => inactivateSearchbar()}
+      <button onClick={() => inactivateMessageInput()}
         className='
           h-9 border border-black rounded-lg px-1.5 py-1
       '>
@@ -45,17 +41,17 @@ const SearchBar = ({
         rounded-lg
         p-0.5
       '>
-        <form onSubmit={(e) => handleSearch(e)}
+        <form onSubmit={(e) => handleSubmit(e)}
           className='
           h-8 flex items-center justify-between
         '>
           <input type="text"
-            value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+            value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
             className='
               grow px-2 py-1 outline-none
           '/>
           <button type='submit' className='mr-2'>
-            <MagnifyingGlassIcon className='h-5 w-5'/>
+            <PaperAirplaneIcon className='h-5 w-5'/>
           </button>
         </form>
       </div>
@@ -63,4 +59,4 @@ const SearchBar = ({
   )
 }
 
-export default SearchBar
+export default MessageInput

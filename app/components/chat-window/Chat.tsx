@@ -8,7 +8,7 @@ const Chat = ({
   chat: IChat
 }) => {
   return (
-    <Link href={`/chats/${1}`}>
+    <Link href={`/chats/${1}?type=chat`}>
       <div className='
         bg-white border border-black px-3 py-2 rounded-lg
         flex flex-col gap-1
