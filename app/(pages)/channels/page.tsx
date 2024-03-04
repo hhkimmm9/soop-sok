@@ -1,68 +1,50 @@
-import React from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { auth, db } from '@/app/lib/firebase/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  collection,
+  getDocs,
+} from 'firebase/firestore';
+
 import Channel from './(components)/Channel';
 
+import { IChannel } from '@/app/interfaces';
+
 const SelectChannel = () => {
-  var channelInfo = [
-    {
-      _id: '1',
-      title: '개인 고민',
-      numAttendants: 13,
-      capacity: 32
-    },
-    {
-      _id: '2',
-      title: '연애 고민',
-      numAttendants: 31,
-      capacity: 32
-    },
-    {
-      _id: '3',
-      title: '장래 고민',
-      numAttendants: 13,
-      capacity: 32
-    },
-    {
-      _id: '4',
-      title: '사연',
-      numAttendants: 13,
-      capacity: 32
-    },
-    {
-      _id: '5',
-      title: '토론 1',
-      numAttendants: 13,
-      capacity: 32
-    },
-    {
-      _id: '6',
-      title: '토론 2',
-      numAttendants: 13,
-      capacity: 32
-    },
-    {
-      _id: '7',
-      title: '아무거나',
-      numAttendants: 13,
-      capacity: 32
-    },
-    {
-      _id: '8',
-      title: '성인들만',
-      numAttendants: 13,
-      capacity: 32
-    },
-  ];
+  // const [signedInUser, loading, error] = useAuthState(auth);
+
+  const [channels, setChannels] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchChannels();
+  }, [])
+
+  const fetchChannels = async () => {
+    var channels: IChannel[] = []
+    try {
+      const querySnapshot = await getDocs(collection(db, 'channels'));
+      querySnapshot.forEach((doc) => {
+        channels.push({
+          id: doc.id,
+          capacity: doc.data().capacity,
+          name: doc.data().name,
+          numUsers: doc.data().numUsers
+          // ...doc.data()
+        })
+      });
+      setChannels(channels);
+    } catch (err) {
+      console.error(err);
+    };
+  };
 
   return (
     <div className='flex flex-col gap-2'>
-      <Channel channelInfo={channelInfo[0]} />
-      <Channel channelInfo={channelInfo[1]} />
-      <Channel channelInfo={channelInfo[2]} />
-      <Channel channelInfo={channelInfo[3]} />
-      <Channel channelInfo={channelInfo[4]} />
-      <Channel channelInfo={channelInfo[5]} />
-      <Channel channelInfo={channelInfo[6]} />
-      <Channel channelInfo={channelInfo[7]} />
+      { channels.map(channel => (
+        <Channel key={channel.id} channelData={channel} />  
+      )) }
     </div>
   )
 };

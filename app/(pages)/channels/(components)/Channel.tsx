@@ -1,17 +1,19 @@
 import Link from 'next/link';
 
+import { IChannel } from '@/app/interfaces';
+
 const Channel = ({
-  channelInfo
+  channelData
 } : {
-  channelInfo: any
+  channelData: IChannel
 }) => {
   return (
-    <Link href={`/chats/${channelInfo.id}?type=lobby`}className='
+    <Link href={`/chats/${channelData.id}?type=lobby`}className='
       border border-black p-3 bg-white rounded-lg
       flex flex-col gap-2
     '>
-      <h3>{ channelInfo.title }</h3>
-      <p>현재 참여 인원: { channelInfo.numAttendants } / { channelInfo.capacity }</p>
+      <h3>{ channelData.name }</h3>
+      <p>현재 참여 인원: { channelData.numUsers } / { channelData.capacity }</p>
     </Link>
   )
 }
