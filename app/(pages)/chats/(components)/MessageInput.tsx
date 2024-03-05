@@ -31,7 +31,7 @@ const MessageInputComponent = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (auth.currentUser) {
+    if (auth.currentUser && messageInput.length > 0) {
       const uid = auth.currentUser.uid;
 
       const messageRef = await addDoc(collection(db, 'messages'), {
@@ -43,7 +43,6 @@ const MessageInputComponent = ({
 
       setMessageInput('');
     }
-
   };
 
   const inactivateMessageInput = () => {
