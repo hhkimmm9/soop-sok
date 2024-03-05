@@ -29,7 +29,7 @@ interface State {
   showFeatures: boolean;
   showCreateChat: boolean;
   showChatList: boolean;
-  showAttendantsList: boolean;
+  showOnlineUsers: boolean;
   activateUserInput: boolean;
   activateSearch: boolean;
   activateSort: boolean;
@@ -40,27 +40,27 @@ const ChatWindow = () => {
     showFeatures: false,
     showCreateChat: false,
     showChatList: false,
-    showAttendantsList: false,
+    showOnlineUsers: false,
     activateUserInput: false,
     activateSearch: false,
     activateSort: false,
   });
   const [messages, setMessages] = useState<IMessage[]>([]);
 
-  var attendants = [
+  var onlineUsers = [
     {
       _id: '1',
-      name: 'Attendant 1',
+      name: 'User 1',
       status: 1
     },
     {
       _id: '2',
-      name: 'Attendant 2',
+      name: 'User 2',
       status: 1
     },
     {
       _id: '3',
-      name: 'Attendant 3',
+      name: 'User 3',
       status: 0
     },
   ];
@@ -97,7 +97,7 @@ const ChatWindow = () => {
 
   const renderBackButton = (onClick: () => void) => (
     <button onClick={onClick} className='w-full py-2 bg-white border border-black rounded-lg shadow-sm'>
-      뒤로 가기
+      Back
     </button>
   );
 
@@ -127,10 +127,10 @@ const ChatWindow = () => {
               <div className='grid grid-cols-2 gap-2'>
                 <button onClick={() => toggleState('activateUserInput')}
                   className='bg-white border border-black py-2 rounded-lg shadow-sm
-                '>메세지 보내기</button>
+                '>Send a message</button>
                 <button onClick={() => toggleState('showFeatures')}
                   className='bg-white border border-black py-2 rounded-lg shadow-sm
-                '>기능 보기</button>
+                '>Other features</button>
               </div>
             ) : (
               <div className=''>
@@ -142,7 +142,7 @@ const ChatWindow = () => {
       ) : (
         <>
           {/* features */}
-          { !state.showCreateChat && !state.showChatList && !state.showAttendantsList && (
+          { !state.showCreateChat && !state.showChatList && !state.showOnlineUsers && (
             <>
               <div className='
                 grow p-4 overflow-y-auto
@@ -151,7 +151,7 @@ const ChatWindow = () => {
               '>
                 { searchParams.get('type') === 'lobby' && renderToggleButton('create page', () => toggleState('showCreateChat')) }
                 { searchParams.get('type') != 'dm' && renderToggleButton('chat list', () => toggleState('showChatList')) }
-                { renderToggleButton('attendants', () => toggleState('showAttendantsList')) }
+                { renderToggleButton('online users', () => toggleState('showOnlineUsers')) }
                 { renderToggleButton('feature 4', () => {}) }
                 { renderToggleButton('feature 5', () => {}) }
                 { renderToggleButton('feature 6', () => {}) }
@@ -179,7 +179,7 @@ const ChatWindow = () => {
                   className='
                   w-full py-2 bg-white
                   border border-black rounded-lg shadow-sm
-                '>만들기</button>
+                '>Create</button>
 
                 { renderBackButton(() => toggleState('showCreateChat')) }
               </div>
@@ -193,10 +193,10 @@ const ChatWindow = () => {
                 <div className='grid grid-cols-2 gap-2'>
                   <button onClick={() => toggleState('activateSearch')}
                     className='bg-white border border-black py-2 rounded-lg shadow-sm
-                  '>검색</button>
+                  '>Search</button>
                   <button onClick={() => toggleState('activateSort')}
                     className='bg-white border border-black py-2 rounded-lg shadow-sm
-                  '>정렬</button>
+                  '>Sort</button>
                 </div>
               )}
 
@@ -228,8 +228,8 @@ const ChatWindow = () => {
             </>
           )}
 
-          {/* attendant list component */}
-          { state.showAttendantsList && (
+          {/* onlineUsers component */}
+          { state.showOnlineUsers && (
             <>
               <div className='
                 grow p-4 overflow-y-auto
@@ -237,19 +237,19 @@ const ChatWindow = () => {
                 flex flex-col gap-4
               '>
                 <ul className='flex flex-col gap-2'>
-                  { attendants.map((attendant: any) => (
-                    <li key={attendant._id} className='
+                  { onlineUsers.map((onlineUser: any) => (
+                    <li key={onlineUser._id} className='
                       border border-black p-2 rounded-lg
                       flex justify-between
                     '>
-                      <p>{ attendant.name }</p>
-                      <p>{ attendant.status }</p>
+                      <p>{ onlineUser.name }</p>
+                      <p>{ onlineUser.status }</p>
                     </li>
                   )) }
                 </ul>
               </div>
 
-              { renderBackButton(() => toggleState('showAttendantsList')) }
+              { renderBackButton(() => toggleState('showOnlineUsers')) }
             </>
           )}
         </>
