@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState } from 'react'
+import { useState } from 'react'
+
 import ChatMessage from '@/app/components/ChatMessage';
 import MessageInput from '@/app/(pages)/chats/(components)/MessageInput';
 import SearchBar from '@/app/components/SearchBar';
 import CreateChat from '@/app/components/CreateChat';
 import SortOptions from '@/app/components/SortOptions';
-import Chat from '@/app/components/chat-window/Chat';
-import { IChat } from '@/app/interfaces';
+
+import Chats from '@/app/components/chat-window/Chats';
+import { IMessage } from '@/app/interfaces';
 
 interface State {
   showFeatures: boolean;
@@ -19,7 +21,13 @@ interface State {
   activateSort: boolean;
 }
 
-const ChatWindow = ({ type }: { type: string | null }) => {
+const ChatWindow = ({
+  type,
+  messages,
+}: {
+  type: string | null,
+  messages: IMessage[],
+}) => {
   const [state, setState] = useState<State>({
     showFeatures: false,
     showCreateChat: false,
@@ -29,78 +37,6 @@ const ChatWindow = ({ type }: { type: string | null }) => {
     activateSearch: false,
     activateSort: false,
   });
-  
-  var messages = [
-    {
-      _id: '1',
-      sentBy: 'user 1',
-      content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure expedita aperiam consequuntur, dolor suscipit, molestias aspernatur nisi in vitae corrupti hic eaque optio nihil cupiditate. Laboriosam at illo quae sint corporis nulla error illum perferendis nisi suscipit iure, corrupti doloremque qui laborum. Natus cupiditate veritatis dolorum corrupti magni, debitis quisquam.',
-      createdAt: '2024-02-02'
-    },
-    {
-      _id: '2',
-      sentBy: 'user 2',
-      content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure expedita aperiam consequuntur, dolor suscipit, molestias aspernatur nisi in vitae corrupti hic eaque optio nihil cupiditate. Laboriosam at illo quae sint corporis nulla error illum perferendis nisi suscipit iure, corrupti doloremque qui laborum. Natus cupiditate veritatis dolorum corrupti magni, debitis quisquam.',
-      createdAt: '2024-02-02'
-    },
-    {
-      _id: '3',
-      sentBy: 'user 3',
-      content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure expedita aperiam consequuntur, dolor suscipit, molestias aspernatur nisi in vitae corrupti hic eaque optio nihil cupiditate. Laboriosam at illo quae sint corporis nulla error illum perferendis nisi suscipit iure, corrupti doloremque qui laborum. Natus cupiditate veritatis dolorum corrupti magni, debitis quisquam.',
-      createdAt: '2024-02-02'
-    },
-  ];
-
-  var chatRooms = ([
-    {
-      _id: '1',
-      title: '이번달에는 취뽀할 수 있을까요. 빚만 쌓어가는데',
-      topic: '취업',
-      capacity: 3,
-      occupiedBy: 2,
-      createdAt: 7
-    },
-    {
-      _id: '2',
-      title: '부트캠프 출신인데 이번에 드디어 취직햇어',
-      topic: '성공',
-      capacity: 3,
-      occupiedBy: 2,
-      createdAt: 13
-    },
-    {
-      _id: '3',
-      title: '이 상황에 이직하는게 맞는가 싶다. 어떻게 해야할지 잘 모르겟어',
-      topic: '이직',
-      capacity: 3,
-      occupiedBy: 2,
-      createdAt: 3
-    },
-    {
-      _id: '4',
-      title: 'ㅅㅂ 개발 안하련다',
-      topic: '포기',
-      capacity: 3,
-      occupiedBy: 2,
-      createdAt: 1
-    },
-    {
-      _id: '5',
-      title: 'ㅅㅂㅅㅂㅅㅂㅅㅂ',
-      topic: 'ㅅㅂ',
-      capacity: 3,
-      occupiedBy: 2,
-      createdAt: 1
-    },
-    {
-      _id: '6',
-      title: 'ㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅ',
-      topic: 'ㅂㅅ',
-      capacity: 3,
-      occupiedBy: 2,
-      createdAt: 1
-    },
-  ]);
 
   var attendants = [
     {
@@ -144,8 +80,8 @@ const ChatWindow = ({ type }: { type: string | null }) => {
             border border-black rounded-lg bg-white
             flex flex-col gap-5
           '>
-            { messages.map((message) => (
-              <ChatMessage key={message._id} message={message} />
+            { messages.map((message: IMessage) => (
+              <ChatMessage key={message.id} message={message} />
             ))}
           </div>
 
@@ -248,9 +184,7 @@ const ChatWindow = ({ type }: { type: string | null }) => {
                 border border-black rounded-lg bg-white
                 flex flex-col gap-3
               '>
-                { chatRooms.map((chat: IChat) => (
-                  <Chat key={chat._id} chat={chat} />
-                ))}
+                <Chats />
               </div>
 
               { renderBackButton(() => toggleState('showChatList')) }
@@ -283,7 +217,6 @@ const ChatWindow = ({ type }: { type: string | null }) => {
           )}
         </>
       )}
-
     </div>
   )
 };

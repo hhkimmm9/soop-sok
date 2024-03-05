@@ -1,15 +1,64 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { auth, db } from '@/app/utils/firebase/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 import Image from 'next/image';
+
+import { IUser } from '@/app/interfaces';
 
 const Message = ({
   message
 } : {
   message: any
 }) => {
-  return (
+  // const [signedInUser, loading, error] = useAuthState(auth);
+
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    var user: IUser;
+    try {
+      // TODO: optimize - subcollection
+      const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        user = {
+          id: doc.id,
+          createdAt: doc.data().createdAt,
+          displayName: doc.data().displayName,
+          email: doc.data().email,
+          friendWith: doc.data().friendWith,
+          honourPoints: doc.data().honourPoints,
+          isEmailVerified: doc.data().isEmailVerified,
+          lastLoginTime: doc.data().lastLoginTime,
+          profile: doc.data().profile,
+          profilePicUrl: doc.data().profilePicUrl,
+          uId: doc.data().uId,
+          username: doc.data().username
+        };
+        setUser(user);
+      });
+    } catch (err) {
+      console.error(err);
+    };
+  };
+
+  if (user) return (
     <div className='grid grid-cols-6'>
-      <div className='col-span-1'>
+      <div className='col-span-1 mt-2'>
         <Image
-          src='https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/IMG_2531.jpeg?alt=media&token=a0566f94-5879-439b-9114-193f3564d378'
+          src={`${user?.profilePicUrl}`}
           alt=''
           width={1324}
           height={1827}
@@ -19,15 +68,17 @@ const Message = ({
             rounded-full
         '/>
       </div>
-      <div className='
-        col-span-5 ml-2 px-3 py-2 rounded-lg
-        bg-gradient-to-b from-sky-500 to-sky-400
-      '>
-        <span className='
-          text-neutral-100
-        '>{ message.content }</span>
+      <div className='col-span-5 ml-2 flex flex-col gap-1'>
+        <span className='text-sm text-gray-600'>{ user.username }</span>
+        <div className='
+          px-3 py-2 rounded-lg
+          bg-gradient-to-b from-sky-500 to-sky-400
+        '>
+          <span className='
+            text-neutral-100
+          '>{ message.text }</span>
+        </div>
       </div>
-
     </div>
   )
 };

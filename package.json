@@ -14,7 +14,8 @@
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-firebase-hooks": "^5.1.1"
+    "react-firebase-hooks": "^5.1.1",
+    "universal-cookie": "^7.1.0"
   },
   "devDependencies": {
     "@heroicons/react": "^2.1.1",

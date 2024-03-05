@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { auth } from '@/app/lib/firebase/firebase';
+import { auth } from '@/app/utils/firebase/firebase';
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 
 const Settings = () => {

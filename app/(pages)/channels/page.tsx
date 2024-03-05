@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, db } from '@/app/lib/firebase/firebase';
+import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
@@ -15,14 +15,14 @@ import { IChannel } from '@/app/interfaces';
 const SelectChannel = () => {
   // const [signedInUser, loading, error] = useAuthState(auth);
 
-  const [channels, setChannels] = useState<any[]>([]);
+  const [channels, setChannels] = useState<IChannel[]>([]);
 
   useEffect(() => {
     fetchChannels();
   }, [])
 
   const fetchChannels = async () => {
-    var channels: IChannel[] = []
+    var channels: IChannel[] = [];
     try {
       const querySnapshot = await getDocs(collection(db, 'channels'));
       querySnapshot.forEach((doc) => {
