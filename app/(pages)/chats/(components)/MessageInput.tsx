@@ -1,26 +1,55 @@
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
+
+import { auth, db } from '@/app/utils/firebase/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  collection,
+  doc,
+  query,
+  where,
+  addDoc,
+  getDocs,
+  updateDoc,
+  serverTimestamp
+} from 'firebase/firestore';
+
 import {
   ChevronDoubleLeftIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
-const MessageInput = ({
+const MessageInputComponent = ({
   goBack
 }: {
   goBack: Function
 }) => {
   const [messageInput, setMessageInput] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const params = useParams();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSubmit');
-    setMessageInput('');
+    
+    if (auth.currentUser) {
+      const uid = auth.currentUser.uid;
+
+      const messageRef = await addDoc(collection(db, 'messages'), {
+        chatId: params.id,
+        createdAt: serverTimestamp(),
+        sentBy: uid,
+        text: messageInput
+      })
+
+      setMessageInput('');
+    }
+
   };
 
   const inactivateMessageInput = () => {
     console.log('inactivateMessageInput');
     setMessageInput('');
-    goBack()
+    goBack();
   };
 
   return (
@@ -57,6 +86,6 @@ const MessageInput = ({
       </div>
     </div>
   )
-}
+};
 
-export default MessageInput
+export default MessageInputComponent;
