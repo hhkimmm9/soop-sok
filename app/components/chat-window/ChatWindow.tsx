@@ -1,14 +1,28 @@
 'use client';
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams, useSearchParams } from 'next/navigation';
+
+import { auth, db } from '@/app/utils/firebase/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  collection,
+  doc,
+  query,
+  where,
+  addDoc,
+  getDocs,
+  updateDoc,
+  serverTimestamp
+} from 'firebase/firestore';
 
 import ChatMessage from '@/app/components/ChatMessage';
 import MessageInput from '@/app/(pages)/chats/(components)/MessageInput';
 import SearchBar from '@/app/components/SearchBar';
 import CreateChat from '@/app/components/CreateChat';
 import SortOptions from '@/app/components/SortOptions';
-
 import Chats from '@/app/components/chat-window/Chats';
+
 import { IMessage } from '@/app/interfaces';
 
 interface State {
@@ -21,13 +35,7 @@ interface State {
   activateSort: boolean;
 }
 
-const ChatWindow = ({
-  type,
-  messages,
-}: {
-  type: string | null,
-  messages: IMessage[],
-}) => {
+const ChatWindow = () => {
   const [state, setState] = useState<State>({
     showFeatures: false,
     showCreateChat: false,
@@ -37,6 +45,7 @@ const ChatWindow = ({
     activateSearch: false,
     activateSort: false,
   });
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   var attendants = [
     {
@@ -55,6 +64,34 @@ const ChatWindow = ({
       status: 0
     },
   ];
+
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    var messages: IMessage[] = []
+    try {
+      const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        messages.push({
+          id: doc.id,
+          chatId: doc.data().chatId,
+          createdAt: doc.data().createdAt,
+          sentBy: doc.data().sentBy,
+          text: doc.data().text
+          // ...doc.data()
+        })
+      });
+      setMessages(messages);
+    } catch (err) {
+      console.error(err);
+    };
+  };
 
   const toggleState = (key: keyof State) => setState((prevState) => ({ ...prevState, [key]: !prevState[key] }));
 
@@ -112,8 +149,8 @@ const ChatWindow = ({
                 border border-black rounded-lg bg-white
                 grid grid-cols-2 gap-4
               '>
-                { type === 'lobby' && renderToggleButton('create page', () => toggleState('showCreateChat')) }
-                { type != 'dm' && renderToggleButton('chat list', () => toggleState('showChatList')) }
+                { searchParams.get('type') === 'lobby' && renderToggleButton('create page', () => toggleState('showCreateChat')) }
+                { searchParams.get('type') != 'dm' && renderToggleButton('chat list', () => toggleState('showChatList')) }
                 { renderToggleButton('attendants', () => toggleState('showAttendantsList')) }
                 { renderToggleButton('feature 4', () => {}) }
                 { renderToggleButton('feature 5', () => {}) }
