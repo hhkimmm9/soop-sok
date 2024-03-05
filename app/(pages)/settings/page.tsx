@@ -1,15 +1,34 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { auth } from '@/app/utils/firebase/firebase';
-import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
+import { auth, db } from '@/app/utils/firebase/firebase';
+import { useSignOut } from 'react-firebase-hooks/auth';
+import {
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 
 const Settings = () => {
-  const [signOut, loading, error] = useSignOut(auth);
+  const [signOut] = useSignOut(auth);
+
+  const router = useRouter();
 
   const handleSignout = async () => {
+    if (auth.currentUser) {
+      console.log(auth.currentUser)
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        isOnline: false
+      });
+    }
+    
     const res = await signOut();
+
+    if (res) {
+      router.push('/');
+    }
   };
 
   return (

@@ -27,6 +27,7 @@ export type IUser = {
   'friendWith': string[];
   'honourPoints': number;
   'isEmailVerified': boolean;
+  'isOnline': boolean;
   'lastLoginTime': string;
   'profile': string;
   'profilePicUrl': string;

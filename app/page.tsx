@@ -7,8 +7,10 @@ import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
+  doc,
   addDoc,
   getDocs,
+  updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
 import {
@@ -69,6 +71,13 @@ export default function Home() {
       if (!errorGoogle) {
         router.push('/channels');
       }
+    }
+    
+    if (auth.currentUser) {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        isOnline: true
+      });
     }
   };
 
