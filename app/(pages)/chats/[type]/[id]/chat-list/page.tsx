@@ -14,7 +14,7 @@ const ChatListPage = () => {
   const params = useParams();
 
   return (
-    <>
+    <div className='h-full flex flex-col gap-4'>
       { !activateSearch && !activateSort && (
         <div className='grid grid-cols-2 gap-2'>
           <button onClick={() => setActivateSearch(true)}
@@ -55,7 +55,7 @@ const ChatListPage = () => {
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
       '>Go Back</Link>
-    </>
+    </div>
   )
 };
 

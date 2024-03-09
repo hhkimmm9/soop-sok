@@ -7,7 +7,7 @@ const Page = () => {
   const params = useParams();
 
   return (
-    <>
+    <div className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto
         border border-black rounded-lg bg-white
@@ -42,7 +42,7 @@ const Page = () => {
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
       '>Go Back</Link>
-    </>
+    </div>
   )
 }
 

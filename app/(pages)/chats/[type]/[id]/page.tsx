@@ -89,7 +89,7 @@ const Chat = () => {
   };
 
   return (
-    <>
+    <div className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto
         border border-black rounded-lg bg-white
@@ -116,7 +116,7 @@ const Chat = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 };
 
