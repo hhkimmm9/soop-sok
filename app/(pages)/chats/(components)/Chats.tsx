@@ -73,10 +73,10 @@ const Chats = () => {
                 <div className='flex justify-between'>
                   {/* bubble */}
                   <div className='
-                    border rounded-full px-4 py-1 border-black bg-amber-400
+                    rounded-full px-4 py-1 bg-amber-500
                     text-xs text-white
                   '>
-                    <span>11</span>
+                    <span>whatever</span>
                   </div>
                 </div>
               </div>

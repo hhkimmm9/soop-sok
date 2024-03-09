@@ -8,7 +8,7 @@ const Channel = ({
   channelData: IChannel
 }) => {
   return (
-    <Link href={`/chats/${channelData.id}?type=lobby`}className='
+    <Link href={`/chats/lobby/${channelData.id}`}className='
       border border-black p-3 bg-white rounded-lg
       flex flex-col gap-2
     '>
