@@ -46,7 +46,6 @@ const MessageInputComponent = ({
   };
 
   const inactivateMessageInput = () => {
-    console.log('inactivateMessageInput');
     setMessageInput('');
     goBack();
   };
