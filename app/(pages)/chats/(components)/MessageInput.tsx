@@ -31,6 +31,7 @@ const MessageInputComponent = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // check if the user is signed in and the length of the input is greater than 0.
     if (auth.currentUser && messageInput.length > 0) {
       const uid = auth.currentUser.uid;
 
