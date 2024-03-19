@@ -6,6 +6,11 @@ import { useParams } from 'next/navigation';
 const Page = () => {
   const params = useParams();
 
+  var channelId;
+  if (localStorage.getItem('channelId')) {
+    channelId = localStorage.getItem('channelId');
+  }
+
   return (
     <div className='h-full flex flex-col gap-4'>
       <div className='

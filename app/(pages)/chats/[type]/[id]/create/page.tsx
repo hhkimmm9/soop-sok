@@ -41,6 +41,7 @@ const CreateChatPage = () => {
       })
 
       if (chatRef) {
+        localStorage.setItem('channelId', params.id.toString())
         router.push(`/chats/chat/${chatRef.id}`);
       }
     };
