@@ -18,15 +18,13 @@ const Page = () => {
               className='
                 h-min py-8 flex justify-center items-center
                 border border-black rounded-lg
-
             '>Create Chat</Link>
           ) }
-          { params.type != 'dm' && (
+          { params.type === 'lobby' && (
             <Link href={`/chats/${params.type}/${params.id}/chat-list`}
               className='
                 h-min py-8 flex justify-center items-center
                 border border-black rounded-lg
-
             '>Chat List</Link>
           ) }
           <Link href={`/chats/${params.type}/${params.id}/online-users`}
@@ -34,6 +32,13 @@ const Page = () => {
               h-min py-8 flex justify-center items-center
               border border-black rounded-lg
           '>User List</Link>
+          { params.type === 'chat' && (
+            <Link href={`/chats/lobby/${channelId}`}
+              className='
+                h-min py-8 flex justify-center items-center
+                border border-black rounded-lg
+            '>Leave</Link>
+          )}
         </div>
       </div>
 
