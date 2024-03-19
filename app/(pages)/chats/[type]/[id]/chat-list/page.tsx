@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import SearchBar from '@/app/components/SearchBar';
 import SortOptions from '@/app/components/SortOptions';
-import Chats from '@/app/(pages)/chats/(components)/Chats';
+import Chats from '@/app/(pages)/chats/[type]/[id]/chat-list/(components)/Chats';
 
 const ChatListPage = () => {
   const [activateSearch, setActivateSearch] = useState(false);
