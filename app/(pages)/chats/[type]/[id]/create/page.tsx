@@ -27,7 +27,7 @@ const CreateChatPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (auth.currentUser) {
+    if (auth.currentUser && name.length > 0) {
       // const uid = auth.currentUser.uid;
   
       const chatRef = await addDoc(collection(db, 'chats'), {
