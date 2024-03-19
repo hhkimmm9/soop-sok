@@ -41,6 +41,7 @@ const Message = ({
           friendWith: doc.data().friendWith,
           honourPoints: doc.data().honourPoints,
           isEmailVerified: doc.data().isEmailVerified,
+          isOnline: doc.data().isOnline,
           lastLoginTime: doc.data().lastLoginTime,
           profile: doc.data().profile,
           profilePicUrl: doc.data().profilePicUrl,
