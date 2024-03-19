@@ -20,9 +20,9 @@ import {
 } from '@heroicons/react/24/outline';
 
 const MessageInputComponent = ({
-  goBack
+  cancel
 }: {
-  goBack: Function
+  cancel: Function
 }) => {
   const [messageInput, setMessageInput] = useState('');
 
@@ -47,7 +47,7 @@ const MessageInputComponent = ({
 
   const inactivateMessageInput = () => {
     setMessageInput('');
-    goBack();
+    cancel();
   };
 
   return (

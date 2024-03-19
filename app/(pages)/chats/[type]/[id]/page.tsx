@@ -112,7 +112,7 @@ const Chat = () => {
           </div>
         ) : (
           <div className=''>
-            <MessageInput goBack={() => setActivateUserInput(false)} />
+            <MessageInput cancel={() => setActivateUserInput(false)} />
           </div>
         )}
       </div>
