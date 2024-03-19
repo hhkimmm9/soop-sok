@@ -28,65 +28,63 @@ const Chat = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [firestoreListener, setFirestoreListener] = useState<Unsubscribe>();
   const [activateUserInput, setActivateUserInput] = useState(false);
+  const [channelId, setChannelId] = useState<string | null>('');
 
   const params = useParams();
 
   useEffect(() => {
-    fetchMessages();
-    initListner();
-    const unsub = initListner();
-
-    return () => {
-      console.log('triggered');
-      // if (firestoreListener) firestoreListener();
-    }
-  }, []);
-
-  const fetchMessages = async () => {
-    var messagesList: IMessage[] = []
-    try {
-      const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        messagesList.push({
-          id: doc.id,
-          chatId: doc.data().chatId,
-          createdAt: doc.data().createdAt,
-          sentBy: doc.data().sentBy,
-          text: doc.data().text
-        })
-      });
-      setMessages(messagesList);
-    } catch (err) {
-      console.error(err);
-    };
-  };
-
-  const initListner = async () => {
-    // TODO: need to unsubscribe from this listner before this component is unmounted.
-    var messagesList: IMessage[] = []
-    const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      querySnapshot.docChanges().forEach((change) => {
-        console.log(change)
-        if (change.type === 'added') {
+    const fetchMessages = async () => {
+      var messagesList: IMessage[] = []
+      try {
+        const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
           messagesList.push({
-            id: change.doc.id,
-            chatId: change.doc.data().chatId,
-            createdAt: change.doc.data().createdAt,
-            sentBy: change.doc.data().sentBy,
-            text: change.doc.data().text
+            id: doc.id,
+            chatId: doc.data().chatId,
+            createdAt: doc.data().createdAt,
+            sentBy: doc.data().sentBy,
+            text: doc.data().text
           })
-          setMessages(messagesList);
-        }
-        else if (change.type === 'removed') {
-          console.log('removed')
-        }
+        });
+        setMessages(messagesList);
+      } catch (err) {
+        console.error(err);
+      };
+    };
+
+    const initListner = async () => {
+      // TODO: need to unsubscribe from this listner before this component is unmounted.
+      var messagesList: IMessage[] = []
+      const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          console.log(change)
+          if (change.type === 'added') {
+            messagesList.push({
+              id: change.doc.id,
+              chatId: change.doc.data().chatId,
+              createdAt: change.doc.data().createdAt,
+              sentBy: change.doc.data().sentBy,
+              text: change.doc.data().text
+            })
+            setMessages(messagesList);
+          }
+          else if (change.type === 'removed') {
+            console.log('removed')
+          }
+        });
       });
-    });
-    console.log('returned')
-    return unsubscribe;
-  };
+      return unsubscribe;
+    };
+  
+    fetchMessages();
+    const unsub = initListner();
+    // return () => {
+    //   console.log('triggered');
+    //   // if (firestoreListener) firestoreListener();
+    // }
+  }, [params.id]);
 
   return (
     <div className='h-full flex flex-col gap-4'>
