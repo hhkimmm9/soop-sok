@@ -9,8 +9,10 @@ export type IChat = {
   'capacity': number;
   'channelId': string;
   'createdAt': FirestoreTimestamp;
+  'isPrivate': boolean;
   'name': string;
   'numUsers': string;
+  'password': string;
 };
 export type IMessage = {
   'id': string;
