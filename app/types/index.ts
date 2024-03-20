@@ -22,7 +22,6 @@ export type TMessage = {
   'text': string
 };
 export type TUser = {
-  'id': string,
   'createdAt': FirestoreTimestamp,
   'displayName': string,
   'email': string,
@@ -34,7 +33,6 @@ export type TUser = {
   'profile': {
     interests: string[],
     introduction: string,
-    name: string,
   },
   'profilePicUrl': string,
   'uId': string

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/app/utils/firebase/firebase';
-import { useSignOut } from 'react-firebase-hooks/auth';
+import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import {
   doc,
   updateDoc,
@@ -14,6 +14,8 @@ const Settings = () => {
   const [signOut] = useSignOut(auth);
 
   const router = useRouter();
+
+  const [signedInUser] = useAuthState(auth);
 
   const handleSignout = async () => {
     if (auth.currentUser) {
@@ -31,7 +33,7 @@ const Settings = () => {
 
   return (
     <div className='flex flex-col gap-4 items-center'>
-      <Link href={`/users/${1}/profile`}
+      <Link href={`/users/${signedInUser?.uid}/profile`}
         className='
           w-full border rounded-lg p-2 bg-white text-center shadow-sm
       '>Profile</Link>
