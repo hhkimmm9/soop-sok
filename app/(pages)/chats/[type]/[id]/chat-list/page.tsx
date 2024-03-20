@@ -14,10 +14,10 @@ import {
 import SearchBar from '@/app/components/SearchBar';
 import SortOptions from '@/app/components/SortOptions';
 import Chat from '@/app/(pages)/chats/[type]/[id]/chat-list/(components)/Chat';
-import { IChat } from '@/app/interfaces'
+import { TChat } from '@/app/types'
 
 const ChatListPage = () => {
-  const [chats, setChats] = useState<IChat[]>([]);
+  const [chats, setChats] = useState<TChat[]>([]);
   const [activateSearch, setActivateSearch] = useState(false);
   const [activateSort, setActivateSort] = useState(false);
 
@@ -25,7 +25,7 @@ const ChatListPage = () => {
 
   useEffect(() => {
     const fetchChats = async () => {
-      var chats: IChat[] = [];
+      var chats: TChat[] = [];
       try {
         const q = query(collection(db, 'chats'), where('channelId', '==', params.id));
         const querySnapshot = await getDocs(q);
@@ -49,7 +49,7 @@ const ChatListPage = () => {
     };
 
     fetchChats();
-  }, [])
+  }, [params.id])
 
   return (
     <div className='h-full flex flex-col gap-4'>
@@ -85,7 +85,7 @@ const ChatListPage = () => {
         border border-black rounded-lg bg-white
         flex flex-col gap-3
       '>
-        { chats.map((chat: IChat) => (
+        { chats.map((chat: TChat) => (
           <Chat key={chat.id} chat={chat} />
         )) }
       </div>

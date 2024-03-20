@@ -3,13 +3,13 @@ import React from 'react'
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { IMessage } from '@/app/interfaces';
+import { TMessage } from '@/app/types';
 
-const DirectMessageComponent = ({
-  message
-} : {
-  message: IMessage
-}) => {
+type DirectMessageProps = {
+  message: TMessage
+};
+
+const DirectMessage = ({ message } : DirectMessageProps ) => {
   return (
     <Link href={`/chats/${1}?type=dm`}>
       <div className='
@@ -47,4 +47,4 @@ const DirectMessageComponent = ({
   )
 }
 
-export default DirectMessageComponent
+export default DirectMessage

@@ -14,13 +14,13 @@ import {
   Unsubscribe
 } from 'firebase/firestore';
 
-import { IChannel } from '@/app/interfaces';
+import { TChannel } from '@/app/types';
 
-type channelProp = {
-  channelData: IChannel
+type ChannelProps = {
+  channelData: TChannel
 };
 
-const Channel = ({ channelData } : channelProp) => {
+const Channel = ({ channelData } : ChannelProps) => {
   const router = useRouter();
 
   const enterChannel = async () => {

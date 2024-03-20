@@ -10,19 +10,19 @@ import {
 
 import Channel from './(components)/Channel';
 
-import { IChannel } from '@/app/interfaces';
+import { TChannel } from '@/app/types';
 
 const SelectChannel = () => {
+  const [channels, setChannels] = useState<TChannel[]>([]);
+  
   // const [signedInUser, loading, error] = useAuthState(auth);
-
-  const [channels, setChannels] = useState<IChannel[]>([]);
 
   useEffect(() => {
     fetchChannels();
   }, [])
 
   const fetchChannels = async () => {
-    var channels: IChannel[] = [];
+    var channels: TChannel[] = [];
     try {
       const querySnapshot = await getDocs(collection(db, 'channels'));
       querySnapshot.forEach((doc) => {

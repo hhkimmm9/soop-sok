@@ -22,10 +22,10 @@ import {
 import ChatMessage from '@/app/components/ChatMessage';
 import MessageInput from '@/app/(pages)/chats/(components)/MessageInput';
 
-import { IMessage } from '@/app/interfaces';
+import { TMessage } from '@/app/types';
 
 const Chat = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [messages, setMessages] = useState<TMessage[]>([]);
   const [firestoreListener, setFirestoreListener] = useState<Unsubscribe>();
   const [activateUserInput, setActivateUserInput] = useState(false);
   const [channelId, setChannelId] = useState<string | null>('');
@@ -34,7 +34,7 @@ const Chat = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      var messagesList: IMessage[] = []
+      var messagesList: TMessage[] = []
       try {
         const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
         const querySnapshot = await getDocs(q);
@@ -55,7 +55,7 @@ const Chat = () => {
 
     const initListner = async () => {
       // TODO: need to unsubscribe from this listner before this component is unmounted.
-      var messagesList: IMessage[] = []
+      var messagesList: TMessage[] = []
       const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.docChanges().forEach((change) => {
@@ -93,7 +93,7 @@ const Chat = () => {
         border border-black rounded-lg bg-white
         flex flex-col gap-5
       '>
-        { messages.map((message: IMessage) => (
+        { messages.map((message: TMessage) => (
           <ChatMessage key={message.id} message={message} />
         ))}
       </div>

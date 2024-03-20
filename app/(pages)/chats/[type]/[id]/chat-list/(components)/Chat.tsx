@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { formatTimeAgo } from '@/app/utils/utils';
-import { IChat } from '@/app/interfaces'
+import { TChat } from '@/app/types'
 
-type chatProp = {
-  chat: IChat
+type ChatProps = {
+  chat: TChat
 };
 
-const Chat = ({ chat }: chatProp) => {
+const Chat = ({ chat }: ChatProps) => {
   const params = useParams();
   const router = useRouter();
 

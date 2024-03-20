@@ -11,49 +11,49 @@ import {
 } from 'firebase/firestore';
 import Image from 'next/image';
 
-import { IUser } from '@/app/interfaces';
+import { TUser, TMessage } from '@/app/types';
 
-const Message = ({
-  message
-} : {
-  message: any
-}) => {
+type MessageProps = {
+  message: TMessage
+};
+
+const Message = ({ message } : MessageProps) => {
+  const [user, setUser] = useState<TUser | null>(null);
+
   // const [signedInUser, loading, error] = useAuthState(auth);
 
-  const [user, setUser] = useState<IUser | null>(null);
-
   useEffect(() => {
+    const fetchUser = async () => {
+      var user: TUser;
+      try {
+        // TODO: optimize - subcollection
+        const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          user = {
+            id: doc.id,
+            createdAt: doc.data().createdAt,
+            displayName: doc.data().displayName,
+            email: doc.data().email,
+            friendWith: doc.data().friendWith,
+            honourPoints: doc.data().honourPoints,
+            isEmailVerified: doc.data().isEmailVerified,
+            isOnline: doc.data().isOnline,
+            lastLoginTime: doc.data().lastLoginTime,
+            profile: doc.data().profile,
+            profilePicUrl: doc.data().profilePicUrl,
+            uId: doc.data().uId,
+            username: doc.data().username
+          };
+          setUser(user);
+        });
+      } catch (err) {
+        console.error(err);
+      };
+    };
+
     fetchUser();
   }, []);
-
-  const fetchUser = async () => {
-    var user: IUser;
-    try {
-      // TODO: optimize - subcollection
-      const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        user = {
-          id: doc.id,
-          createdAt: doc.data().createdAt,
-          displayName: doc.data().displayName,
-          email: doc.data().email,
-          friendWith: doc.data().friendWith,
-          honourPoints: doc.data().honourPoints,
-          isEmailVerified: doc.data().isEmailVerified,
-          isOnline: doc.data().isOnline,
-          lastLoginTime: doc.data().lastLoginTime,
-          profile: doc.data().profile,
-          profilePicUrl: doc.data().profilePicUrl,
-          uId: doc.data().uId,
-          username: doc.data().username
-        };
-        setUser(user);
-      });
-    } catch (err) {
-      console.error(err);
-    };
-  };
 
   if (user) return (
     <div className='grid grid-cols-6'>

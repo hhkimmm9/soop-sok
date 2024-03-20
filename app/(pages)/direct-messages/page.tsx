@@ -3,7 +3,7 @@
 import SearchBar from '@/app/components/SearchBar';
 import DirectMessage from './components/DirectMessage';
 
-import { IMessage } from '@/app/interfaces';
+import { TMessage } from '@/app/types';
 
 const DirectMessages = () => {
   var messages = ([
@@ -29,7 +29,7 @@ const DirectMessages = () => {
 
       {/* DMs */}
       <div className='flex flex-col gap-2'>
-        { messages.map((message: IMessage) => (
+        { messages.map((message: TMessage) => (
           <DirectMessage key={message._id} message={message} />
         ))}
       </div>
