@@ -45,8 +45,8 @@ const Profile = () => {
           'isOnline': data.isOnline,
           'lastLoginTime': data.lastLoginTime,
           'profile': {
-            'interests': [],
-            'introduction': '',
+            'interests': data.profile.interests,
+            'introduction': data.profile.introduction,
           },
           'profilePicUrl': data.profilePicUrl,
           'uId': data.uId,
@@ -67,7 +67,7 @@ const Profile = () => {
   };
 
   if (user !== undefined && loading) return (
-    <div className='pt-24 flex flex-col gap-16 items-center'>
+    <div className='pt-24 flex flex-col gap-12 items-center'>
       <Image
         src={user.profilePicUrl} alt=''
         width={1324} height={1827}
@@ -76,39 +76,46 @@ const Profile = () => {
           ${user.isOnline ? 'border-green-400' : 'border-gray-400'}
           border-4
       `}/>
-      <p className='text-5xl font-medium'>
-        { user?.displayName }
-      </p>
+      <div className='flex flex-col gap-2'>
+        <p className='text-5xl font-medium'>
+          { user.displayName }
+        </p>
+        <p>
+          { user.profile.introduction }
+        </p>
+      </div>
       
-      { isMyProfile ? (
-        <div className='w-72 flex flex-col gap-8'>
-          <Link href={`/users/${user.uId}/profile/edit`}
-            className='
-              border rounded-lg py-3 bg-white
-              text-center
-          '>프로필 수정</Link>
-        </div>
-      ) : (
-        <div className='w-72 flex flex-col gap-8'>
-          {
-            // TODO: already friend? then ...
-            true && (
-              <button  type='button'
-                onClick={addUserToFriendList}
-                className='
-                  border rounded-lg py-3 bg-white
-                  text-center
-              '>친구 추가</button>
-            )
-          }
+      <div className=''>
+        { isMyProfile ? (
+          <div className='w-72 flex flex-col gap-8'>
+            <Link href={`/users/${user.uId}/profile/edit`}
+              className='
+                border rounded-lg py-3 bg-white
+                text-center
+            '>프로필 수정</Link>
+          </div>
+        ) : (
+          <div className='w-72 flex flex-col gap-8'>
+            {
+              // TODO: already friend? then ...
+              true && (
+                <button  type='button'
+                  onClick={addUserToFriendList}
+                  className='
+                    border rounded-lg py-3 bg-white
+                    text-center
+                '>친구 추가</button>
+              )
+            }
 
-          <Link href={`/chats/${user?.uId}?type=dm`}
-            className='
-              border rounded-lg py-3 bg-white
-              text-center
-          '>DM 보내기</Link>
-        </div>
-      )}
+            <Link href={`/chats/${user?.uId}?type=dm`}
+              className='
+                border rounded-lg py-3 bg-white
+                text-center
+            '>DM 보내기</Link>
+          </div>
+        )}
+      </div>
     </div>
   )
 };
