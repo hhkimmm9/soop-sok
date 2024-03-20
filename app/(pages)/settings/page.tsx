@@ -17,17 +17,15 @@ const Settings = () => {
 
   const handleSignout = async () => {
     if (auth.currentUser) {
-      console.log(auth.currentUser)
       const userRef = doc(db, 'users', auth.currentUser.uid);
       await updateDoc(userRef, {
         isOnline: false
       });
-    }
-    
-    const res = await signOut();
 
-    if (res) {
-      router.push('/');
+      const res = await signOut();
+      if (res) {
+        router.push('/');
+      }
     }
   };
 

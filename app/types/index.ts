@@ -37,8 +37,7 @@ export type TUser = {
     name: string,
   },
   'profilePicUrl': string,
-  'uId': string,
-  'username': string
+  'uId': string
 };
 
 export type FirestoreTimestamp = {

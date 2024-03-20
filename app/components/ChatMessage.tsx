@@ -43,7 +43,6 @@ const Message = ({ message } : MessageProps) => {
             profile: doc.data().profile,
             profilePicUrl: doc.data().profilePicUrl,
             uId: doc.data().uId,
-            username: doc.data().username
           };
           setUser(user);
         });
@@ -70,7 +69,7 @@ const Message = ({ message } : MessageProps) => {
         '/>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
-        <span className='text-sm text-gray-600'>{ user.username }</span>
+        <span className='text-sm text-gray-600'>{ user.displayName }</span>
         <div className='
           px-3 py-2 rounded-lg
           bg-gradient-to-b from-sky-500 to-sky-400

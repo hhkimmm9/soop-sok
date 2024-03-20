@@ -9,6 +9,7 @@ import {
   collection,
   doc,
   addDoc,
+  getDoc,
   getDocs,
   updateDoc,
   serverTimestamp
@@ -31,53 +32,47 @@ export default function Home() {
 
   const cookies = new Cookies();
 
-  useEffect(() => {
-    // writeFirestore();
-    readFirestore();
-  }, []);
-
-  const writeFirestore = async () => {
-    try {
-      const docRef = await addDoc(collection(db, 'test'), {
-        first: "Ada",
-        last: "Lovelace",
-        born: 1815
-      });
-      console.log(docRef.id);
-    } catch (err) {
-      console.error(err)
-    }
-  };
-
-  const readFirestore = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'test'));
-      querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`);
-      });
-    } catch (err) {
-      console.error(err);
-    };
-  };
-
   const handleSignIn = async (signInWith: string) => {
     if (signInWith === 'google') {
       const result = await signInWithGoogle();
-      console.log(result);
 
+      // store the auth token into the cookie
       // https://www.npmjs.com/package/cookies
       cookies.set('auth-token', result?.user.refreshToken);
 
-      if (!errorGoogle) {
-        router.push('/channels');
+      // check if the user is signed in
+      if (result && auth.currentUser) {
+        // if their profile isn't found in the database, create a new one
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        const querySnapshot = await getDoc(userRef);
+        const data = querySnapshot.data();
+        
+        if (data === undefined) {
+          const newUserRef = await addDoc(collection(db, 'useres'), {
+            createdAt: serverTimestamp(),
+            displayName: result.user.displayName,
+            email: result.user.email,
+            friendWith: [],
+            honourPoints: 0,
+            isEmailVerified: true,
+            isOnline: true,
+            lastLoginTime: serverTimestamp(),
+            profile: '',
+            profilePicUrl: '',
+            uId: auth.currentUser.uid
+          });
+        }
+        // otherwise, update the isOnline status
+        else {
+          await updateDoc(userRef, {
+            isOnline: true,
+            lastLoginTime: serverTimestamp()
+          });
+        }
+
+
+        if (!errorGoogle) router.push('/channels');
       }
-    }
-    
-    if (auth.currentUser) {
-      const userRef = doc(db, 'users', auth.currentUser.uid);
-      await updateDoc(userRef, {
-        isOnline: true
-      });
     }
   };
 
