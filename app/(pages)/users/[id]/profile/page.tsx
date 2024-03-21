@@ -2,20 +2,14 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  doc,
-  query,
-  where,
-  limit,
-  addDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
+  collection, doc, query,
+  or, where, limit,
+  setDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
 
@@ -27,6 +21,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   const params = useParams();
+  const router = useRouter();
 
   const [signedInUser] = useAuthState(auth);
 
@@ -67,6 +62,38 @@ const Profile = () => {
 
   const addUserToFriendList = async () => {
     console.log('addUserToFriendList');
+  };
+
+  const redirectToDMChat = async () => {
+    // check if their dm chat exists
+    const myId = signedInUser?.uid;
+    const opponentId = params.id;
+
+    const q = query(collection(db, 'chats'),
+      or(where('channelId', '==', `${myId}-${opponentId}`),
+         where('channelId', '==', `${opponentId}-${myId}`),
+      ),
+      limit(1)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    // if it doesn't, create a dm chat room first
+    if (querySnapshot.empty) {
+      await setDoc(doc(db, 'chats', `${myId}-${opponentId}`), {
+        'capacity': 2,
+        'channelId': `${myId}-${opponentId}`,
+        'createdAt': serverTimestamp(),
+        'isPrivate': false,
+        'name': '',
+        'numUsers': 2,
+        'password': ''
+      });
+      // redirect the user to the newly created dm chat room.
+      router.push(`/chats/dm/${myId}-${opponentId}`);
+    }
+
+    // redirect the user to the dm chat room.
+    router.push(`/chats/dm/${querySnapshot.docs[0].data().channelId}`);
   };
 
   if (user !== undefined && loading) return (
@@ -111,11 +138,10 @@ const Profile = () => {
               )
             }
 
-            <Link href={`/chats/${user?.uId}?type=dm`}
-              className='
+            <button onClick={redirectToDMChat} className='
                 border rounded-lg py-3 bg-white
                 text-center
-            '>DM 보내기</Link>
+            '>DM 보내기</button>
           </div>
         )}
       </div>
