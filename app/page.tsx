@@ -48,7 +48,7 @@ export default function Home() {
         const data = querySnapshot.data();
         
         if (data === undefined) {
-          const newUserRef = await addDoc(collection(db, 'useres'), {
+          const newUserRef = await addDoc(collection(db, 'users'), {
             createdAt: serverTimestamp(),
             displayName: result.user.displayName,
             email: result.user.email,
