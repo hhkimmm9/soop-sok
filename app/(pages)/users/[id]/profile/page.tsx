@@ -34,7 +34,7 @@ const Profile = () => {
     const fecthUser = async () => {
       if (signedInUser) {
         const q = query(collection(db, 'users'),
-          where('uId', '==', signedInUser.uid),
+          where('uId', '==', params.id),
           limit(1)
         );
         const querySnapshot = await getDocs(q);
@@ -61,11 +61,9 @@ const Profile = () => {
     };
 
     fecthUser();
-  }, [signedInUser])
 
-  useEffect(() => {
-    if (user?.uId == params.id) setIsMyProfile(true);
-  }, [user, params.id]);
+    if (signedInUser?.uid == params.id) setIsMyProfile(true);
+  }, [signedInUser, params.id])
 
   const addUserToFriendList = async () => {
     console.log('addUserToFriendList');
