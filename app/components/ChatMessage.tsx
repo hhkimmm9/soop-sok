@@ -31,7 +31,6 @@ const Message = ({ message } : MessageProps) => {
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           user = {
-            id: doc.id,
             createdAt: doc.data().createdAt,
             displayName: doc.data().displayName,
             email: doc.data().email,

@@ -9,6 +9,9 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
   doc,
+  query,
+  where,
+  limit,
   addDoc,
   getDoc,
   getDocs,
@@ -30,10 +33,12 @@ const Profile = () => {
   useEffect(() => {
     const fecthUser = async () => {
       if (signedInUser) {
-        const querySnapshot = await getDoc(
-          doc(db, 'users', signedInUser.uid)
+        const q = query(collection(db, 'users'),
+          where('uId', '==', signedInUser.uid),
+          limit(1)
         );
-        const data = querySnapshot.data();
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs[0].data()
 
         if (data) setUser({
           'createdAt': data.createdAt,

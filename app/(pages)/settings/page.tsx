@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import {
-  doc,
+  collection,
+  query,
+  where,
+  limit,
+  getDocs,
   updateDoc,
 } from 'firebase/firestore';
 
@@ -19,10 +23,14 @@ const Settings = () => {
 
   const handleSignout = async () => {
     if (auth.currentUser) {
-      const userRef = doc(db, 'users', auth.currentUser.uid);
-      await updateDoc(userRef, {
-        isOnline: false
-      });
+      const q = query(collection(db, 'users'), where('uId', '==', auth.currentUser.uid), limit(1));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const userRef = querySnapshot.docs[0].ref;
+        await updateDoc(userRef, {
+          isOnline: false
+        });
+      }
 
       const res = await signOut();
       if (res) {
