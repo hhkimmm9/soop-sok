@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -9,7 +11,6 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import Image from 'next/image';
 
 import { TUser, TMessage } from '@/app/types';
 
@@ -51,21 +52,23 @@ const Message = ({ message } : MessageProps) => {
     };
 
     fetchUser();
-  }, []);
+  }, [message.sentBy]);
 
   if (user) return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
-        <Image
-          src={`${user?.profilePicUrl}`}
-          alt=''
-          width={1324}
-          height={1827}
-          className='
-            object-cover
-            w-12 h-12
-            rounded-full
-        '/>
+        <Link href={`/users/${user?.uId}/profile`}>
+          <Image
+            src={`${user?.profilePicUrl}`}
+            alt=''
+            width={1324}
+            height={1827}
+            className='
+              object-cover
+              w-12 h-12
+              rounded-full
+          '/>
+        </Link>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
         <span className='text-sm text-gray-600'>{ user.displayName }</span>
