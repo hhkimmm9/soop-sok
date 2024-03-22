@@ -27,24 +27,11 @@ const Message = ({ message } : MessageProps) => {
     const fetchUser = async () => {
       var user: TUser;
       try {
-        // TODO: optimize - subcollection
         const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
-          user = {
-            createdAt: doc.data().createdAt,
-            displayName: doc.data().displayName,
-            email: doc.data().email,
-            friendWith: doc.data().friendWith,
-            honourPoints: doc.data().honourPoints,
-            isEmailVerified: doc.data().isEmailVerified,
-            isOnline: doc.data().isOnline,
-            lastLoginTime: doc.data().lastLoginTime,
-            profile: doc.data().profile,
-            profilePicUrl: doc.data().profilePicUrl,
-            uId: doc.data().uId,
-          };
-          setUser(user);
+          const userData = { id: doc.id, ...doc.data() } as TUser;
+          setUser(userData);
         });
       } catch (err) {
         console.error(err);
@@ -57,7 +44,7 @@ const Message = ({ message } : MessageProps) => {
   if (user) return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
-        <Link href={`/users/${user?.uId}/profile`}>
+        <Link href={`/users/${user?.id}/profile`}>
           <Image
             src={`${user?.profilePicUrl}`}
             alt=''

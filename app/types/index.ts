@@ -22,6 +22,7 @@ export type TMessage = {
   'text': string
 };
 export type TUser = {
+  'id': string,
   'createdAt': FirestoreTimestamp,
   'displayName': string,
   'email': string,
