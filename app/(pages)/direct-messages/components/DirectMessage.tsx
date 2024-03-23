@@ -15,6 +15,8 @@ import {
 
 import { TMessage, TPrivateChat, TUser } from '@/app/types';
 
+import { formatTimeAgo } from '@/app/utils/utils';
+
 type DirectMessageProps = {
   privateChat: TPrivateChat
 };
@@ -60,22 +62,6 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
     fetchLatestMessage();
   }, [privateChat.id]);
 
-  const convertTiem = (seconds: number | undefined) => {
-    if (typeof seconds === 'number') {
-      const currentTime = Math.floor(Date.now() / 1000);
-      const timeDifference = currentTime - seconds;
-  
-      const minutes = Math.floor(timeDifference / 60);
-      if (minutes === 0) {
-        return "Just now";
-      } else if (minutes === 1) {
-        return "1 minute ago";
-      } else {
-        return minutes + " minutes ago";
-      }
-    }
-  }
-
   return (
     <Link href={`/chats/dm/${privateChat.id}`}>
       <div className='
@@ -96,7 +82,9 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
           {/*  */}
           <div className='flex justify-between'>
             <p>{ toUser?.displayName }</p>
-            <p>{ convertTiem(latestMessage?.createdAt.seconds) }</p>
+            { latestMessage && (
+              <p>{ formatTimeAgo(latestMessage?.createdAt) }</p>
+            )}
           </div>
 
           {/*  */}
