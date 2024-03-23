@@ -10,7 +10,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,
   or, where, limit,
-  setDoc, getDoc, getDocs,
+  addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
 
@@ -34,7 +34,7 @@ const Profile = () => {
         const profileSnapshot = await getDoc(doc(db, 'users', id.toString()));
         if (profileSnapshot.exists()) {
           const profileData = {
-            id:profileSnapshot.id,
+            id: profileSnapshot.id,
             ...profileSnapshot.data()
           } as TUser;
           setProfile(profileData);
@@ -65,10 +65,10 @@ const Profile = () => {
     const opponentId = id;
 
     // check if their dm chat exists
-    const q = query(collection(db, 'chats'),
+    const q = query(collection(db, 'private_chats'),
       or(
-        where('channelId', '==', `${myId}-${opponentId}`),
-        where('channelId', '==', `${opponentId}-${myId}`),
+        (where('from', '==', myId), where('to', '==', opponentId)),
+        (where('to', '==', myId), where('from', '==', opponentId))
       ),
       limit(1)
     );
@@ -76,20 +76,16 @@ const Profile = () => {
     const querySnapshot = await getDocs(q);
     // if it doesn't, create a dm chat room first
     if (querySnapshot.empty) {
-      await setDoc(doc(db, 'chats', `${myId}-${opponentId}`), {
-        capacity: 2,
-        channelId: `${myId}-${opponentId}`,
+      const docRef = await addDoc(collection(db, 'private_chats'), {
+        from: myId,
+        to: opponentId,
         createdAt: serverTimestamp(),
-        isPrivate: false,
-        name: '',
-        numUsers: 2,
-        password: ''
       });
       // redirect the user to the newly created dm chat room.
-      router.push(`/chats/dm/${myId}-${opponentId}`);
+      router.push(`/chats/dm/${docRef.id}`);
     } else {
       // redirect the user to the dm chat room.
-      router.push(`/chats/dm/${querySnapshot.docs[0].data().channelId}`);
+      router.push(`/chats/dm/${querySnapshot.docs[0].id}`);
     }
   };
 
