@@ -68,14 +68,16 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
         bg-white border border-black px-3 py-2 rounded-lg
         flex gap-3 items-center
       '>
-        <Image
-          src='https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/IMG_2531.jpeg?alt=media&token=a0566f94-5879-439b-9114-193f3564d378' alt=''
-          width={1324} height={1827}
-          className='
-            object-cover
-            w-16 h-16
-            rounded-full
-        '/>
+        { toUser && (
+          <Image
+            src={toUser?.profilePicUrl} alt=''
+            width={1324} height={1827}
+            className='
+              object-cover
+              w-16 h-16
+              rounded-full
+          '/>
+        )}
 
         {/*  */}
         <div className='grow w-min'>
