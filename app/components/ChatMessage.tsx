@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -9,7 +11,6 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import Image from 'next/image';
 
 import { TUser, TMessage } from '@/app/types';
 
@@ -26,25 +27,11 @@ const Message = ({ message } : MessageProps) => {
     const fetchUser = async () => {
       var user: TUser;
       try {
-        // TODO: optimize - subcollection
         const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
-          user = {
-            id: doc.id,
-            createdAt: doc.data().createdAt,
-            displayName: doc.data().displayName,
-            email: doc.data().email,
-            friendWith: doc.data().friendWith,
-            honourPoints: doc.data().honourPoints,
-            isEmailVerified: doc.data().isEmailVerified,
-            isOnline: doc.data().isOnline,
-            lastLoginTime: doc.data().lastLoginTime,
-            profile: doc.data().profile,
-            profilePicUrl: doc.data().profilePicUrl,
-            uId: doc.data().uId,
-          };
-          setUser(user);
+          const userData = { id: doc.id, ...doc.data() } as TUser;
+          setUser(userData);
         });
       } catch (err) {
         console.error(err);
@@ -52,21 +39,23 @@ const Message = ({ message } : MessageProps) => {
     };
 
     fetchUser();
-  }, []);
+  }, [message.sentBy]);
 
   if (user) return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
-        <Image
-          src={`${user?.profilePicUrl}`}
-          alt=''
-          width={1324}
-          height={1827}
-          className='
-            object-cover
-            w-12 h-12
-            rounded-full
-        '/>
+        <Link href={`/users/${user?.id}/profile`}>
+          <Image
+            src={`${user?.profilePicUrl}`}
+            alt=''
+            width={1324}
+            height={1827}
+            className='
+              object-cover
+              w-12 h-12
+              rounded-full
+          '/>
+        </Link>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
         <span className='text-sm text-gray-600'>{ user.displayName }</span>

@@ -8,10 +8,15 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
   doc,
+  query,
+  where,
+  limit,
   addDoc,
   getDoc,
   getDocs,
+  onSnapshot,
   updateDoc,
+  deleteDoc,
   serverTimestamp
 } from 'firebase/firestore';
 import {
@@ -35,6 +40,7 @@ export default function Home() {
   const handleSignIn = async (signInWith: string) => {
     if (signInWith === 'google') {
       const result = await signInWithGoogle();
+      console.log(result);
 
       // store the auth token into the cookie
       // https://www.npmjs.com/package/cookies
@@ -43,12 +49,14 @@ export default function Home() {
       // check if the user is signed in
       if (result && auth.currentUser) {
         // if their profile isn't found in the database, create a new one
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        const querySnapshot = await getDoc(userRef);
-        const data = querySnapshot.data();
-        
-        if (data === undefined) {
-          const newUserRef = await addDoc(collection(db, 'useres'), {
+        const q = query(collection(db, 'users'),
+          where('uId', '==', auth.currentUser.uid),
+          limit(1)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.size == 0) {
+          await addDoc(collection(db, 'users'), {
             createdAt: serverTimestamp(),
             displayName: result.user.displayName,
             email: result.user.email,
@@ -57,19 +65,25 @@ export default function Home() {
             isEmailVerified: true,
             isOnline: true,
             lastLoginTime: serverTimestamp(),
-            profile: '',
-            profilePicUrl: '',
+            profile: {
+              introduction: '',
+              interests: []
+            },
+            profilePicUrl: result.user.photoURL,
             uId: auth.currentUser.uid
           });
         }
         // otherwise, update the isOnline status
         else {
-          await updateDoc(userRef, {
-            isOnline: true,
-            lastLoginTime: serverTimestamp()
-          });
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const userRef = querySnapshot.docs[0].ref;
+            await updateDoc(userRef, {
+              isOnline: true,
+              lastLoginTime: serverTimestamp()
+            });
+          }
         }
-
 
         if (!errorGoogle) router.push('/channels');
       }

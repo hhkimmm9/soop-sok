@@ -5,12 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  doc,
-  addDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
+  collection, doc,
+  query, where, limit,
+  addDoc, getDoc, getDocs, updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
 
@@ -27,10 +24,12 @@ const ProfileEdit = () => {
   useEffect(() => {
     const fecthUser = async () => {
       if (signedInUser) {
-        const querySnapshot = await getDoc(
-          doc(db, 'users', signedInUser.uid)
+        const q = query(collection(db, 'users'),
+          where('uId', '==', signedInUser.uid),
+          limit(1)
         );
-        const data = querySnapshot.data();
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs[0].data()
 
         if (data) {
           setIntroduction(data.profile.introduction);
@@ -47,8 +46,12 @@ const ProfileEdit = () => {
     e.preventDefault();
 
     if (signedInUser) {
-      const updatedUserRef = doc(db, 'users', params.id.toString());
-      await updateDoc(updatedUserRef, {
+      const q = query(collection(db, 'users'),
+        where('uId', '==', params.id.toString())
+      );
+      const querySnapshot = await getDocs(q);
+      const userRef = querySnapshot.docs[0].ref;
+      await updateDoc(userRef, {
         profile: {
           introduction,
         }

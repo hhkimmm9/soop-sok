@@ -3,16 +3,7 @@ import { useParams } from 'next/navigation';
 
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  collection,
-  doc,
-  query,
-  where,
-  addDoc,
-  getDocs,
-  updateDoc,
-  serverTimestamp
-} from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 import {
   ChevronDoubleLeftIcon,
@@ -28,14 +19,16 @@ const MessageInputComponent = ({
 
   const params = useParams();
 
+  const [signedInUser] = useAuthState(auth)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // check if the user is signed in and the length of the input is greater than 0.
     if (auth.currentUser && messageInput.length > 0) {
-      const uid = auth.currentUser.uid;
+      const uid = signedInUser?.uid;
 
-      const messageRef = await addDoc(collection(db, 'messages'), {
+      await addDoc(collection(db, 'messages'), {
         chatId: params.id,
         createdAt: serverTimestamp(),
         sentBy: uid,
@@ -53,12 +46,14 @@ const MessageInputComponent = ({
 
   return (
     <div className='flex gap-3 items-center'>
-      <button onClick={() => inactivateMessageInput()}
-        className='
-          h-9 border border-black rounded-lg px-1.5 py-1
-      '>
-        <ChevronDoubleLeftIcon className='h-5 w-5' />
-      </button>
+      { params.type !== 'dm' && (
+        <button onClick={() => inactivateMessageInput()}
+          className='
+            h-9 border border-black rounded-lg px-1.5 py-1
+        '>
+          <ChevronDoubleLeftIcon className='h-5 w-5' />
+        </button>
+      )}
 
       {/* search input field */}
       <div className='
