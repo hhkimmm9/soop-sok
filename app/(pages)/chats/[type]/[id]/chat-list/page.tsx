@@ -5,11 +5,10 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
-  collection,
-  query,
-  where,
-  getDocs,
+  collection, query,
+  where, orderBy,
 } from 'firebase/firestore'
 import SearchBar from '@/app/components/SearchBar';
 import SortOptions from '@/app/components/SortOptions';
@@ -23,33 +22,27 @@ const ChatListPage = () => {
 
   const params = useParams();
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      var chats: TChat[] = [];
-      try {
-        const q = query(collection(db, 'chats'), where('channelId', '==', params.id));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          chats.push({
-            id: doc.id,
-            capacity: doc.data().capacity,
-            channelId: doc.data().channelId,
-            createdAt: doc.data().createdAt,
-            isPrivate: doc.data().isPrivate,
-            name: doc.data().name,
-            numUsers: doc.data().numUsers,
-            password: doc.data().password
-          });
-        });
-        setChats(chats);
-        console.log(chats)
-      } catch (err) {
-        console.error(err);
-      };
-    };
+  const [realtime_chats, loading, error] = useCollection(
+    query(collection(db, 'chats'),
+      where('channelId', '==', params.id),
+      orderBy('createdAt', 'asc')
+    ), {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
-    fetchChats();
-  }, [params.id])
+  useEffect(() => {
+    const chatList: TChat[] = [];
+    if (realtime_chats && !realtime_chats.empty) {
+      realtime_chats.forEach((doc) => {
+        chatList.push({
+          id: doc.id,
+          ...doc.data()
+        } as TChat);
+      });
+      setChats(chatList);
+    }
+  }, [realtime_chats])
 
   return (
     <div className='h-full flex flex-col gap-4'>
