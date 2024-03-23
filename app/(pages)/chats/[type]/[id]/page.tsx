@@ -6,11 +6,10 @@ import { useState, useEffect } from 'react';
 
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
-  collection, doc, query,
-  where,
-  addDoc, getDocs, onSnapshot, updateDoc,
-  serverTimestamp, Unsubscribe
+  collection, query,
+  where, orderBy,
 } from 'firebase/firestore';
 
 import ChatMessage from '@/app/components/ChatMessage';
@@ -20,59 +19,31 @@ import { TMessage } from '@/app/types';
 
 const Chat = () => {
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const [firestoreListener, setFirestoreListener] = useState<Unsubscribe>();
   const [activateUserInput, setActivateUserInput] = useState(false);
-  const [channelId, setChannelId] = useState<string | null>('');
 
   const params = useParams();
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      var messagesList: TMessage[] = [];
-      try {
-        const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          messagesList.push({
-            id: doc.id,
-            ...doc.data()
-          } as TMessage)
-        });
-        setMessages(messagesList);
-      } catch (err) {
-        console.error(err);
-      };
-    };
+  const [realtime_messages, loading, error] = useCollection(
+    query(collection(db, 'messages'),
+      where('chatId', '==', params.id),
+      orderBy('createdAt', 'asc')
+    ), {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
-    const initListner = async () => {
-      // TODO: need to unsubscribe from this listner before this component is unmounted.
-      var messagesList: TMessage[] = []
-      const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        querySnapshot.docChanges().forEach((change) => {
-          console.log(change)
-          if (change.type === 'added') {
-            messagesList.push({
-              id: change.doc.id,
-              ...change.doc.data()
-            } as TMessage)
-            setMessages(messagesList);
-          }
-          else if (change.type === 'removed') {
-            console.log('removed')
-          }
-        });
+  useEffect(() => {
+    const messageList: TMessage[] = []; 
+    if (realtime_messages && !realtime_messages.empty) {
+      realtime_messages.forEach((doc) => {
+        messageList.push({
+          id: doc.id,
+          ...doc.data()
+        } as TMessage);
       });
-      return unsubscribe;
-    };
-  
-    fetchMessages();
-    const unsub = initListner();
-    // return () => {
-    //   console.log('triggered');
-    //   // if (firestoreListener) firestoreListener();
-    // }
-  }, [params.id]);
+      setMessages(messageList);
+    }
+  }, [realtime_messages]);
 
   return (
     <div className='h-full flex flex-col gap-4'>
