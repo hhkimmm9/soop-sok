@@ -46,7 +46,7 @@ const ChatListPage = () => {
 
   return (
     <div className='h-full flex flex-col gap-4'>
-      { !activateSearch && !activateSort && (
+      {/* { !activateSearch && !activateSort && (
         <div className='grid grid-cols-2 gap-2'>
           <button onClick={() => setActivateSearch(true)}
             className='bg-white border border-black py-2 rounded-lg shadow-sm
@@ -70,7 +70,7 @@ const ChatListPage = () => {
           options={['Option A', 'Option B']}
           onSelect={(selectedValue: string) => console.log(selectedValue) }
         />
-      )}
+      )} */}
 
       {/* chat list */}
       <div className='
