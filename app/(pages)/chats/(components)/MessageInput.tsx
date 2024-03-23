@@ -1,36 +1,59 @@
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
+
+import { auth, db } from '@/app/utils/firebase/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+
 import {
   ChevronDoubleLeftIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
-const MessageInput = ({
-  goBack
+const MessageInputComponent = ({
+  cancel
 }: {
-  goBack: Function
+  cancel: Function
 }) => {
   const [messageInput, setMessageInput] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const params = useParams();
+
+  const [signedInUser] = useAuthState(auth)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSubmit');
-    setMessageInput('');
+    
+    // check if the user is signed in and the length of the input is greater than 0.
+    if (auth.currentUser && messageInput.length > 0) {
+      const uid = signedInUser?.uid;
+
+      await addDoc(collection(db, 'messages'), {
+        chatId: params.id,
+        createdAt: serverTimestamp(),
+        sentBy: uid,
+        text: messageInput
+      })
+
+      setMessageInput('');
+    }
   };
 
   const inactivateMessageInput = () => {
-    console.log('inactivateMessageInput');
     setMessageInput('');
-    goBack()
+    cancel();
   };
 
   return (
     <div className='flex gap-3 items-center'>
-      <button onClick={() => inactivateMessageInput()}
-        className='
-          h-9 border border-black rounded-lg px-1.5 py-1
-      '>
-        <ChevronDoubleLeftIcon className='h-5 w-5' />
-      </button>
+      { params.type !== 'dm' && (
+        <button onClick={() => inactivateMessageInput()}
+          className='
+            h-9 border border-black rounded-lg px-1.5 py-1
+        '>
+          <ChevronDoubleLeftIcon className='h-5 w-5' />
+        </button>
+      )}
 
       {/* search input field */}
       <div className='
@@ -57,6 +80,6 @@ const MessageInput = ({
       </div>
     </div>
   )
-}
+};
 
-export default MessageInput
+export default MessageInputComponent;

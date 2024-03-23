@@ -26,8 +26,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/lib/firebase/firebase.js",
-    "app/lib/firebase/auth.js",
+    "app/utils/firebase/firebase.js",
+    "app/utils/firebase/auth.js",
   ],
   "exclude": ["node_modules"]
 }

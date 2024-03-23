@@ -22,7 +22,7 @@ export default async function RootLayout({
         ${inter.className}
         relative w-screen h-screen
       `}>
-        <main className="px-4 py-8">
+        <main className="h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6">
           { children }
         </main>
 
