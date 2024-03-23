@@ -63,13 +63,11 @@ const Page = () => {
               h-min py-8 flex justify-center items-center
               border border-black rounded-lg
           '>User List</Link>
-          { params.type != 'dm' && (
-            <div onClick={leaveChat}
-              className='
-                h-min py-8 flex justify-center items-center
-                border border-black rounded-lg
-            '>Leave</div>
-          )}
+          <div onClick={leaveChat}
+            className='
+              h-min py-8 flex justify-center items-center
+              border border-black rounded-lg
+          '>Leave</div>
         </div>
       </div>
 

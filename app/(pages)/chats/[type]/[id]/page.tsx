@@ -7,16 +7,10 @@ import { useState, useEffect } from 'react';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  doc,
-  query,
+  collection, doc, query,
   where,
-  addDoc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
-  serverTimestamp,
-  Unsubscribe
+  addDoc, getDocs, onSnapshot, updateDoc,
+  serverTimestamp, Unsubscribe
 } from 'firebase/firestore';
 
 import ChatMessage from '@/app/components/ChatMessage';
@@ -34,18 +28,15 @@ const Chat = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      var messagesList: TMessage[] = []
+      var messagesList: TMessage[] = [];
       try {
         const q = query(collection(db, 'messages'), where('chatId', '==', params.id));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           messagesList.push({
             id: doc.id,
-            chatId: doc.data().chatId,
-            createdAt: doc.data().createdAt,
-            sentBy: doc.data().sentBy,
-            text: doc.data().text
-          })
+            ...doc.data()
+          } as TMessage)
         });
         setMessages(messagesList);
       } catch (err) {
@@ -63,11 +54,8 @@ const Chat = () => {
           if (change.type === 'added') {
             messagesList.push({
               id: change.doc.id,
-              chatId: change.doc.data().chatId,
-              createdAt: change.doc.data().createdAt,
-              sentBy: change.doc.data().sentBy,
-              text: change.doc.data().text
-            })
+              ...change.doc.data()
+            } as TMessage)
             setMessages(messagesList);
           }
           else if (change.type === 'removed') {
@@ -99,7 +87,11 @@ const Chat = () => {
       </div>
 
       <div className=''>
-        { !activateUserInput ? (
+        { activateUserInput || params.type === 'dm' ? (
+          <div className=''>
+            <MessageInput cancel={() => setActivateUserInput(false)} />
+          </div>
+        ) : (
           <div className='grid grid-cols-2 gap-2'>
             <button onClick={() => setActivateUserInput(true)}
               className='bg-white border border-black py-2 rounded-lg shadow-sm
@@ -107,10 +99,6 @@ const Chat = () => {
             <Link href={`/chats/${params.type}/${params.id}/features`}
               className='bg-white border border-black py-2 rounded-lg shadow-sm text-center
             '>Other features</Link>
-          </div>
-        ) : (
-          <div className=''>
-            <MessageInput cancel={() => setActivateUserInput(false)} />
           </div>
         )}
       </div>
