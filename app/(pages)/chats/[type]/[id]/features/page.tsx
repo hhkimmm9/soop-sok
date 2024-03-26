@@ -5,13 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  doc,
-  addDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  serverTimestamp
+  collection, doc, query,
+  where,
+  getDoc, getDocs, updateDoc, deleteDoc,
 } from 'firebase/firestore';
 
 const Page = () => {
@@ -19,6 +15,8 @@ const Page = () => {
   const router = useRouter();
 
   var channelId: string | null = localStorage.getItem('channelId');
+
+  const [signedInUser] = useAuthState(auth);
 
   const leaveChat = async () => {
     const channelRef = doc(db, 'channels', params.id.toString());
@@ -31,10 +29,29 @@ const Page = () => {
         numUsers: data.numUsers - 1
       });
     }
+    
+    try {
+      const statusRef = query(collection(db, 'status_board'),
+        where('cId', '==', params.id),
+        where('uId', '==', signedInUser?.uid)
+      );
+      const statusSnapshot = await getDocs(statusRef);
 
-    router.push(`${params.type == 'lobby' ?
-      '/channels' : `/chats/lobby/${channelId}`}`
-    )
+      if (!statusSnapshot.empty) {
+        const deleteRef = doc(db, 'status_board', statusSnapshot.docs[0].id);
+        await deleteDoc(deleteRef);
+    
+        const destination = params.type === 'lobby' ? '/channels' : `/chats/lobby/${channelId}`;
+        router.push(destination);
+      }
+      // TODO: error handling
+      else {
+        // Handle case when no documents match the query
+        // You might want to redirect or display a message to the user
+      }
+    } catch(error) {
+      console.error('An error occurred:', error);
+    }
   };
 
   return (
@@ -75,7 +92,7 @@ const Page = () => {
         className='
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
-      '>Go Back</Link>
+      '>Cancel</Link>
     </div>
   )
 }
