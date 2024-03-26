@@ -46,6 +46,10 @@ const Settings = () => {
           isOnline: false
         });
       }
+      // TODO: error handling
+      else {
+
+      }
 
       const res = await signOut();
       if (res) {
