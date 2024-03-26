@@ -2,6 +2,13 @@
 
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { auth, db } from '@/app/utils/firebase/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  collection, doc,
+  addDoc, updateDoc,
+} from 'firebase/firestore';
+
 import { formatTimeAgo } from '@/app/utils/utils';
 import { TChat } from '@/app/types'
 
@@ -13,8 +20,20 @@ const Chat = ({ chat }: ChatProps) => {
   const params = useParams();
   const router = useRouter();
 
-  const enterChat = () => {
+  const [signedInUser] = useAuthState(auth);
+
+  const enterChat = async () => {
+    // store channel id
     localStorage.setItem('channelId', params.id.toString());
+
+    const statusRef = collection(db, 'status_board');
+    await addDoc(statusRef, {
+      cId: chat.id,
+      displayName: signedInUser?.displayName,
+      profilePicUrl: signedInUser?.photoURL,
+      uId: signedInUser?.uid
+    });
+
     router.push(`/chats/chat/${chat.id}`);
   };
 
