@@ -1,22 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  doc,
-  query,
-  where,
-  limit,
-  addDoc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
-  deleteDoc,
+  collection, query,
+  where, limit,
+  addDoc, getDocs, updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
 import {
@@ -29,7 +20,7 @@ import SignInWithGoogle from '@/app/components/(SignInWith)/SignInWithGoogle';
 
 export default function Home() {
   const [signInWithGoogle, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);
-  const [signInWithApple, loadingApple, errorApple] = useSignInWithApple(auth);
+  // const [signInWithApple, loadingApple, errorApple] = useSignInWithApple(auth);
 
   const [signedInUser, loading, error] = useAuthState(auth);
 
@@ -40,22 +31,22 @@ export default function Home() {
   const handleSignIn = async (signInWith: string) => {
     if (signInWith === 'google') {
       const result = await signInWithGoogle();
-      console.log(result);
 
       // store the auth token into the cookie
       // https://www.npmjs.com/package/cookies
       cookies.set('auth-token', result?.user.refreshToken);
 
       // check if the user is signed in
-      if (result && auth.currentUser) {
+      if (result && signedInUser) {
         // if their profile isn't found in the database, create a new one
         const q = query(collection(db, 'users'),
-          where('uId', '==', auth.currentUser.uid),
+          where('uId', '==', signedInUser.uid),
           limit(1)
         );
         const querySnapshot = await getDocs(q);
 
-        if (querySnapshot.size == 0) {
+        // if this is the first time sign in, create a new user data and store it.
+        if (querySnapshot.empty) {
           await addDoc(collection(db, 'users'), {
             createdAt: serverTimestamp(),
             displayName: result.user.displayName,
@@ -70,7 +61,7 @@ export default function Home() {
               interests: []
             },
             profilePicUrl: result.user.photoURL,
-            uId: auth.currentUser.uid
+            uId: signedInUser.uid
           });
         }
         // otherwise, update the isOnline status
@@ -93,8 +84,8 @@ export default function Home() {
   return (
     <div className="pt-24 flex flex-col gap-64 items-center">
       <div className='text-center flex flex-col gap-4'>
-        <h1 className='text-4xl'>Introverts</h1>
-        <p className=''>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus laboriosam dolor maxime suscipit tempore corrupti odit. Assumenda molestias nostrum voluptatem?</p>
+        <h1 className='text-4xl'>숲 속</h1>
+        <p className=''>Lorem, ipsum lor sit amet consectetur adipisicing elit. Doloribus laboriosam dolor maxime suscipit tempore corrupti odit. Assumenda molestias nostrum voluptatem?</p>
       </div>
 
       { !signedInUser ? (
