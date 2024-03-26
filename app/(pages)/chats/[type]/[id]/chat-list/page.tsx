@@ -87,7 +87,7 @@ const ChatListPage = () => {
         className='
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
-      '>Go Back</Link>
+      '>Cancel</Link>
     </div>
   )
 };
