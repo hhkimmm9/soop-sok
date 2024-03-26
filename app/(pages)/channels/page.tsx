@@ -28,11 +28,8 @@ const SelectChannel = () => {
       querySnapshot.forEach((doc) => {
         channels.push({
           id: doc.id,
-          capacity: doc.data().capacity,
-          name: doc.data().name,
-          numUsers: doc.data().numUsers
-          // ...doc.data()
-        })
+          ...doc.data()
+        } as TChannel);
       });
       setChannels(channels);
     } catch (err) {
