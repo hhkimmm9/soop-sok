@@ -2,16 +2,8 @@ import { useRouter } from 'next/navigation';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  doc,
-  query,
-  where,
-  addDoc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
-  serverTimestamp,
-  Unsubscribe
+  collection, doc,
+  addDoc, updateDoc,
 } from 'firebase/firestore';
 
 import { TChannel } from '@/app/types';
@@ -23,12 +15,24 @@ type ChannelProps = {
 const Channel = ({ channelData } : ChannelProps) => {
   const router = useRouter();
 
+  const [signedInUser] = useAuthState(auth);
+
   const enterChannel = async () => {
     // update the status of the channel.
     const channelRef = doc(db, 'channels', channelData.id)
     await updateDoc(channelRef, {
       numUsers: channelData.numUsers + 1
     })
+
+    // console.log(signedInUser)
+
+    const statusRef = collection(db, 'status_board');
+    await addDoc(statusRef, {
+      cId: channelData.id,
+      displayName: signedInUser?.displayName,
+      profilePicUrl: signedInUser?.photoURL,
+      uId: signedInUser?.uid
+    });
 
     // redriect to the selected channel page.
     router.push(`/chats/lobby/${channelData.id}`);
