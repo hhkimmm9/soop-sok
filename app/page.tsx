@@ -37,10 +37,10 @@ export default function Home() {
       cookies.set('auth-token', result?.user.refreshToken);
 
       // check if the user is signed in
-      if (result && signedInUser) {
+      if (result && auth.currentUser) {
         // if their profile isn't found in the database, create a new one
         const q = query(collection(db, 'users'),
-          where('uId', '==', signedInUser.uid),
+          where('uId', '==', auth.currentUser.uid),
           limit(1)
         );
         const querySnapshot = await getDocs(q);
@@ -61,7 +61,7 @@ export default function Home() {
               interests: []
             },
             profilePicUrl: result.user.photoURL,
-            uId: signedInUser.uid
+            uId: auth.currentUser.uid
           });
         }
         // otherwise, update the isOnline status
