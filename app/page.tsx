@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection, query,
+  collection, doc, query,
   where, limit,
-  addDoc, getDocs, updateDoc,
+  setDoc, getDoc, getDocs, updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
 import {
@@ -39,15 +39,12 @@ export default function Home() {
       // check if the user is signed in
       if (result && auth.currentUser) {
         // if their profile isn't found in the database, create a new one
-        const q = query(collection(db, 'users'),
-          where('uId', '==', auth.currentUser.uid),
-          limit(1)
-        );
-        const querySnapshot = await getDocs(q);
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        const querySnapshot = await getDoc(userRef);
 
-        // if this is the first time sign in, create a new user data and store it.
-        if (querySnapshot.empty) {
-          await addDoc(collection(db, 'users'), {
+        // if this is the first time sign in, create a new user data and store it.)
+        if (!querySnapshot.exists()) {
+          await setDoc(doc(db, 'users', auth.currentUser.uid), {
             createdAt: serverTimestamp(),
             displayName: result.user.displayName,
             email: result.user.email,
@@ -56,24 +53,21 @@ export default function Home() {
             isEmailVerified: true,
             isOnline: true,
             lastLoginTime: serverTimestamp(),
+            photoURL: result.user.photoURL,
             profile: {
               introduction: '',
               interests: []
             },
-            profilePicUrl: result.user.photoURL,
-            uId: auth.currentUser.uid
+            uid: auth.currentUser.uid
           });
         }
         // otherwise, update the isOnline status
         else {
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            const userRef = querySnapshot.docs[0].ref;
-            await updateDoc(userRef, {
-              isOnline: true,
-              lastLoginTime: serverTimestamp()
-            });
-          }
+          const userSnapshot = doc(db, 'users', querySnapshot.id);
+          await updateDoc(userSnapshot, {
+            isOnline: true,
+            lastLoginTime: serverTimestamp()
+          });
         }
 
         if (!errorGoogle) router.push('/channels');

@@ -30,7 +30,7 @@ const Message = ({ message } : MessageProps) => {
         const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
-          const userData = { id: doc.id, ...doc.data() } as TUser;
+          const userData = { ...doc.data() } as TUser;
           setUser(userData);
         });
       } catch (err) {
@@ -44,9 +44,9 @@ const Message = ({ message } : MessageProps) => {
   if (user) return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
-        <Link href={`/users/${user?.id}/profile`}>
+        <Link href={`/users/${user?.uid}/profile`}>
           <Image
-            src={`${user?.profilePicUrl}`}
+            src={`${user?.photoURL}`}
             alt=''
             width={1324}
             height={1827}

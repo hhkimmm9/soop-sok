@@ -4,12 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  collection, doc,
-  query, where, limit,
-  addDoc, getDoc, getDocs, updateDoc,
-  serverTimestamp
-} from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const ProfileEdit = () => {
   const [loading, setLoading] = useState(false);
@@ -24,16 +19,17 @@ const ProfileEdit = () => {
   useEffect(() => {
     const fecthUser = async () => {
       if (signedInUser) {
-        const q = query(collection(db, 'users'),
-          where('uId', '==', signedInUser.uid),
-          limit(1)
-        );
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs[0].data()
+        try {
+          const userRef = doc(db, 'users', signedInUser.uid);
+          const querySnapshot = await getDoc(userRef);
 
-        if (data) {
-          setIntroduction(data.profile.introduction);
-          setInterests(data.profile.profile);
+          if (querySnapshot.exists()) {
+            const data = querySnapshot.data();
+            setIntroduction(data.profile.introduction);
+            setInterests(data.profile.profile);
+          }
+        } catch (err) {
+          console.error(err);
         }
       }
       setLoading(true);
@@ -46,18 +42,17 @@ const ProfileEdit = () => {
     e.preventDefault();
 
     if (signedInUser) {
-      const q = query(collection(db, 'users'),
-        where('uId', '==', params.id.toString())
-      );
-      const querySnapshot = await getDocs(q);
-      const userRef = querySnapshot.docs[0].ref;
-      await updateDoc(userRef, {
-        profile: {
-          introduction,
-        }
-      })
-
-      router.push(`/users/${params.id}/profile`);
+      try {
+        const userRef = doc(db, 'users', signedInUser.uid);
+        await updateDoc(userRef, {
+          profile: {
+            introduction,
+          }
+        })
+        router.push(`/users/${params.id}/profile`);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
