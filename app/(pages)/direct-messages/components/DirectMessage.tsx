@@ -29,13 +29,14 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
   // or, store user data into the private_chat collection.
   useEffect(() => {
     const fetchToUser = async () => {
-      const userSnapshot = await getDoc(doc(db, 'users', privateChat.to));
-      if (userSnapshot.exists()) {
-        const data = {
-          id: userSnapshot.id,
-          ...userSnapshot.data()
-        } as TUser;
-        setToUser(data);
+      try {
+        const userSnapshot = await getDoc(doc(db, 'users', privateChat.to));
+        if (userSnapshot.exists()) {
+          const data = { ...userSnapshot.data() } as TUser;
+          setToUser(data);
+        }
+      } catch (err) {
+        console.error(err);
       }
     };
     fetchToUser();
@@ -70,7 +71,7 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
       '>
         { toUser && (
           <Image
-            src={toUser?.profilePicUrl} alt=''
+            src={toUser?.photoURL} alt=''
             width={1324} height={1827}
             className='
               object-cover

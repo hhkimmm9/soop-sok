@@ -6,49 +6,23 @@ import Link from 'next/link';
 
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
-import {
-  collection, doc,
-  query, where, limit,
-  getDoc, getDocs, updateDoc,
-} from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 
 const Settings = () => {
-  const [signedInUserId, setSignedInUserId] = useState('');
-
-  const [signOut] = useSignOut(auth);
-
   const router = useRouter();
-
-  const [signedInUser] = useAuthState(auth);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (signedInUser) {
-        const userQuery = query(collection(db, 'users'), where('uId', '==', signedInUser.uid.toString()));
-        const userSnapshot = await getDocs(userQuery);
-        if (!userSnapshot.empty) {
-          const profileData = userSnapshot.docs[0];
-          setSignedInUserId(profileData.id);
-        }
-      }
-    };
-    fetchUser();
-  }, [signedInUser])
   
+  const [signedInUser] = useAuthState(auth);
+  const [signOut] = useSignOut(auth);
 
   const handleSignout = async () => {
     if (signedInUser) {
-      const q = query(collection(db, 'users'), where('uId', '==', signedInUser.uid), limit(1));
-      const userSnapshot = await getDocs(q);
-      if (!userSnapshot.empty) {
-        const userRef = userSnapshot.docs[0].ref;
+      try {
+        const userRef = doc(db, 'users', signedInUser.uid);
         await updateDoc(userRef, {
           isOnline: false
         });
-      }
-      // TODO: error handling
-      else {
-
+      } catch (err) {
+        console.error(err);
       }
 
       const res = await signOut();
@@ -60,7 +34,7 @@ const Settings = () => {
 
   return (
     <div className='flex flex-col gap-4 items-center'>
-      <Link href={`/users/${signedInUserId}/profile`}
+      <Link href={`/users/${signedInUser?.uid}/profile`}
         className='
           w-full border rounded-lg p-2 bg-white text-center shadow-sm
       '>Profile</Link>

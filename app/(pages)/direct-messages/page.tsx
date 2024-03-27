@@ -23,19 +23,18 @@ const DirectMessages = () => {
     const fetchMessages = async () => {
       // check authentication
       if (signedInUser) {
-        // fetch user data
-        const userQuery = query(collection(db, 'users'),
-          where('uId', '==', signedInUser.uid)
-        );
-        const userSnapshot = await getDocs(userQuery);
-        
-        // if found, store it into the user state.
-        if (!userSnapshot.empty) {
-          const userData = {
-            id: userSnapshot.docs[0].id,
-            ...userSnapshot.docs[0].data()
-          } as TUser
-          setUser(userData);
+        try {
+          // fetch user data
+          const userRef = doc(db, 'users', signedInUser.uid);
+          const userSnapshot = await getDoc(userRef);
+          
+          // if found, store it into the user state.
+          if (userSnapshot.exists()) {
+            const userData = { ...userSnapshot.data() } as TUser
+            setUser(userData);
+          }
+        } catch (err) {
+          console.error(err);
         }
       };
     };
@@ -49,8 +48,8 @@ const DirectMessages = () => {
         // fetch DM messages associated with the currently signed in user.
         const chatQuery = query(collection(db, 'private_chats'),
           or(
-            where('from', '==', user.id),
-            where('to', '==', user.id),
+            where('from', '==', user.uid),
+            where('to', '==', user.uid),
           )
         );
         const chatSnapshot = await getDocs(chatQuery);

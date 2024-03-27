@@ -28,7 +28,6 @@ export type TMessage = {
   text: string
 };
 export type TUser = {
-  id: string,
   createdAt: FirestoreTimestamp,
   displayName: string,
   email: string,
@@ -37,12 +36,12 @@ export type TUser = {
   isEmailVerified: boolean,
   isOnline: boolean,
   lastLoginTime: string,
+  photoURL: string,
   profile: {
     interests: string[],
     introduction: string,
   },
-  profilePicUrl: string,
-  uId: string
+  uid: string
 };
 
 export type FirestoreTimestamp = {
