@@ -6,10 +6,7 @@ import Image from 'next/image';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection,
-  query,
-  where,
-  getDocs,
+  doc, getDoc,
 } from 'firebase/firestore';
 
 import { TUser, TMessage } from '@/app/types';
@@ -27,12 +24,12 @@ const Message = ({ message } : MessageProps) => {
     const fetchUser = async () => {
       var user: TUser;
       try {
-        const q = query(collection(db, 'users'), where('uId', '==', message.sentBy));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          const userData = { ...doc.data() } as TUser;
+        const userRef = doc(db, 'users', message.sentBy);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          const userData = { ... userSnapshot.data() } as TUser;
           setUser(userData);
-        });
+        }
       } catch (err) {
         console.error(err);
       };
