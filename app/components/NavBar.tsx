@@ -1,17 +1,35 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAppState } from '@/app/utils/AppStateProvider';
 
 import {
   QueueListIcon,
   ChatBubbleBottomCenterIcon,
   UserIcon,
   Cog6ToothIcon
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/outline';
 
 const NavBar = () => {
+  const router = useRouter();
   const pathname = usePathname();
+  const { dispatch } = useAppState();
+
+  const activateChats = (type: string) => {
+    if (type === 'channels') {
+      dispatch({ type: 'SET_TO_IN_CHANNEL' });
+    }
+    else if (type === 'private_chats') {
+      dispatch({ type: 'SET_TO_PRIVATE_CHATS' });
+    }
+  };
+
+  const activateRegularPage = (url: string) => {
+    dispatch({ type: 'SET_TO_PAGES' });
+
+    // TODO: may need to push after the url changed.
+    router.push(url);
+  };
   
   return (
     <>
@@ -22,36 +40,36 @@ const NavBar = () => {
           px-12 flex justify-between items-center
         ">
           {/* Channels */}
-          <Link href='/channels'
+          <div onClick={() => activateChats('channels')}
             className="rounded-full px-3
           ">
             <QueueListIcon className='h-5 w-5' />
-          </Link>
+          </div>
 
-          {/* DMs */}
-          <Link href='/direct-messages'
+          {/* Private chats */}
+          <div onClick={() => activateChats('private_chats')}
             className="rounded-full px-3
           ">
             <ChatBubbleBottomCenterIcon className='h-5 w-5' />
-          </Link>
+          </div>
 
           {/* Friends List */}
-          <Link href='/users'
+          <div onClick={() => activateRegularPage('/friends')}
             className="rounded-full px-3
           ">
             <UserIcon className='h-5 w-5' />
-          </Link>
+          </div>
 
-          {/* Settings page */}
-          <Link href='/settings'
+          {/* Settings */}
+          <div onClick={() => activateRegularPage('/settings')}
             className="rounded-full px-3
           ">
             <Cog6ToothIcon className='h-5 w-5' />
-          </Link>
+          </div>
         </div> 
       )}
     </>
   )
-}
+};
 
-export default NavBar
+export default NavBar;
