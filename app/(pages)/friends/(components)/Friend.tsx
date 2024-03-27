@@ -1,16 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-const User = ({
-  user
-}: {
-  user: {
-    _id: string,
-    name: string
-  } 
-}) => {
+type FriendProps = {
+  friend: {
+    _id: string;
+    name: string;
+  }
+};
+
+const Friend = ({ friend }: FriendProps ) => {
   return (
-    <Link href={`/users/${user._id}/profile`}
+    <Link href={`/users/${friend._id}/profile`}
       className='
         border border-black bg-white p-4 rounded-lg shadow-sm
         flex gap-3
@@ -28,11 +28,11 @@ const User = ({
 
       <div>
         {/* last signed in, where they are */}
-        <p className='font-semibold'>{ user.name }</p>
+        <p className='font-semibold'>{ friend.name }</p>
         <p>status: online</p>
       </div>
     </Link>
   )
-}
+};
 
-export default User
+export default Friend;
