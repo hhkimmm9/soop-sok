@@ -19,7 +19,6 @@ import { TUser } from '@/app/types';
 const Profile = () => {
   const [profile, setProfile] = useState<TUser>();
   const [isMyProfile, setIsMyProfile] = useState(false);
-  const [signedInUserId, setSignedInUserId] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { id } = useParams();
@@ -38,7 +37,7 @@ const Profile = () => {
           if (profileSnapshot.exists()) {
             const profileData = { ...profileSnapshot.data() } as TUser;
             setProfile(profileData);
-            setIsMyProfile(profileData.uid === id);
+            setIsMyProfile(signedInUser.uid === id);
           }
         } catch (err) {
           console.error(err);
@@ -54,7 +53,7 @@ const Profile = () => {
   };
 
   const redirectToDMChat = async () => {
-    const myId = signedInUserId;
+    const myId = signedInUser?.uid;
     const opponentId = id;
 
     // check if their dm chat exists
