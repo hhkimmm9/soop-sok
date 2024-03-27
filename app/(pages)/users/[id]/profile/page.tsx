@@ -30,29 +30,22 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (signedInUser) {
-        // fetch profile data with the given id in the URL.
-        const profileSnapshot = await getDoc(doc(db, 'users', id.toString()));
-        if (profileSnapshot.exists()) {
-          const profileData = {
-            id: profileSnapshot.id,
-            ...profileSnapshot.data()
-          } as TUser;
-          setProfile(profileData);
-        }
-
-        const myAccountQuery = query(collection(db, 'users'),
-          where('uId', '==', signedInUser.uid)
-        );
-        const myAccountSnapshot = await getDocs(myAccountQuery);
-        if (!myAccountSnapshot.empty) {
-          const myAccountId = myAccountSnapshot.docs[0].id;
-          setSignedInUserId(myAccountId);
-          setIsMyProfile(myAccountId === id);
+        try {
+          // fetch profile data with the given id in the URL.
+          const profileRef = doc(db, 'users', id.toString());
+          const profileSnapshot = await getDoc(profileRef);
+  
+          if (profileSnapshot.exists()) {
+            const profileData = { ...profileSnapshot.data() } as TUser;
+            setProfile(profileData);
+            setIsMyProfile(profileData.uid === id);
+          }
+        } catch (err) {
+          console.error(err);
         }
       }
       setLoading(true);
     };
-
     fetchData();
   }, [signedInUser, id])
 
@@ -72,8 +65,8 @@ const Profile = () => {
       ),
       limit(1)
     );
-    
     const querySnapshot = await getDocs(q);
+
     // if it doesn't, create a dm chat room first
     if (querySnapshot.empty) {
       const docRef = await addDoc(collection(db, 'private_chats'), {
@@ -92,7 +85,7 @@ const Profile = () => {
   if (profile !== undefined && loading) return (
     <div className='pt-24 flex flex-col gap-12 items-center'>
       <Image
-        src={profile.profilePicUrl} alt=''
+        src={profile.photoURL} alt=''
         width={1324} height={1827}
         className={`
           object-cover w-72 h-72 rounded-full
@@ -111,7 +104,7 @@ const Profile = () => {
       <div className=''>
         { isMyProfile ? (
           <div className='w-72 flex flex-col gap-8'>
-            <Link href={`/users/${profile.uId}/profile/edit`}
+            <Link href={`/users/${profile.uid}/profile/edit`}
               className='
                 border rounded-lg py-3 bg-white
                 text-center
