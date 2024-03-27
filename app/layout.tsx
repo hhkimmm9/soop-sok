@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { AppStateProvider } from '@/app/utils/AppStateProvider';
+import Wrapper from '@/app/components/Wrapper';
 import NavBar from "./components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,9 +25,11 @@ export default async function RootLayout({ children }: Readonly<Props>) {
           ${inter.className}
           relative w-screen h-screen
         `}>
-          <main className="h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6">
-            { children }
-          </main>
+          <Wrapper>
+            <main className="h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6">
+              { children }
+            </main>
+          </Wrapper>
 
           <NavBar />
         </body>
