@@ -25,22 +25,29 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
   const [toUser, setToUser] = useState<TUser>();
   const [latestMessage, setLatestMessage] = useState<TMessage>();
 
+  const [signedInUser] = useAuthState(auth);
+
   // fetch user data based on the given user id,
   // or, store user data into the private_chat collection.
   useEffect(() => {
     const fetchToUser = async () => {
-      try {
-        const userSnapshot = await getDoc(doc(db, 'users', privateChat.to));
-        if (userSnapshot.exists()) {
-          const data = { ...userSnapshot.data() } as TUser;
-          setToUser(data);
+      if (signedInUser) {
+        try {
+          const userId = privateChat.to === signedInUser.uid ?
+            privateChat.from : privateChat.to;
+  
+          const userSnapshot = await getDoc(doc(db, 'users', userId));
+          if (userSnapshot.exists()) {
+            const data = { ...userSnapshot.data() } as TUser;
+            setToUser(data);
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
       }
     };
     fetchToUser();
-  }, [privateChat.to]);
+  }, [privateChat.to, privateChat.from, signedInUser]);
 
   // fetch the latest message associated with this private chat
   // to display when it is sent and the content of it.
