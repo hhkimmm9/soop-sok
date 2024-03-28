@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAppState } from '@/app/utils/AppStateProvider';
-import InChannel from '@/app/components/InChannel';
+import Channels from '@/app/components/Channels';
 import PrivateChats from '@/app/components/PrivateChats';
 
 type WrapperProps = {
@@ -15,10 +15,12 @@ const Wrapper = ({ children }: WrapperProps) => {
   let content;
 
   switch (state.currentPage) {
-    case 'in_channel':
-      content = <InChannel />;
+    case 'channel':
+      // TODO: change the URL
+      content = <Channels />;
       break;
-    case 'private_chats':
+    case 'private_chat':
+      // TODO: change the URL
       content = <PrivateChats />;
       break;
     case 'pages':

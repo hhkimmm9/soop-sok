@@ -17,10 +17,10 @@ const NavBar = () => {
 
   const activateChats = (type: string) => {
     if (type === 'channels') {
-      dispatch({ type: 'SET_TO_IN_CHANNEL' });
+      dispatch({ type: 'SET_TO_CHANNEL' });
     }
     else if (type === 'private_chats') {
-      dispatch({ type: 'SET_TO_PRIVATE_CHATS' });
+      dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
     }
   };
 

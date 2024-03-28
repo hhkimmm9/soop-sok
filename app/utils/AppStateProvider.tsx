@@ -7,23 +7,51 @@ import React, {
   useReducer,
 } from 'react';
 
+type TAvailableChannelComponents = (
+  | 'lobby'
+  | 'features'
+  | 'create_chat'
+  | 'chat_list'
+  | 'user_list'
+  | 'chat'
+);
+
+type TAvailablePrivateChatComponents = ('chat_window' | 'features');
+
 interface AppState {
-  currentPage: 'in_channel' | 'private_chats' | 'pages';
+  currentPage: ('channel' | 'private_chat' | 'pages');
   activateChannelChat: boolean;
   activatePrivateChat: boolean;
+  channelId: string;
+  privateChatId: string;
+  channelComponent: TAvailableChannelComponents;
+  privateChatComponent: TAvailablePrivateChatComponents;
 };
 
-type Action =
-  | { type: 'SET_TO_IN_CHANNEL' }
-  | { type: 'SET_TO_PRIVATE_CHATS' }
+type Action = (
+  | { type: 'SET_TO_CHANNEL' }
+  | { type: 'SET_TO_PRIVATE_CHAT' }
   | { type: 'SET_TO_PAGES' }
-  | { type: 'TOGGLE_CHANNEL_CHAT' }
-  | { type: 'TOGGLE_PRIVATE_CHAT' };
+  | { type: 'ENTER_CHANNEL', channelId: string }
+  | { type: 'ENTER_PRIVATE_CHAT', privateChatId: string }
+  | {
+      type: 'CURRENT_CHANNEL_COMPONENT',
+      channelComponent: TAvailableChannelComponents
+    }
+  | {
+      type: 'CURRENT_PRIVATE_CHAT_COMPONENT',
+      privateChatComponent: TAvailablePrivateChatComponents
+    }
+);
 
 const initialState: AppState = {
   currentPage: 'pages',
   activateChannelChat: false,
-  activatePrivateChat: false
+  activatePrivateChat: false,
+  channelId: '',
+  privateChatId: '',
+  channelComponent: 'lobby',
+  privateChatComponent: 'chat_window'
 }
 
 const AppStateContext = createContext<{
@@ -33,18 +61,36 @@ const AppStateContext = createContext<{
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
-    case 'SET_TO_IN_CHANNEL':
-      return { ...state, currentPage: 'in_channel' }
-    case 'SET_TO_PRIVATE_CHATS':
-      return { ...state, currentPage: 'private_chats' }
+    case 'SET_TO_CHANNEL':
+      return { ...state, currentPage: 'channel' };
+    case 'SET_TO_PRIVATE_CHAT':
+      return { ...state, currentPage: 'private_chat' };
     case 'SET_TO_PAGES':
-      return { ...state, currentPage: 'pages' }
-    case 'TOGGLE_CHANNEL_CHAT':
-      return { ...state, activateChannelChat: !state.activateChannelChat }
-    case 'TOGGLE_PRIVATE_CHAT':
-      return { ...state, activatePrivateChat: !state.activatePrivateChat }
+      return { ...state, currentPage: 'pages' };
+    case 'ENTER_CHANNEL':
+      return {
+        ...state,
+        activateChannelChat: true,
+        channelId: action.channelId
+      };
+    case 'ENTER_PRIVATE_CHAT':
+      return {
+        ...state,
+        activatePrivateChat: true,
+        channelId: action.privateChatId
+      };
+    case 'CURRENT_CHANNEL_COMPONENT':
+      return {
+        ...state,
+        channelComponent: action.channelComponent
+      };
+    case 'CURRENT_PRIVATE_CHAT_COMPONENT':
+      return {
+        ...state,
+        channelId: action.privateChatComponent
+      };
     default:
-      return state
+      return state;
   }
 };
 

@@ -72,7 +72,7 @@ export default function Home() {
           });
         }
 
-        if (!errorGoogle) dispatch({ type: 'SET_TO_IN_CHANNEL' });
+        if (!errorGoogle) dispatch({ type: 'SET_TO_CHANNEL' });
       }
     }
   };

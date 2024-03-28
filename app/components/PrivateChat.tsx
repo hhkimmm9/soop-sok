@@ -75,7 +75,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   }, [privateChat.id]);
 
   const enterPrivateChat = () => {
-    dispatch({ type: 'TOGGLE_PRIVATE_CHAT' });
+    dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: privateChat.id });
   };
 
   return (

@@ -9,7 +9,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 
-import ChatWindow from './ChatWindow';
+import ChannelChatWindow from '@/app/components/ChannelChatWindow';
 import Channel from '@/app/components/Channel';
 
 import { TChannel } from '@/app/types';
@@ -42,7 +42,7 @@ const InChannel = () => {
   return (
     <>
       { state.activateChannelChat ? (
-        <ChatWindow />
+        <ChannelChatWindow chatId={state.channelId} />
       ) : (
         <div className='flex flex-col gap-2'>
           { channels.map(channel => (

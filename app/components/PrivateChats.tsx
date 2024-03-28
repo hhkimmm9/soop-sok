@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 
 import SearchBar from '@/app/components/SearchBar';
-import ChatWindow from '@/app/components/ChatWindow';
+import PrivateChatWindow from '@/app/components/PrivateChatWindow';
 import PrivateChat from '@/app/components/PrivateChat';
 
 import { TUser, TPrivateChat } from '@/app/types';
@@ -53,7 +53,7 @@ const PrivateChats = () => {
   return (
     <>
       { state.activatePrivateChat ? (
-        <ChatWindow />
+        <PrivateChatWindow chatId={state.privateChatId} />
       ) : (
         <div className='flex flex-col gap-6'>
           {/* interaction area */}

@@ -39,7 +39,7 @@ const Channel = ({ channelData } : ChannelProps) => {
 
     // redriect to the selected channel page.
     // router.push(`/chats/lobby/${channelData.id}`);
-    dispatch({ type: 'TOGGLE_CHANNEL_CHAT' });
+    dispatch({ type: 'ENTER_CHANNEL', channelId: channelData.id });
   };
 
   return (
