@@ -10,27 +10,29 @@ type WrapperProps = {
 }
 
 const Wrapper = ({ children }: WrapperProps) => {
-  const { state, dispatch } = useAppState();
+  const { state } = useAppState();
 
-  if (state.currentPage === 'in_channel') {
-    return (
-      <>
-        <InChannel />
-      </>
-    )
-  } else if (state.currentPage === 'private_chats') {
-    return (
-      <>
-        <PrivateChats />
-      </>
-    )
-  } else if (state.currentPage === 'pages') {
-    return (
-      <>
-        { children }
-      </>
-    )
+  let content;
+
+  switch (state.currentPage) {
+    case 'in_channel':
+      content = <InChannel />;
+      break;
+    case 'private_chats':
+      content = <PrivateChats />;
+      break;
+    case 'pages':
+      content = children;
+      break;
+    default:
+      content = null; // 예외 처리
   }
+
+  return (
+    <main className="h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6">
+      { content }
+    </main>
+  )
 };
 
 export default Wrapper;

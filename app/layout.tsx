@@ -26,9 +26,7 @@ export default async function RootLayout({ children }: Readonly<Props>) {
           relative w-screen h-screen
         `}>
           <Wrapper>
-            <main className="h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6">
-              { children }
-            </main>
+            { children }
           </Wrapper>
 
           <NavBar />
