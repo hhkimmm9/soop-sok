@@ -53,7 +53,7 @@ const PrivateChats = () => {
   return (
     <>
       { state.activatePrivateChat ? (
-        <PrivateChatWindow chatId={state.privateChatId} />
+        <PrivateChatWindow />
       ) : (
         <div className='flex flex-col gap-6'>
           {/* interaction area */}

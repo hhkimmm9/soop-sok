@@ -12,6 +12,9 @@ import Banner from '@/app/components/Banner';
 import ChatMessage from '@/app/components/ChatMessage';
 import MessageInput from '@/app/components/ChatWindow/MessageInput';
 import Features from '@/app/components/ChatWindow/Features';
+import CreateChat from '@/app/components/ChatWindow/CreateChat';
+import ChatList from '@/app/components/ChatWindow/ChatList';
+import UserList from '@/app/components/ChatWindow/UserList';
 
 import { TMessage } from '@/app/types';
 import {

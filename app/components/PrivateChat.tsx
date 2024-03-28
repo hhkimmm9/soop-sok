@@ -79,7 +79,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   };
 
   return (
-    <div onClick={() => { enterPrivateChat() }}>
+    <div onClick={enterPrivateChat}>
       <div className='
         bg-white border border-black px-3 py-2 rounded-lg
         flex gap-3 items-center

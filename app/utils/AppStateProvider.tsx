@@ -16,7 +16,6 @@ type TAvailableChannelComponents = (
   | 'chat'
 );
 
-type TAvailablePrivateChatComponents = ('chat_window' | 'features');
 
 interface AppState {
   currentPage: ('channel' | 'private_chat' | 'pages');
@@ -25,7 +24,6 @@ interface AppState {
   channelId: string;
   privateChatId: string;
   channelComponent: TAvailableChannelComponents;
-  privateChatComponent: TAvailablePrivateChatComponents;
 };
 
 type Action = (
@@ -34,13 +32,10 @@ type Action = (
   | { type: 'SET_TO_PAGES' }
   | { type: 'ENTER_CHANNEL', channelId: string }
   | { type: 'ENTER_PRIVATE_CHAT', privateChatId: string }
+  | { type: 'LEAVE_PRIVATE_CHAT' }
   | {
       type: 'CURRENT_CHANNEL_COMPONENT',
       channelComponent: TAvailableChannelComponents
-    }
-  | {
-      type: 'CURRENT_PRIVATE_CHAT_COMPONENT',
-      privateChatComponent: TAvailablePrivateChatComponents
     }
 );
 
@@ -50,8 +45,7 @@ const initialState: AppState = {
   activatePrivateChat: false,
   channelId: '',
   privateChatId: '',
-  channelComponent: 'lobby',
-  privateChatComponent: 'chat_window'
+  channelComponent: 'lobby'
 }
 
 const AppStateContext = createContext<{
@@ -79,15 +73,15 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
         activatePrivateChat: true,
         channelId: action.privateChatId
       };
+    case 'LEAVE_PRIVATE_CHAT':
+      return {
+        ...state,
+        activatePrivateChat: false,
+      };
     case 'CURRENT_CHANNEL_COMPONENT':
       return {
         ...state,
         channelComponent: action.channelComponent
-      };
-    case 'CURRENT_PRIVATE_CHAT_COMPONENT':
-      return {
-        ...state,
-        channelId: action.privateChatComponent
       };
     default:
       return state;
