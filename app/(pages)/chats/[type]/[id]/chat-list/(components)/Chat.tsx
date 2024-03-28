@@ -28,10 +28,10 @@ const Chat = ({ chat }: ChatProps) => {
 
     const statusRef = collection(db, 'status_board');
     await addDoc(statusRef, {
-      cId: chat.id,
+      cid: chat.id,
       displayName: signedInUser?.displayName,
       profilePicUrl: signedInUser?.photoURL,
-      uId: signedInUser?.uid
+      uid: signedInUser?.uid
     });
 
     router.push(`/chats/chat/${chat.id}`);

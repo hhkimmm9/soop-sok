@@ -103,7 +103,7 @@ const Profile = () => {
       <div className=''>
         { isMyProfile ? (
           <div className='w-72 flex flex-col gap-8'>
-            <Link href={`/users/${profile.uid}/profile/edit`}
+            <Link href={`/profile/${profile.uid}/edit`}
               className='
                 border rounded-lg py-3 bg-white
                 text-center

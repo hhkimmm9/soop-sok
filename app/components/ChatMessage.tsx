@@ -41,7 +41,7 @@ const Message = ({ message } : MessageProps) => {
   if (user) return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
-        <Link href={`/users/${user?.uid}/profile`}>
+        <Link href={`/profile/${user?.uid}`}>
           <Image
             src={`${user?.photoURL}`}
             alt=''

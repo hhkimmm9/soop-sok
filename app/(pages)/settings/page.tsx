@@ -34,7 +34,7 @@ const Settings = () => {
 
   return (
     <div className='flex flex-col gap-4 items-center'>
-      <Link href={`/users/${signedInUser?.uid}/profile`}
+      <Link href={`/profile/${signedInUser?.uid}`}
         className='
           w-full border rounded-lg p-2 bg-white text-center shadow-sm
       '>Profile</Link>

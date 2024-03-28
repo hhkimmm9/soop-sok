@@ -28,10 +28,10 @@ const Channel = ({ channelData } : ChannelProps) => {
 
     const statusRef = collection(db, 'status_board');
     await addDoc(statusRef, {
-      cId: channelData.id,
+      cid: channelData.id,
       displayName: signedInUser?.displayName,
       profilePicUrl: signedInUser?.photoURL,
-      uId: signedInUser?.uid
+      uid: signedInUser?.uid
     });
 
     // redriect to the selected channel page.

@@ -10,7 +10,7 @@ type FriendProps = {
 
 const Friend = ({ friend }: FriendProps ) => {
   return (
-    <Link href={`/users/${friend._id}/profile`}
+    <Link href={`/profile/${friend._id}`}
       className='
         border border-black bg-white p-4 rounded-lg shadow-sm
         flex gap-3

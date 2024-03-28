@@ -49,7 +49,7 @@ const ProfileEdit = () => {
             introduction,
           }
         })
-        router.push(`/users/${params.id}/profile`);
+        router.push(`/profile/${params.id}`);
       } catch (err) {
         console.error(err);
       }
