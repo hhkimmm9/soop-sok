@@ -17,7 +17,7 @@ type Action =
   | { type: 'SET_TO_PAGES' };
 
 const initialState: AppState = {
-  currentPage: 'in_channel'
+  currentPage: 'pages'
 }
 
 const AppStateContext = createContext<{
