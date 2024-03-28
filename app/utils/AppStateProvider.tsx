@@ -8,16 +8,22 @@ import React, {
 } from 'react';
 
 interface AppState {
-  currentPage: 'in_channel' | 'private_chats' | 'pages'
+  currentPage: 'in_channel' | 'private_chats' | 'pages';
+  activateChannelChat: boolean;
+  activatePrivateChat: boolean;
 };
 
 type Action =
   | { type: 'SET_TO_IN_CHANNEL' }
   | { type: 'SET_TO_PRIVATE_CHATS' }
-  | { type: 'SET_TO_PAGES' };
+  | { type: 'SET_TO_PAGES' }
+  | { type: 'TOGGLE_CHANNEL_CHAT' }
+  | { type: 'TOGGLE_PRIVATE_CHAT' };
 
 const initialState: AppState = {
-  currentPage: 'pages'
+  currentPage: 'pages',
+  activateChannelChat: false,
+  activatePrivateChat: false
 }
 
 const AppStateContext = createContext<{
@@ -33,6 +39,10 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return { ...state, currentPage: 'private_chats' }
     case 'SET_TO_PAGES':
       return { ...state, currentPage: 'pages' }
+    case 'TOGGLE_CHANNEL_CHAT':
+      return { ...state, activateChannelChat: !state.activateChannelChat }
+    case 'TOGGLE_PRIVATE_CHAT':
+      return { ...state, activatePrivateChat: !state.activatePrivateChat }
     default:
       return state
   }

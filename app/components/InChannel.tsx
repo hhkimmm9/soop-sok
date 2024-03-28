@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -8,6 +9,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 
+import ChatWindow from './ChatWindow';
 import Channel from '@/app/components/Channel';
 
 import { TChannel } from '@/app/types';
@@ -15,7 +17,7 @@ import { TChannel } from '@/app/types';
 const InChannel = () => {
   const [channels, setChannels] = useState<TChannel[]>([]);
   
-  // const [signedInUser, loading, error] = useAuthState(auth);
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     fetchChannels();
@@ -38,11 +40,17 @@ const InChannel = () => {
   };
 
   return (
-    <div className='flex flex-col gap-2'>
-      { channels.map(channel => (
-        <Channel key={channel.id} channelData={channel} />  
-      )) }
-    </div>
+    <>
+      { state.activateChannelChat ? (
+        <ChatWindow />
+      ) : (
+        <div className='flex flex-col gap-2'>
+          { channels.map(channel => (
+            <Channel key={channel.id} channelData={channel} />  
+          )) }
+        </div>
+      ) }
+    </>
   )
 };
 

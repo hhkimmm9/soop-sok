@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -10,6 +11,7 @@ import {
 } from 'firebase/firestore';
 
 import SearchBar from '@/app/components/SearchBar';
+import ChatWindow from '@/app/components/ChatWindow';
 import PrivateChat from '@/app/components/PrivateChat';
 
 import { TUser, TPrivateChat } from '@/app/types';
@@ -17,6 +19,8 @@ import { TUser, TPrivateChat } from '@/app/types';
 const PrivateChats = () => {
   const [user, setUser] = useState<TUser>();
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>();
+
+  const { state, dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
@@ -47,21 +51,26 @@ const PrivateChats = () => {
   }, [signedInUser]);
 
   return (
-    <div className='flex flex-col gap-6'>
-      {/* interaction area */}
-      <SearchBar
-        goBack={() => {}}
-        onSubmit={(searchQuery: string) => console.log(searchQuery) }
-      />
+    <>
+      { state.activatePrivateChat ? (
+        <ChatWindow />
+      ) : (
+        <div className='flex flex-col gap-6'>
+          {/* interaction area */}
+          <SearchBar
+            goBack={() => {}}
+            onSubmit={(searchQuery: string) => console.log(searchQuery) }
+          />
 
-      {/* private chats */}
-      <div className='flex flex-col gap-2'>
-        { privateChats?.map((privateChat: TPrivateChat) => (
-          <PrivateChat key={privateChat.id} privateChat={privateChat} />
-        ))}
-      </div>
-        
-    </div>
+          {/* private chats */}
+          <div className='flex flex-col gap-2'>
+            { privateChats?.map((privateChat: TPrivateChat) => (
+              <PrivateChat key={privateChat.id} privateChat={privateChat} />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

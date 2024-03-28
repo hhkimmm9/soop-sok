@@ -1,4 +1,5 @@
 import { useRouter } from 'next/navigation';
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -14,6 +15,8 @@ type ChannelProps = {
 
 const Channel = ({ channelData } : ChannelProps) => {
   const router = useRouter();
+
+  const { dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
@@ -35,7 +38,8 @@ const Channel = ({ channelData } : ChannelProps) => {
     });
 
     // redriect to the selected channel page.
-    router.push(`/chats/lobby/${channelData.id}`);
+    // router.push(`/chats/lobby/${channelData.id}`);
+    dispatch({ type: 'TOGGLE_CHANNEL_CHAT' });
   };
 
   return (

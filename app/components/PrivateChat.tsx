@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAppState } from '@/app/utils/AppStateProvider';
+
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -14,7 +16,6 @@ import {
 } from 'firebase/firestore';
 
 import { TMessage, TPrivateChat, TUser } from '@/app/types';
-
 import { formatTimeAgo } from '@/app/utils/utils';
 
 type PrivateChatProps = {
@@ -24,6 +25,9 @@ type PrivateChatProps = {
 const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   const [toUser, setToUser] = useState<TUser>();
   const [latestMessage, setLatestMessage] = useState<TMessage>();
+  const [activateChatWindow, setActivateChatWindow] = useState(false);
+
+  const { dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
@@ -70,8 +74,12 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
     fetchLatestMessage();
   }, [privateChat.id]);
 
+  const enterPrivateChat = () => {
+    dispatch({ type: 'TOGGLE_PRIVATE_CHAT' });
+  };
+
   return (
-    <Link href={`/chats/dm/${privateChat.id}`}>
+    <div onClick={() => { enterPrivateChat() }}>
       <div className='
         bg-white border border-black px-3 py-2 rounded-lg
         flex gap-3 items-center
@@ -107,7 +115,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   )
 }
 
