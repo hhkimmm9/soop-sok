@@ -17,11 +17,11 @@ import { TMessage, TPrivateChat, TUser } from '@/app/types';
 
 import { formatTimeAgo } from '@/app/utils/utils';
 
-type DirectMessageProps = {
+type PrivateChatProps = {
   privateChat: TPrivateChat
 };
 
-const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
+const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   const [toUser, setToUser] = useState<TUser>();
   const [latestMessage, setLatestMessage] = useState<TMessage>();
 
@@ -33,10 +33,10 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
     const fetchToUser = async () => {
       if (signedInUser) {
         try {
-          const userId = privateChat.to === signedInUser.uid ?
+          const uid = privateChat.to === signedInUser.uid ?
             privateChat.from : privateChat.to;
   
-          const userSnapshot = await getDoc(doc(db, 'users', userId));
+          const userSnapshot = await getDoc(doc(db, 'users', uid));
           if (userSnapshot.exists()) {
             const data = { ...userSnapshot.data() } as TUser;
             setToUser(data);
@@ -111,4 +111,4 @@ const DirectMessage = ({ privateChat } : DirectMessageProps ) => {
   )
 }
 
-export default DirectMessage
+export default PrivateChat
