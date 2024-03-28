@@ -8,11 +8,15 @@ import {
   where, orderBy,
 } from 'firebase/firestore';
 
+import Banner from '@/app/components/Banner';
 import ChatMessage from '@/app/components/ChatMessage';
-import MessageInput from '@/app/(pages)/chats/(components)/MessageInput';
+import MessageInput from '@/app/components/ChatWindow/MessageInput';
 import Features from '@/app/components/ChatWindow/Features';
 
 import { TMessage } from '@/app/types';
+import {
+  Bars3Icon,
+} from '@heroicons/react/24/outline';
 
 type ChatWindowProps = {
   chatId: string;
@@ -20,7 +24,6 @@ type ChatWindowProps = {
 
 const ChatWindow = ({ chatId }: ChatWindowProps) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const [activateUserInput, setActivateUserInput] = useState(false);
 
   const { state, dispatch } = useAppState();
 
@@ -47,42 +50,42 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
   }, [realtime_messages]);
 
   return (
-    <div className='h-full flex flex-col gap-4'>
-      { state.channelComponent === 'lobby' && (
-        <>
-          <div className='
-            grow p-4 overflow-y-auto
-            border border-black rounded-lg bg-white
-            flex flex-col gap-5
-          '>
-            { messages.map((message: TMessage) => (
-              <ChatMessage key={message.id} message={message} />
-            ))}
-          </div>
-
-          <div className=''>
-            { activateUserInput ? (
-              <div className=''>
-                <MessageInput cancel={() => setActivateUserInput(false)} />
+    <div className='h-full grid grid-rows-12'>
+      <Banner />
+      <div className='row-start-2 row-span-11'>
+        <div className='h-full flex flex-col gap-4'>
+          { state.channelComponent === 'lobby' && (
+            <>
+              <div className='
+                grow p-4 overflow-y-auto
+                border border-black rounded-lg bg-white
+                flex flex-col gap-5
+              '>
+                { messages.map((message: TMessage) => (
+                  <ChatMessage key={message.id} message={message} />
+                ))}
               </div>
-            ) : (
-              <div className='grid grid-cols-2 gap-2'>
-                <button onClick={() => setActivateUserInput(true)}
-                  className='bg-white border border-black py-2 rounded-lg shadow-sm
-                '>Send a message</button>
+
+              <div className='flex justify-between gap-3'>
                 <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features'})}
-                  className='bg-white border border-black py-2 rounded-lg shadow-sm text-center
-                '>Other features</div>
+                  className='flex items-center border border-black p-2 rounded-lg bg-white'
+                >
+                  <Bars3Icon className='h-5 w-5' />
+                </div>
+                <div className='grow'>
+                  <MessageInput chatId={chatId} />
+                </div>
               </div>
-            )}
-          </div>
-        </>  
-      )}
+            </>  
+          )}
 
-      { state.channelComponent === 'features' && (
-        <Features />
-      ) }
+          { state.channelComponent === 'features' && (
+            <Features />
+          ) }
+        </div>
+      </div>
     </div>
+    
   )
 };
 

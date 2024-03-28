@@ -10,11 +10,11 @@ import {
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
-const MessageInputComponent = ({
-  cancel
-}: {
-  cancel: Function
-}) => {
+type MessageinputProps = {
+  chatId: string
+};
+
+const MessageInput = ({ chatId }: MessageinputProps) => {
   const [messageInput, setMessageInput] = useState('');
 
   const params = useParams();
@@ -29,7 +29,7 @@ const MessageInputComponent = ({
       const uid = signedInUser?.uid;
 
       await addDoc(collection(db, 'messages'), {
-        chatId: params.id,
+        chatId: chatId,
         createdAt: serverTimestamp(),
         sentBy: uid,
         text: messageInput
@@ -39,40 +39,17 @@ const MessageInputComponent = ({
     }
   };
 
-  const inactivateMessageInput = () => {
-    setMessageInput('');
-    cancel();
-  };
-
   return (
     <div className='flex gap-3 items-center'>
-      { params.type !== 'dm' && (
-        <button onClick={() => inactivateMessageInput()}
-          className='
-            h-9 border border-black rounded-lg px-1.5 py-1
-        '>
-          <ChevronDoubleLeftIcon className='h-5 w-5' />
-        </button>
-      )}
 
       {/* search input field */}
-      <div className='
-        grow
-        bg-white
-        border
-        border-black
-        rounded-lg
-        p-0.5
-      '>
+      <div className='grow p-0.5 rounded-lg border border-black bg-white'>
         <form onSubmit={(e) => handleSubmit(e)}
-          className='
-          h-8 flex items-center justify-between
-        '>
+          className='h-8 flex items-center justify-between'>
           <input type="text"
             value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
-            className='
-              grow px-2 py-1 outline-none
-          '/>
+            className='grow px-2 py-1 outline-none'
+          />
           <button type='submit' className='mr-2'>
             <PaperAirplaneIcon className='h-5 w-5'/>
           </button>
@@ -82,4 +59,4 @@ const MessageInputComponent = ({
   )
 };
 
-export default MessageInputComponent;
+export default MessageInput;

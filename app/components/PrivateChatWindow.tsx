@@ -9,10 +9,13 @@ import {
 } from 'firebase/firestore';
 
 import ChatMessage from '@/app/components/ChatMessage';
-import MessageInput from '@/app/(pages)/chats/(components)/MessageInput';
+import MessageInput from '@/app/components/ChatWindow/MessageInput';
 import Features from '@/app/components/ChatWindow/Features';
 
 import { TMessage } from '@/app/types';
+import {
+  Bars3Icon,
+} from '@heroicons/react/24/outline';
 
 type ChatWindowProps = {
   chatId: string;
@@ -59,8 +62,15 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
             ))}
           </div>
 
-          <div className=''>
-            <MessageInput cancel={() => {}} />
+          <div className='flex justify-between gap-3'>
+            <div onClick={() => dispatch({ type: 'CURRENT_PRIVATE_CHAT_COMPONENT', privateChatComponent: 'features'})}
+              className='flex items-center border border-black p-2 rounded-lg bg-white'
+            >
+              <Bars3Icon className='h-5 w-5' />
+            </div>
+            <div className='grow'>
+              <MessageInput chatId={chatId} />
+            </div>
           </div>
         </>  
       )}
