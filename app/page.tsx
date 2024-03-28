@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -15,7 +16,6 @@ import {
   useSignInWithApple
 } from 'react-firebase-hooks/auth';
 import Cookies from 'universal-cookie';
-
 import SignInWithGoogle from '@/app/components/(SignInWith)/SignInWithGoogle';
 
 export default function Home() {
@@ -25,6 +25,8 @@ export default function Home() {
   const [signedInUser, loading, error] = useAuthState(auth);
 
   const router = useRouter();
+
+  const { dispatch } = useAppState();
 
   const cookies = new Cookies();
 
@@ -70,7 +72,7 @@ export default function Home() {
           });
         }
 
-        if (!errorGoogle) router.push('/channels');
+        if (!errorGoogle) dispatch({ type: 'SET_TO_IN_CHANNEL' });
       }
     }
   };
