@@ -11,12 +11,12 @@ import {
   getDoc, getDocs, updateDoc, deleteDoc
 } from 'firebase/firestore';
 
-import Banner from '@/app/components/Banner';
-import ChatMessage from '@/app/components/ChatMessage';
-import MessageInput from '@/app/components/ChatWindow/MessageInput';
-import CreateChat from '@/app/components/ChatWindow/CreateChat';
-import ChatList from '@/app/components/ChatWindow/ChatList';
-import UserList from '@/app/components/ChatWindow/UserList';
+import Banner from '@/app/components/chat-window/Banner';
+import ChatMessage from '@/app/components/chat-window/ChatMessage';
+import MessageInput from '@/app/components/chat-window/MessageInput';
+import CreateChat from '@/app/components/chat-window/CreateChat';
+import ChatList from '@/app/components/chat-window/ChatList';
+import UserList from '@/app/components/chat-window/UserList';
 
 import { TMessage } from '@/app/types';
 import {
@@ -34,8 +34,6 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
   const { state, dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
-
-  var channelId: string | null = localStorage.getItem('channelId');
 
   const [realtime_messages] = useCollection(
     query(collection(db, 'messages'),
@@ -60,30 +58,25 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
   }, [realtime_messages]);
 
   useEffect(() => {
-    if (state.chatId.length == 0) {
-      console.log('channelId: ', state.channelId);
-      setCid(state.channelId);
-    } else {
-      console.log('chatId: ', state.chatId);
-      setCid(state.chatId);
-    }
-  }, [state.channelId, state.chatId]);
+    console.log('channelId: ', state.channelId);
+    setCid(state.channelId);
+  }, [state.channelId]);
   
 
   const leaveChat = async () => {
     if (signedInUser) {
-      // try {
-      //   const channelRef = doc(db, 'channels', cid);
-      //   const querySnapshot = await getDoc(channelRef);
-      //   const data = querySnapshot.data()
-      //   if (data) {
-      //     await updateDoc(channelRef, {
-      //       numUsers: data.numUsers - 1
-      //     });
-      //   }
-      // } catch (err) {
-      //   console.error(err);
-      // }
+      try {
+        const channelRef = doc(db, 'channels', cid);
+        const querySnapshot = await getDoc(channelRef);
+        const data = querySnapshot.data()
+        if (data) {
+          await updateDoc(channelRef, {
+            numUsers: data.numUsers - 1
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
       
       try {
         // find the document id
@@ -97,13 +90,21 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
         if (!statusSnapshot.empty) {
           const deleteRef = doc(db, 'status_board', statusSnapshot.docs[0].id);
           await deleteDoc(deleteRef);
+  
+          // if you were in a chat, leave the chat
+          if (state.chatId.length > 0) {
+            dispatch({ type: 'LEAVE_CHAT' });
+            dispatch({ type: 'ENTER_CHANNEL', channelId: state.channelId });
+          }
+          // if you were in a channel, leave the channel
+          else {
+            dispatch({ type: 'LEAVE_CHANNEL' });
+          }
         }
         else {
           // Handle the case where no documents match the query
           // You might want to redirect or display a message to the user
         }
-
-        dispatch({ type: 'LEAVE_CHAT' });
       } catch(error) {
         console.error('An error occurred:', error);
       }
@@ -115,7 +116,7 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
       <Banner />
       <div className='row-start-2 row-span-11'>
         <div className='h-full flex flex-col gap-4'>
-          { state.channelComponent === 'chat' && (
+          { state.channelComponent === 'lobby' && (
             <>
               <div className='
                 grow p-4 overflow-y-auto
@@ -128,7 +129,7 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
               </div>
 
               <div className='flex justify-between gap-3'>
-                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features'})}
+                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
                   className='flex items-center border border-black p-2 rounded-lg bg-white'
                 >
                   <Bars3Icon className='h-5 w-5' />
@@ -147,6 +148,16 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
                 border border-black rounded-lg bg-white
               '>
                 <div className='grid grid-cols-2 gap-4'>
+                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'create_chat' })}
+                    className='
+                      h-min py-8 flex justify-center items-center
+                      border border-black rounded-lg
+                  '>Create Chat</div>
+                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat_list' })}
+                    className='
+                      h-min py-8 flex justify-center items-center
+                      border border-black rounded-lg
+                  '>Chat List</div>
                   <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' })}
                     className='
                       h-min py-8 flex justify-center items-center
@@ -160,12 +171,20 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
                 </div>
               </div>
         
-              <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat' })}
+              <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'lobby' })}
                 className='
                 w-full py-2 bg-white
                 border border-black rounded-lg shadow-sm text-center
               '>Cancel</div>
             </div>
+          )}
+
+          { state.channelComponent === 'create_chat' && (
+            <CreateChat />
+          )}
+
+          { state.channelComponent === 'chat_list' && (
+            <ChatList />
           )}
 
           { state.channelComponent === 'user_list' && (

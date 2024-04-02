@@ -1,5 +1,5 @@
 import React from 'react';
-import Friend from '@/app/pages/friends/(components)/Friend';
+import Friend from '@/app/pages/friends/components/Friend';
 
 const Friends = () => {
   const friends = [

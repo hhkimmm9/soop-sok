@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore'
 import SearchBar from '@/app/components/SearchBar';
 import SortOptions from '@/app/components/SortOptions';
-import Chat from '@/app/components/ChatWindow/Chat';
+import Chat from '@/app/components/chat-window/Chat';
 import { TChat } from '@/app/types'
 
 const ChatList = () => {

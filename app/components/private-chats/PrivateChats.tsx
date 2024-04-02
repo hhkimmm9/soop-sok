@@ -11,8 +11,8 @@ import {
 } from 'firebase/firestore';
 
 import SearchBar from '@/app/components/SearchBar';
-import PrivateChatWindow from '@/app/components/PrivateChatWindow';
-import PrivateChat from '@/app/components/PrivateChat';
+import PrivateChatWindow from '@/app/components/private-chats/PrivateChatWindow';
+import PrivateChat from '@/app/components/private-chats/PrivateChat';
 
 import { TUser, TPrivateChat } from '@/app/types';
 

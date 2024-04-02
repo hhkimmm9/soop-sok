@@ -8,8 +8,8 @@ import {
   where, orderBy,
 } from 'firebase/firestore';
 
-import ChatMessage from '@/app/components/ChatMessage';
-import MessageInput from '@/app/components/ChatWindow/MessageInput';
+import ChatMessage from '@/app/components/chat-window/ChatMessage';
+import MessageInput from '@/app/components/chat-window/MessageInput';
 
 import { TMessage } from '@/app/types';
 import {

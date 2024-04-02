@@ -9,9 +9,9 @@ import {
   getDocs,
 } from 'firebase/firestore';
 
-import ChannelChatWindow from '@/app/components/ChannelChatWindow';
-import ChatChatWindow from '@/app/components/ChatChatWindow';
-import Channel from '@/app/components/Channel';
+import ChannelChatWindow from '@/app/components/channels/ChannelChatWindow';
+import ChatChatWindow from '@/app/components/channels/ChatChatWindow';
+import Channel from '@/app/components/channels/Channel';
 
 import { TChannel } from '@/app/types';
 

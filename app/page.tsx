@@ -16,7 +16,7 @@ import {
   useSignInWithApple
 } from 'react-firebase-hooks/auth';
 import Cookies from 'universal-cookie';
-import SignInWithGoogle from '@/app/components/(SignInWith)/SignInWithGoogle';
+import SignInWithGoogle from '@/app/components/authorization/SignInWithGoogle';
 
 export default function Home() {
   const [signInWithGoogle, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);
