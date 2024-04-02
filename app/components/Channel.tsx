@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation';
 import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -14,8 +13,6 @@ type ChannelProps = {
 };
 
 const Channel = ({ channelData } : ChannelProps) => {
-  const router = useRouter();
-
   const { dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
@@ -27,8 +24,6 @@ const Channel = ({ channelData } : ChannelProps) => {
       numUsers: channelData.numUsers + 1
     })
 
-    // console.log(signedInUser)
-
     const statusRef = collection(db, 'status_board');
     await addDoc(statusRef, {
       cid: channelData.id,
@@ -38,7 +33,6 @@ const Channel = ({ channelData } : ChannelProps) => {
     });
 
     // redriect to the selected channel page.
-    // router.push(`/chats/lobby/${channelData.id}`);
     dispatch({ type: 'ENTER_CHANNEL', channelId: channelData.id });
   };
 

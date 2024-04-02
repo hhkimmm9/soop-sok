@@ -1,8 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -12,19 +11,19 @@ import {
 } from 'firebase/firestore'
 import SearchBar from '@/app/components/SearchBar';
 import SortOptions from '@/app/components/SortOptions';
-import Chat from '@/app/(pages)/chats/[type]/[id]/chat-list/(components)/Chat';
+import Chat from '@/app/components/ChatWindow/Chat';
 import { TChat } from '@/app/types'
 
-const ChatListPage = () => {
+const ChatList = () => {
   const [chats, setChats] = useState<TChat[]>([]);
   const [activateSearch, setActivateSearch] = useState(false);
   const [activateSort, setActivateSort] = useState(false);
-
-  const params = useParams();
+  
+  const { state, dispatch } = useAppState();
 
   const [realtime_chats, loading, error] = useCollection(
     query(collection(db, 'chats'),
-      where('channelId', '==', params.id),
+      where('channelId', '==', state.channelId),
       orderBy('createdAt', 'asc')
     ), {
       snapshotListenOptions: { includeMetadataChanges: true },
@@ -83,13 +82,13 @@ const ChatListPage = () => {
         )) }
       </div>
 
-      <Link href={`/chats/${params.type}/${params.id}/features`}
+      <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
         className='
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
-      '>Cancel</Link>
+      '>Cancel</div>
     </div>
   )
-};
+}
 
-export default ChatListPage;
+export default ChatList

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAppState } from '@/app/utils/AppStateProvider';
 
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -23,6 +24,8 @@ const Profile = () => {
 
   const { id } = useParams();
   const router = useRouter();
+
+  const { dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
@@ -74,10 +77,12 @@ const Profile = () => {
         createdAt: serverTimestamp(),
       });
       // redirect the user to the newly created dm chat room.
-      router.push(`/chats/dm/${docRef.id}`);
+      dispatch({ type: 'SET_TO_PRIVATE_CHAT' })
+      dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: docRef.id });
     } else {
       // redirect the user to the dm chat room.
-      router.push(`/chats/dm/${querySnapshot.docs[0].id}`);
+      dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
+      dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: querySnapshot.docs[0].id });
     }
   };
 

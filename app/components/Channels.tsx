@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 
 import ChannelChatWindow from '@/app/components/ChannelChatWindow';
+import ChatChatWindow from '@/app/components/ChatChatWindow';
 import Channel from '@/app/components/Channel';
 
 import { TChannel } from '@/app/types';
@@ -20,38 +21,47 @@ const InChannel = () => {
   const { state, dispatch } = useAppState();
 
   useEffect(() => {
+    const fetchChannels = async () => {
+      var channels: TChannel[] = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, 'channels'));
+        querySnapshot.forEach((doc) => {
+          channels.push({
+            id: doc.id,
+            ...doc.data()
+          } as TChannel);
+        });
+        setChannels(channels);
+      } catch (err) {
+        console.error(err);
+      };
+    };
     fetchChannels();
   }, [])
 
-  const fetchChannels = async () => {
-    var channels: TChannel[] = [];
-    try {
-      const querySnapshot = await getDocs(collection(db, 'channels'));
-      querySnapshot.forEach((doc) => {
-        channels.push({
-          id: doc.id,
-          ...doc.data()
-        } as TChannel);
-      });
-      setChannels(channels);
-    } catch (err) {
-      console.error(err);
-    };
-  };
-
-  return (
-    <>
-      { state.activateChannelChat ? (
+  if (state.activateChannelChat) {
+    return (
+      <>
         <ChannelChatWindow chatId={state.channelId} />
-      ) : (
+      </>
+    )
+  } else if (state.activateChatChat) {
+    return (
+      <>
+        <ChatChatWindow chatId={state.chatId} />
+      </>
+    )
+  } else {
+    return (
+      <>
         <div className='flex flex-col gap-2'>
           { channels.map(channel => (
             <Channel key={channel.id} channelData={channel} />  
           )) }
         </div>
-      ) }
-    </>
-  )
+      </>
+    )
+  }
 };
 
 export default InChannel;

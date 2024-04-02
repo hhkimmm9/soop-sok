@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useAppState } from '@/app/utils/AppStateProvider';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,16 +16,26 @@ import {
 
 import { TUser } from '@/app/types';
 
-const OnlineUsersPage = () => {
+const UserList = () => {
   const [activeUsers, setActiveUsers] = useState([]);
 
-  const params = useParams();
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
+    // TODO: it needs to be done real-time.
     const fetchActiveUsers = async () => {
       const activeUserContainer: any = [];
+      var cid
+      if (state.activateChannelChat) {
+        cid = state.channelId
+      }
+      else if (state.activateChatChat) {
+        cid = state.chatId
+      }
+
+      console.log(cid)
       const activeUserQuery = query(collection(db, 'status_board'),
-        where('cId', '==', params.id)
+        where('cid', '==', cid)
       );
       const activeUserSnapshot = await getDocs(activeUserQuery);
 
@@ -40,7 +51,7 @@ const OnlineUsersPage = () => {
       }
     };
     fetchActiveUsers()
-  }, [params.id]);
+  }, []);
   
   return (
     <div className='h-full flex flex-col gap-4'>
@@ -60,27 +71,26 @@ const OnlineUsersPage = () => {
                   width={52} height={52}
                   className='rounded-full'
                 />
-
                 <p>{ activeUser.displayName }</p>
               </div>
 
-              {/* TODO: uId here is not their document id. */}
-              <Link href={`/users/${activeUser.uId}/profile`} className='
-                mr-4 border px-2 py-1 rounded-lg
+              <Link href={`/profile/${activeUser.uid}`}
+                onClick={() => dispatch({ type: 'SET_TO_PAGES' })}
+                className='
+                  mr-4 border px-2 py-1 rounded-lg
               '>Profile</Link>
-
             </li>
           )) }
         </ul>
       </div>
 
-      <Link href={`/chats/${params.type}/${params.id}/features`}
+      <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
         className='
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
-      '>Cancel</Link>
+      '>Cancel</div>
     </div>
   )
-};
+}
 
-export default OnlineUsersPage;
+export default UserList

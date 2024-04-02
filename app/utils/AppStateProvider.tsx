@@ -20,8 +20,10 @@ type TAvailableChannelComponents = (
 interface AppState {
   currentPage: ('channel' | 'private_chat' | 'pages');
   activateChannelChat: boolean;
+  activateChatChat: boolean;
   activatePrivateChat: boolean;
   channelId: string;
+  chatId: string;
   privateChatId: string;
   channelComponent: TAvailableChannelComponents;
 };
@@ -31,7 +33,10 @@ type Action = (
   | { type: 'SET_TO_PRIVATE_CHAT' }
   | { type: 'SET_TO_PAGES' }
   | { type: 'ENTER_CHANNEL', channelId: string }
+  | { type: 'ENTER_CHAT', chatId: string }
   | { type: 'ENTER_PRIVATE_CHAT', privateChatId: string }
+  | { type: 'LEAVE_CHANNEL' }
+  | { type: 'LEAVE_CHAT' }
   | { type: 'LEAVE_PRIVATE_CHAT' }
   | {
       type: 'CURRENT_CHANNEL_COMPONENT',
@@ -42,8 +47,10 @@ type Action = (
 const initialState: AppState = {
   currentPage: 'pages',
   activateChannelChat: false,
+  activateChatChat: false,
   activatePrivateChat: false,
   channelId: '',
+  chatId: '',
   privateChatId: '',
   channelComponent: 'lobby'
 }
@@ -65,18 +72,42 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         activateChannelChat: true,
+        channelComponent: 'lobby',
         channelId: action.channelId
+      };
+    case 'ENTER_CHAT':
+      return {
+        ...state,
+        activateChannelChat: false,
+        activateChatChat: true,
+        channelComponent: 'chat',
+        chatId: action.chatId
       };
     case 'ENTER_PRIVATE_CHAT':
       return {
         ...state,
         activatePrivateChat: true,
-        channelId: action.privateChatId
+        privateChatId: action.privateChatId
+      };
+    case 'LEAVE_CHANNEL':
+      return {
+        ...state,
+        activateChannelChat: false,
+        channelId: '',
+      };
+    case 'LEAVE_CHAT':
+      return {
+        ...state,
+        activateChannelChat: true,
+        activateChatChat: false,
+        channelComponent: 'lobby',
+        chatId: ''
       };
     case 'LEAVE_PRIVATE_CHAT':
       return {
         ...state,
         activatePrivateChat: false,
+        privateChatId: ''
       };
     case 'CURRENT_CHANNEL_COMPONENT':
       return {

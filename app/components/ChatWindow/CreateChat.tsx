@@ -1,48 +1,44 @@
 'use client';
 
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
-  doc,
   addDoc,
-  getDocs,
-  updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
 
-const CreateChatPage = () => {  
+const CreateChat = () => {
   const [capacity, setCapacity] = useState(2);
   const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
-  const params = useParams();
-  const router = useRouter();
+  const { state, dispatch } = useAppState();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // validate the inputs
     if (auth.currentUser && name.length > 0) {
-      // const uid = auth.currentUser.uid;
+      try {
+        const chatRef = await addDoc(collection(db, 'chats'), {
+          capacity,
+          channelId: state.channelId,
+          createdAt: serverTimestamp(),
+          isPrivate,
+          name,
+          numUsers: 1,
+          password
+        });
   
-      const chatRef = await addDoc(collection(db, 'chats'), {
-        capacity,
-        channelId: params.id,
-        createdAt: serverTimestamp(),
-        isPrivate,
-        name,
-        numUsers: 1,
-        password
-      })
-
-      if (chatRef) {
-        localStorage.setItem('channelId', params.id.toString())
-        router.push(`/chats/chat/${chatRef.id}`);
+        if (chatRef) {
+          dispatch({ type: 'ENTER_CHAT', chatId: chatRef.id });
+        }
+      } catch (err) {
+        console.error(err);
       }
     };
   };
@@ -98,7 +94,12 @@ const CreateChatPage = () => {
         </div>
 
         {/* password */}
-        <div className={`${isPrivate ? 'opacity-100 pointer-events-auto ease-in duration-300' : 'opacity-0 pointer-events-none ease-in duration-300'} flex flex-col gap-2`}>
+        <div className={`flex flex-col gap-2
+          ${isPrivate ?
+            'opacity-100 pointer-events-auto ease-in duration-300' :
+            'opacity-0 pointer-events-none ease-in duration-300'
+          }`
+        }>
           <label htmlFor="password">Password</label>
           <input type="password" id='password' name='password'
             value={ password } onChange={(e) => setPassword(e.target.value)}
@@ -108,19 +109,20 @@ const CreateChatPage = () => {
       </div>
 
       <div className='grid grid-cols-2 gap-2.5'>
-        <Link href={`/chats/${params.type}/${params.id}/features`}
+        <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
           className='
           w-full py-2 bg-white
           border border-black rounded-lg shadow-sm text-center
-        '>Go Back</Link>
+        '>Cancel</div>
 
-        <button type='submit' className='
-          w-full py-2 bg-white
-          border border-black rounded-lg shadow-sm
+        <button type='submit'
+          className='
+            w-full py-2 bg-white
+            border border-black rounded-lg shadow-sm
         '>Create</button>
       </div>
     </form>
   )
 };
 
-export default CreateChatPage;
+export default CreateChat;

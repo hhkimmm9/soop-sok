@@ -1,13 +1,9 @@
 'use client';
 
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useAppState } from '@/app/utils/AppStateProvider';
 import { auth, db } from '@/app/utils/firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  collection, doc,
-  addDoc, updateDoc,
-} from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 
 import { formatTimeAgo } from '@/app/utils/utils';
 import { TChat } from '@/app/types'
@@ -17,15 +13,11 @@ type ChatProps = {
 };
 
 const Chat = ({ chat }: ChatProps) => {
-  const params = useParams();
-  const router = useRouter();
+  const { dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
   const enterChat = async () => {
-    // store channel id
-    localStorage.setItem('channelId', params.id.toString());
-
     const statusRef = collection(db, 'status_board');
     await addDoc(statusRef, {
       cid: chat.id,
@@ -34,7 +26,7 @@ const Chat = ({ chat }: ChatProps) => {
       uid: signedInUser?.uid
     });
 
-    router.push(`/chats/chat/${chat.id}`);
+    dispatch({ type: 'ENTER_CHAT', chatId: chat.id });
   };
 
   return (
