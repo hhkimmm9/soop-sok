@@ -4,10 +4,8 @@ import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  collection,
-  getDocs,
-} from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 
 import ChannelChatWindow from '@/components/channels/ChannelChatWindow';
 import ChatChatWindow from '@/components/channels/ChatChatWindow';
@@ -20,24 +18,26 @@ const InChannel = () => {
   
   const { state, dispatch } = useAppState();
 
+  const [realtime_channels, loading, error] = useCollection(
+    query(collection(db, 'channels'),
+      orderBy('orderId', 'asc')
+    ), {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
   useEffect(() => {
-    const fetchChannels = async () => {
-      var channels: TChannel[] = [];
-      try {
-        const querySnapshot = await getDocs(collection(db, 'channels'));
-        querySnapshot.forEach((doc) => {
-          channels.push({
-            id: doc.id,
-            ...doc.data()
-          } as TChannel);
-        });
-        setChannels(channels);
-      } catch (err) {
-        console.error(err);
-      };
-    };
-    fetchChannels();
-  }, [])
+    const channels: TChannel[] = [];
+    if (realtime_channels && !realtime_channels.empty) {
+      realtime_channels.forEach((doc) => {
+        channels.push({
+          id: doc.id,
+          ...doc.data()
+        } as TChannel);
+      });
+      setChannels(channels);
+    }
+  }, [realtime_channels])
 
   if (state.activateChannelChat) {
     return (

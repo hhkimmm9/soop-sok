@@ -6,9 +6,8 @@ import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
-  collection, doc, query,
-  where, limit,
-  setDoc, getDoc, getDocs, updateDoc,
+  doc,
+  setDoc, getDoc, updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
 import {

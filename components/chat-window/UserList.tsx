@@ -8,11 +8,8 @@ import Image from 'next/image';
 
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  collection, doc, query,
-  where,
-  getDocs,
-} from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 import { TUser } from '@/types';
 
@@ -21,37 +18,35 @@ const UserList = () => {
 
   const { state, dispatch } = useAppState();
 
+  var cid;
+  if (state.activateChannelChat) {
+    cid = state.channelId
+  }
+  else if (state.activateChatChat) {
+    cid = state.chatId
+  }
+
+  const [realtime_users, loading, error] = useCollection(
+    query(collection(db, 'status_board'),
+      where('cid', '==', cid)
+    ), {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
   useEffect(() => {
-    // TODO: it needs to be done real-time.
-    const fetchActiveUsers = async () => {
-      const activeUserContainer: any = [];
-      var cid
-      if (state.activateChannelChat) {
-        cid = state.channelId
-      }
-      else if (state.activateChatChat) {
-        cid = state.chatId
-      }
-
-      console.log(cid)
-      const activeUserQuery = query(collection(db, 'status_board'),
-        where('cid', '==', cid)
-      );
-      const activeUserSnapshot = await getDocs(activeUserQuery);
-
-      if (!activeUserSnapshot.empty) {
-        activeUserSnapshot.forEach((doc) => {
-          activeUserContainer.push({
-            id: doc.id,
-            ...doc.data()
-          })
+    const activeUserContainer: any = [];
+    
+    if (realtime_users && !realtime_users.empty) {
+      realtime_users.forEach((doc) => {
+        activeUserContainer.push({
+          id: doc.id,
+          ...doc.data()
         })
-        // console.log(activeUserContainer)
-        setActiveUsers(activeUserContainer)
-      }
-    };
-    fetchActiveUsers()
-  }, []);
+      })
+      setActiveUsers(activeUserContainer)
+    }
+  }, [realtime_users]);
   
   return (
     <div className='h-full flex flex-col gap-4'>

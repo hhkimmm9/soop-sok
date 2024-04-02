@@ -14,8 +14,6 @@ import {
 import Banner from '@/components/chat-window/Banner';
 import ChatMessage from '@/components/chat-window/ChatMessage';
 import MessageInput from '@/components/chat-window/MessageInput';
-import CreateChat from '@/components/chat-window/CreateChat';
-import ChatList from '@/components/chat-window/ChatList';
 import UserList from '@/components/chat-window/UserList';
 
 import { TMessage } from '@/types';

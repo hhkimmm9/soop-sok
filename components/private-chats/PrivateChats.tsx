@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, doc,
   query, or, where,
@@ -17,38 +18,35 @@ import PrivateChat from '@/components/private-chats/PrivateChat';
 import { TUser, TPrivateChat } from '@/types';
 
 const PrivateChats = () => {
-  const [user, setUser] = useState<TUser>();
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>();
 
   const { state, dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
+  const [realtime_chats, loading, error] = useCollection(
+    query(collection(db, 'private_chats'),
+      or(
+        where('from', '==', signedInUser?.uid),
+        where('to', '==', signedInUser?.uid),
+      )
+    ), {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
   useEffect(() => {
-    const fetchMessages = async () => {
-      const messageContainer: TPrivateChat[] = []
-      if (signedInUser) {
-        // fetch DM messages associated with the currently signed-in user.
-        const chatQuery = query(collection(db, 'private_chats'),
-          or(
-            where('from', '==', signedInUser.uid),
-            where('to', '==', signedInUser.uid),
-          )
-        );
-        const chatSnapshot = await getDocs(chatQuery);
-        if (!chatSnapshot.empty) {
-          chatSnapshot.forEach((doc) => {
-            messageContainer.push({
-              id: doc.id,
-              ...doc.data()
-            } as TPrivateChat)
-          });
-          setPrivateChats(messageContainer);
-        }
-      }
-    };
-    fetchMessages();
-  }, [signedInUser]);
+    const messageContainer: TPrivateChat[] = []
+    if (realtime_chats && !realtime_chats.empty) {
+      realtime_chats.forEach((doc) => {
+        messageContainer.push({
+          id: doc.id,
+          ...doc.data()
+        } as TPrivateChat)
+      });
+      setPrivateChats(messageContainer);
+    }
+  }, [realtime_chats]);
 
   return (
     <>

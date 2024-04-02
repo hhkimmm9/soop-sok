@@ -5,9 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  doc, getDoc,
-} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
 import { TUser, TMessage } from '@/types';
 
