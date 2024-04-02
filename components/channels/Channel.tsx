@@ -1,12 +1,12 @@
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc,
   addDoc, updateDoc,
 } from 'firebase/firestore';
 
-import { TChannel } from '@/app/types';
+import { TChannel } from '@/types';
 
 type ChannelProps = {
   channelData: TChannel

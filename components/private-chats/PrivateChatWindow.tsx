@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
@@ -8,10 +8,10 @@ import {
   where, orderBy,
 } from 'firebase/firestore';
 
-import ChatMessage from '@/app/components/chat-window/ChatMessage';
-import MessageInput from '@/app/components/chat-window/MessageInput';
+import ChatMessage from '@/components/chat-window/ChatMessage';
+import MessageInput from '@/components/chat-window/MessageInput';
 
-import { TMessage } from '@/app/types';
+import { TMessage } from '@/types';
 import {
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';

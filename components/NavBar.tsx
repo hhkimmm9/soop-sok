@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useAppState } from '@/app/utils/AppStateProvider';
+import { useAppState } from '@/utils/AppStateProvider';
 
 import {
   QueueListIcon,

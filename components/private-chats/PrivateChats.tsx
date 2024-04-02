@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc,
@@ -10,11 +10,11 @@ import {
   getDoc, getDocs
 } from 'firebase/firestore';
 
-import SearchBar from '@/app/components/SearchBar';
-import PrivateChatWindow from '@/app/components/private-chats/PrivateChatWindow';
-import PrivateChat from '@/app/components/private-chats/PrivateChat';
+import SearchBar from '@/components/SearchBar';
+import PrivateChatWindow from '@/components/private-chats/PrivateChatWindow';
+import PrivateChat from '@/components/private-chats/PrivateChat';
 
-import { TUser, TPrivateChat } from '@/app/types';
+import { TUser, TPrivateChat } from '@/types';
 
 const PrivateChats = () => {
   const [user, setUser] = useState<TUser>();

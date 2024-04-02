@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useAppState } from '@/app/utils/AppStateProvider';
+import { useAppState } from '@/utils/AppStateProvider';
 
-import { auth, db } from '@/app/utils/firebase';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc,
@@ -15,8 +15,8 @@ import {
   getDoc, getDocs
 } from 'firebase/firestore';
 
-import { TMessage, TPrivateChat, TUser } from '@/app/types';
-import { formatTimeAgo } from '@/app/utils/utils';
+import { TMessage, TPrivateChat, TUser } from '@/types';
+import { formatTimeAgo } from '@/utils/utils';
 
 type PrivateChatProps = {
   privateChat: TPrivateChat

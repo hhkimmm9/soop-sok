@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAppState } from '@/app/utils/AppStateProvider';
+import { useAppState } from '@/utils/AppStateProvider';
 
-import { auth, db } from '@/app/utils/firebase';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,
@@ -15,7 +15,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 
-import { TUser } from '@/app/types';
+import { TUser } from '@/types';
 
 const Profile = () => {
   const [profile, setProfile] = useState<TUser>();

@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
   getDocs,
 } from 'firebase/firestore';
 
-import ChannelChatWindow from '@/app/components/channels/ChannelChatWindow';
-import ChatChatWindow from '@/app/components/channels/ChatChatWindow';
-import Channel from '@/app/components/channels/Channel';
+import ChannelChatWindow from '@/components/channels/ChannelChatWindow';
+import ChatChatWindow from '@/components/channels/ChatChatWindow';
+import Channel from '@/components/channels/Channel';
 
-import { TChannel } from '@/app/types';
+import { TChannel } from '@/types';
 
 const InChannel = () => {
   const [channels, setChannels] = useState<TChannel[]>([]);

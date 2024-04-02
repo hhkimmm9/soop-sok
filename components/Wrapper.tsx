@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useAppState } from '@/app/utils/AppStateProvider';
-import Channels from '@/app/components/channels/Channels';
-import PrivateChats from '@/app/components/private-chats/PrivateChats';
+import { useAppState } from '@/utils/AppStateProvider';
+import Channels from '@/components/channels/Channels';
+import PrivateChats from '@/components/private-chats/PrivateChats';
 
 type WrapperProps = {
   children: React.ReactNode;

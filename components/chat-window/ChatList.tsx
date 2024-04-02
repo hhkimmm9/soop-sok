@@ -1,18 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
   where, orderBy,
 } from 'firebase/firestore'
-import SearchBar from '@/app/components/SearchBar';
-import SortOptions from '@/app/components/SortOptions';
-import Chat from '@/app/components/chat-window/Chat';
-import { TChat } from '@/app/types'
+import SearchBar from '@/components/SearchBar';
+import SortOptions from '@/components/SortOptions';
+import Chat from '@/components/chat-window/Chat';
+import { TChat } from '@/types'
 
 const ChatList = () => {
   const [chats, setChats] = useState<TChat[]>([]);

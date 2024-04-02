@@ -1,12 +1,12 @@
 'use client';
 
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, addDoc } from 'firebase/firestore';
 
-import { formatTimeAgo } from '@/app/utils/utils';
-import { TChat } from '@/app/types'
+import { formatTimeAgo } from '@/utils/utils';
+import { TChat } from '@/types'
 
 type ChatProps = {
   chat: TChat

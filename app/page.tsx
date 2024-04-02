@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,
@@ -16,7 +16,7 @@ import {
   useSignInWithApple
 } from 'react-firebase-hooks/auth';
 import Cookies from 'universal-cookie';
-import SignInWithGoogle from '@/app/components/authorization/SignInWithGoogle';
+import SignInWithGoogle from '@/components/authorization/SignInWithGoogle';
 
 export default function Home() {
   const [signInWithGoogle, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);

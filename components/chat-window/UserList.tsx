@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useAppState } from '@/app/utils/AppStateProvider';
+import { useAppState } from '@/utils/AppStateProvider';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { auth, db } from '@/app/utils/firebase';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,
@@ -14,7 +14,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 
-import { TUser } from '@/app/types';
+import { TUser } from '@/types';
 
 const UserList = () => {
   const [activeUsers, setActiveUsers] = useState([]);
