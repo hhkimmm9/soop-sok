@@ -1,4 +1,4 @@
-import '@/app/components/Marquee.css';
+import '@/components/Marquee.css';
 
 const Banner = () => {
   return (

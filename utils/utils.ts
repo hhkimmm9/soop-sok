@@ -1,4 +1,4 @@
-import { FirestoreTimestamp } from '@/app/types'
+import { FirestoreTimestamp } from '@/types'
 
 export const formatTimeAgo = (unixSeconds: FirestoreTimestamp) => {
   const timestamp = unixSeconds.seconds;

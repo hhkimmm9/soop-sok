@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppState } from '@/app/utils/AppStateProvider';
-import { auth, db } from '@/app/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
