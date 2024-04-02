@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import { auth, db } from '@/app/utils/firebase/firebase';
+import { auth, db } from '@/app/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 

@@ -6,7 +6,7 @@ import { useAppState } from '@/app/utils/AppStateProvider';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { auth, db } from '@/app/utils/firebase/firebase';
+import { auth, db } from '@/app/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,

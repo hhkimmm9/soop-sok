@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { auth, db } from '@/app/utils/firebase/firebase';
+import { auth, db } from '@/app/utils/firebase';
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 
