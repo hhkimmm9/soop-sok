@@ -33,8 +33,6 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
 
   const [signedInUser] = useAuthState(auth);
 
-  var channelId: string | null = localStorage.getItem('channelId');
-
   const [realtime_messages] = useCollection(
     query(collection(db, 'messages'),
       where('chatId', '==', cid),
@@ -58,14 +56,8 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
   }, [realtime_messages]);
 
   useEffect(() => {
-    if (state.chatId.length == 0) {
-      console.log('channelId: ', state.channelId);
-      setCid(state.channelId);
-    } else {
-      console.log('chatId: ', state.chatId);
-      setCid(state.chatId);
-    }
-  }, [state.channelId, state.chatId]);
+    setCid(state.chatId);
+  }, [state.chatId]);
   
 
   const leaveChat = async () => {

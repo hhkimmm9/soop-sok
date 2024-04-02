@@ -58,7 +58,6 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
   }, [realtime_messages]);
 
   useEffect(() => {
-    console.log('channelId: ', state.channelId);
     setCid(state.channelId);
   }, [state.channelId]);
   
