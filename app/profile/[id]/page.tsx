@@ -84,6 +84,8 @@ const Profile = () => {
       dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
       dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: querySnapshot.docs[0].id });
     }
+
+    router.push('/components');
   };
 
   if (profile !== undefined && loading) return (

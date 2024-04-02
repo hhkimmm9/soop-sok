@@ -16,6 +16,7 @@ const NavBar = () => {
   const { dispatch } = useAppState();
 
   const activateChats = (type: string) => {
+    router.push('/components');
     if (type === 'channels') {
       dispatch({ type: 'SET_TO_CHANNEL' });
     }

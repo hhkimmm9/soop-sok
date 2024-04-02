@@ -4,16 +4,16 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  useAuthState,
+  useSignInWithGoogle,
+  useSignInWithApple
+} from 'react-firebase-hooks/auth';
 import {
   doc,
   setDoc, getDoc, updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
-import {
-  useSignInWithGoogle,
-  useSignInWithApple
-} from 'react-firebase-hooks/auth';
 import Cookies from 'universal-cookie';
 import SignInWithGoogle from '@/components/authorization/SignInWithGoogle';
 
@@ -71,7 +71,10 @@ export default function Home() {
           });
         }
 
-        if (!errorGoogle) dispatch({ type: 'SET_TO_CHANNEL' });
+        if (!errorGoogle) {
+          router.push('/components');
+          dispatch({ type: 'SET_TO_CHANNEL' });
+        }
       }
     }
   };
