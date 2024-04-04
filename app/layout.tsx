@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: Readonly<Props>) {
       <AppStateProvider>
         <body className={`
           ${inter.className}
-          relative w-screen h-screen
+          relative w-screen h-screen min-w-80
         `}>
           <Wrapper>
             { children }
