@@ -4,7 +4,6 @@ import "./globals.css";
 
 import { AppStateProvider } from '@/utils/AppStateProvider';
 import Wrapper from '@/components/Wrapper';
-import NavBar from "@/components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,15 +20,10 @@ export default async function RootLayout({ children }: Readonly<Props>) {
   return (
     <html lang="en">
       <AppStateProvider>
-        <body className={`
-          ${inter.className}
-          relative w-screen h-screen min-w-80
-        `}>
+        <body className={inter.className}>
           <Wrapper>
             { children }
           </Wrapper>
-
-          <NavBar />
         </body>
       </AppStateProvider>
     </html>

@@ -33,7 +33,7 @@ const NavBar = () => {
   };
   
   return (
-    <>
+    <nav>
       { pathname !== '/'  && (
         <div className="
           absolute bottom-0 w-full h-14
@@ -69,7 +69,7 @@ const NavBar = () => {
           </div>
         </div> 
       )}
-    </>
+    </nav>
   )
 };
 
