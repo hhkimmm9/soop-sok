@@ -18,7 +18,7 @@ import Cookies from 'universal-cookie';
 import SignInWithGoogle from '@/components/authorization/SignInWithGoogle';
 
 export default function Home() {
-  const [signInWithGoogle, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);
+  const [signInWithGoogle, user, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);
   // const [signInWithApple, loadingApple, errorApple] = useSignInWithApple(auth);
 
   const [signedInUser, loading, error] = useAuthState(auth);
@@ -29,52 +29,50 @@ export default function Home() {
 
   const cookies = new Cookies();
 
-  const handleSignIn = async (signInWith: string) => {
-    if (signInWith === 'google') {
-      const result = await signInWithGoogle();
+  const handleSignIn = async () => {
+    const result = await signInWithGoogle();
 
-      // store the auth token into the cookie
-      // https://www.npmjs.com/package/cookies
-      cookies.set('auth-token', result?.user.refreshToken);
+    // store the auth token into the cookie
+    // https://www.npmjs.com/package/cookies
+    cookies.set('auth-token', result?.user.refreshToken);
 
-      // check if the user is signed in
-      if (result && auth.currentUser) {
-        // if their profile isn't found in the database, create a new one
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        const querySnapshot = await getDoc(userRef);
+    // check if the user is signed in
+    if (result && auth.currentUser) {
+      // if their profile isn't found in the database, create a new one
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const querySnapshot = await getDoc(userRef);
 
-        // if this is the first time sign in, create a new user data and store it.)
-        if (!querySnapshot.exists()) {
-          await setDoc(doc(db, 'users', auth.currentUser.uid), {
-            createdAt: serverTimestamp(),
-            displayName: result.user.displayName,
-            email: result.user.email,
-            friendWith: [],
-            honourPoints: 0,
-            isEmailVerified: true,
-            isOnline: true,
-            lastLoginTime: serverTimestamp(),
-            photoURL: result.user.photoURL,
-            profile: {
-              introduction: '',
-              interests: []
-            },
-            uid: auth.currentUser.uid
-          });
-        }
-        // otherwise, update the isOnline status
-        else {
-          const userSnapshot = doc(db, 'users', querySnapshot.id);
-          await updateDoc(userSnapshot, {
-            isOnline: true,
-            lastLoginTime: serverTimestamp()
-          });
-        }
+      // if this is the first time sign in, create a new user data and store it.)
+      if (!querySnapshot.exists()) {
+        await setDoc(doc(db, 'users', auth.currentUser.uid), {
+          createdAt: serverTimestamp(),
+          displayName: result.user.displayName,
+          email: result.user.email,
+          friendWith: [],
+          honourPoints: 0,
+          isEmailVerified: true,
+          isOnline: true,
+          lastLoginTime: serverTimestamp(),
+          photoURL: result.user.photoURL,
+          profile: {
+            introduction: '',
+            interests: []
+          },
+          uid: auth.currentUser.uid
+        });
+      }
+      // otherwise, update the isOnline status
+      else {
+        const userSnapshot = doc(db, 'users', querySnapshot.id);
+        await updateDoc(userSnapshot, {
+          isOnline: true,
+          lastLoginTime: serverTimestamp()
+        });
+      }
 
-        if (!errorGoogle) {
-          router.push('/components');
-          dispatch({ type: 'SET_TO_CHANNEL' });
-        }
+      if (!errorGoogle) {
+        router.push('/components');
+        dispatch({ type: 'SET_TO_CHANNEL' });
       }
     }
   };
@@ -88,14 +86,13 @@ export default function Home() {
 
       { !signedInUser ? (
         <div className='flex flex-col gap-4 text-center'>
-          <div onClick={() => handleSignIn('google')}>
+          <div onClick={handleSignIn}>
             <SignInWithGoogle />
           </div>
         </div>
       ) : (
         <p>signed in</p>
       )}
-
     </div>
   );
 }
