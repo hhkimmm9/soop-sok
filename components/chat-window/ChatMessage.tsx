@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -16,7 +17,11 @@ type MessageProps = {
 const Message = ({ message } : MessageProps) => {
   const [user, setUser] = useState<TUser | null>(null);
 
+  const router = useRouter();
+
   // const [signedInUser, loading, error] = useAuthState(auth);
+
+  const { dispatch } = useAppState();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,10 +41,15 @@ const Message = ({ message } : MessageProps) => {
     fetchUser();
   }, [message.sentBy]);
 
+  const redirectToProfile = () => {
+    router.push(`/profile/${user?.uid}`);
+    dispatch({ type: 'SET_TO_PAGES' });
+  };
+
   if (user) return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
-        <Link href={`/profile/${user?.uid}`}>
+        <div onClick={redirectToProfile}>
           <Image
             src={`${user?.photoURL}`}
             alt=''
@@ -50,7 +60,7 @@ const Message = ({ message } : MessageProps) => {
               w-12 h-12
               rounded-full
           '/>
-        </Link>
+        </div>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
         <span className='text-sm text-gray-600'>{ user.displayName }</span>
