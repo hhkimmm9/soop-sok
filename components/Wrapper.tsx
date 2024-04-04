@@ -4,6 +4,7 @@ import React from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import Channels from '@/components/channels/Channels';
 import PrivateChats from '@/components/private-chats/PrivateChats';
+import NavBar from "@/components/NavBar";
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -31,9 +32,17 @@ const Wrapper = ({ children }: WrapperProps) => {
   }
 
   return (
-    <main className="h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6">
-      { content }
-    </main>
+    <section className="
+      relative mx-auto
+      min-w-80 w-screen max-w-[430px]
+      min-h-[667px] h-screen
+      border border-black bg-white
+    ">
+      <main className='min-h-[calc(667px-3.5rem)] h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6'>
+        { content }
+      </main>
+      <NavBar />
+    </section>
   )
 };
 
