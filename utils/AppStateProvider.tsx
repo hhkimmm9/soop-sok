@@ -16,7 +16,6 @@ type TAvailableChannelComponents = (
   | 'chat'
 );
 
-
 interface AppState {
   currentPage: ('channel' | 'private_chat' | 'pages');
   activateChannelChat: boolean;

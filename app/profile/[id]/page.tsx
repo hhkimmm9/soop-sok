@@ -118,8 +118,7 @@ const Profile = () => {
           </div>
         ) : (
           <div className='w-72 flex flex-col gap-8'>
-            {
-              // TODO: already friend? then ...
+            {/* {
               true && (
                 <button type='button' onClick={addUserToFriendList}
                   className='
@@ -127,7 +126,7 @@ const Profile = () => {
                     text-center
                 '>Send Friend Request</button>
               )
-            }
+            } */}
 
             <button onClick={redirectToDMChat}
               className='

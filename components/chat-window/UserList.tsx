@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAppState } from '@/utils/AppStateProvider';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -15,6 +15,8 @@ import { TUser } from '@/types';
 
 const UserList = () => {
   const [activeUsers, setActiveUsers] = useState([]);
+
+  const router = useRouter();
 
   const { state, dispatch } = useAppState();
 
@@ -48,6 +50,11 @@ const UserList = () => {
     }
   }, [realtime_users]);
   
+  const redirectToProfile = (uid: string) => {
+    router.push(`/profile/${uid}`);
+    dispatch({ type: 'SET_TO_PAGES' });
+  };
+
   return (
     <div className='h-full flex flex-col gap-4'>
       <div className='
@@ -69,11 +76,12 @@ const UserList = () => {
                 <p>{ activeUser.displayName }</p>
               </div>
 
-              <Link href={`/profile/${activeUser.uid}`}
-                onClick={() => dispatch({ type: 'SET_TO_PAGES' })}
+              <div onClick={() => redirectToProfile(activeUser.uid)}
                 className='
                   mr-4 border px-2 py-1 rounded-lg
-              '>Profile</Link>
+              '>
+                Profile
+              </div>
             </li>
           )) }
         </ul>
