@@ -1,9 +1,12 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
+import { GoogleAuthProvider } from 'firebase/auth';
+import * as firebaseui from 'firebaseui'
+import 'firebaseui/dist/firebaseui.css'
 import {
   useAuthState,
   useSignInWithGoogle,
@@ -15,7 +18,6 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import Cookies from 'universal-cookie';
-import SignInWithGoogle from '@/components/authorization/SignInWithGoogle';
 
 export default function Home() {
   const [signInWithGoogle, user, loadingGoogle, errorGoogle] = useSignInWithGoogle(auth);
@@ -28,6 +30,14 @@ export default function Home() {
   const { dispatch } = useAppState();
 
   const cookies = new Cookies();
+
+  // Initialize the FirebaseUI Widget using Firebase.
+  var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+  ui.start('#firebaseui-auth-container', {
+    signInOptions: [
+      GoogleAuthProvider.PROVIDER_ID
+    ]
+  });
 
   const handleSignIn = async () => {
     const result = await signInWithGoogle();
@@ -87,7 +97,7 @@ export default function Home() {
       { !signedInUser ? (
         <div className='flex flex-col gap-4 text-center'>
           <div onClick={handleSignIn}>
-            <SignInWithGoogle />
+            <div id='firebaseui-auth-container'></div>
           </div>
         </div>
       ) : (
