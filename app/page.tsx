@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { auth, db } from '@/utils/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import * as firebaseui from 'firebaseui'
+import 'firebaseui/dist/firebaseui.css'
 import {
   doc,
   setDoc, getDoc, updateDoc,
@@ -59,7 +61,8 @@ export default function Home() {
           .catch((err) => {
             console.error('Error getting document:', err);
           })
-          return true;
+
+        return true;
       },
     },
     signinFlow: 'popup',
@@ -69,6 +72,9 @@ export default function Home() {
     ]
   };
 
+  var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+  ui.start('#firebaseui-auth-container', uiConfig);  
+
   return (
     <div className="pt-24 flex flex-col gap-64 items-center">
       <div className='text-center flex flex-col gap-4'>
@@ -76,7 +82,7 @@ export default function Home() {
         <p className=''>Lorem, ipsum lor sit amet consectetur adipisicing elit. Doloribus laboriosam dolor maxime suscipit tempore corrupti odit. Assumenda molestias nostrum voluptatem?</p>
       </div>
       <div className='z-10 flex flex-col gap-4 text-center'>
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+        <div id='firebaseui-auth-container'></div>
       </div>
       <Image src='https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/Untitled_Artwork.png?alt=media&token=6b57b2e1-c921-47ff-ae70-9cc2e96ea6c9'
         alt='background image'
