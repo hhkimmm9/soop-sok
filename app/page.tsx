@@ -72,8 +72,10 @@ export default function Home() {
     ]
   };
 
-  var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
-  ui.start('#firebaseui-auth-container', uiConfig);  
+  useEffect(() => {
+    var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+    ui.start('#firebaseui-auth-container', uiConfig);  
+  }, [])
 
   return (
     <div className="pt-24 flex flex-col gap-64 items-center">
@@ -89,6 +91,7 @@ export default function Home() {
         width={320}
         height={320}
         className='absolute bottom-0 w-full'
+        priority={false}
       />
     </div>
   );
