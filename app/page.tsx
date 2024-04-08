@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { auth, db } from '@/utils/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
-// import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import {
   doc,
@@ -15,8 +14,8 @@ import {
 import Cookies from 'universal-cookie';
 
 export default function Home() {
+  const [firebaseui, setFirebaseUI] = useState<any>(null);
   const router = useRouter();
-
   const cookies = new Cookies();
 
   // Initialize the FirebaseUI Widget using Firebase.
@@ -73,14 +72,21 @@ export default function Home() {
   };
 
   useEffect(() => {
-    async () => {
+    const loadFirebaseUI = async () => {
       const firebaseui = await import('firebaseui');
-      var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
-      ui.start('#firebaseui-auth-container', uiConfig);  
-    }
-  }, [])
+      setFirebaseUI(firebaseui);
+    };
+    loadFirebaseUI();
+  }, []);
 
-  return (
+  useEffect(() => {
+    if (firebaseui) {
+      const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+      ui.start('#firebaseui-auth-container', uiConfig);
+    }
+  }, [firebaseui]);
+
+  if (firebaseui) return (
     <div className="pt-24 flex flex-col gap-64 items-center">
       <div className='text-center flex flex-col gap-4'>
         <h1 className='text-4xl'>숲 속</h1>
