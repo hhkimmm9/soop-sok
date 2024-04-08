@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { auth, db } from '@/utils/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
-import * as firebaseui from 'firebaseui'
+// import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import {
   doc,
@@ -73,8 +73,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-    var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
-    ui.start('#firebaseui-auth-container', uiConfig);  
+    async () => {
+      const firebaseui = await import('firebaseui');
+      var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+      ui.start('#firebaseui-auth-container', uiConfig);  
+    }
   }, [])
 
   return (
