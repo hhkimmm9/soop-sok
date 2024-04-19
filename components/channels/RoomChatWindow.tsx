@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, doc, query,
   where, orderBy,
@@ -12,53 +10,17 @@ import {
 } from 'firebase/firestore';
 
 import Banner from '@/components/chat-window/Banner';
-import ChatMessage from '@/components/chat-window/ChatMessage';
-import MessageInput from '@/components/chat-window/MessageInput';
+import MessageContainer from '../MessageContainer';
 import UserList from '@/components/chat-window/UserList';
 
-import { TMessage } from '@/types';
-import {
-  Bars3Icon,
-} from '@heroicons/react/24/outline';
-
 type ChatWindowProps = {
-  chatId: string;
+  cid: string;
 };
 
-const ChatWindow = ({ chatId }: ChatWindowProps) => {
-  const [messages, setMessages] = useState<TMessage[]>([]);
-  const [cid, setCid] = useState('');
-
+const ChatWindow = ({ cid }: ChatWindowProps) => {
   const { state, dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
-
-  const [realtime_messages] = useCollection(
-    query(collection(db, 'messages'),
-      where('chatId', '==', cid),
-      orderBy('createdAt', 'asc')
-    ), {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
-
-  useEffect(() => {
-    const messageList: TMessage[] = []; 
-    if (realtime_messages && !realtime_messages.empty) {
-      realtime_messages.forEach((doc) => {
-        messageList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TMessage);
-      });
-      setMessages(messageList);
-    }
-  }, [realtime_messages]);
-
-  useEffect(() => {
-    setCid(state.chatId);
-  }, [state.chatId]);
-  
 
   const leaveChat = async () => {
     if (signedInUser) {
@@ -106,30 +68,10 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
       <div className='row-start-2 row-span-11'>
         <div className='h-full flex flex-col gap-4'>
           { state.channelComponent === 'chat' && (
-            <>
-              <div className='
-                grow p-4 overflow-y-auto
-                border border-black rounded-lg bg-white
-                flex flex-col gap-5
-              '>
-                { messages.map((message: TMessage) => (
-                  <ChatMessage key={message.id} message={message} />
-                ))}
-              </div>
-
-              <div className='flex justify-between gap-3'>
-                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features'})}
-                  className='flex items-center border border-black p-2 rounded-lg bg-white'
-                >
-                  <Bars3Icon className='h-5 w-5' />
-                </div>
-                <div className='grow'>
-                  <MessageInput chatId={chatId} />
-                </div>
-              </div>
-            </>  
+            <MessageContainer cid={cid} />
           )}
 
+          {/* features */}
           { state.channelComponent === 'features' && (
             <div className='h-full flex flex-col gap-4'>
               <div className='
@@ -158,9 +100,7 @@ const ChatWindow = ({ chatId }: ChatWindowProps) => {
             </div>
           )}
 
-          { state.channelComponent === 'user_list' && (
-            <UserList />
-          )}
+          { state.channelComponent === 'user_list' && <UserList /> }
         </div>
       </div>
     </div>
