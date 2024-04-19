@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useAppState } from '@/utils/AppStateProvider';
 
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -11,13 +12,15 @@ import {
 } from '@heroicons/react/24/outline';
 
 type MessageinputProps = {
-  chatId: string
+  cid: string,
 };
 
-const MessageInput = ({ chatId }: MessageinputProps) => {
+const MessageInput = ({ cid }: MessageinputProps) => {
   const [messageInput, setMessageInput] = useState('');
 
   const params = useParams();
+
+  const { state, dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth)
 
@@ -28,8 +31,10 @@ const MessageInput = ({ chatId }: MessageinputProps) => {
     if (auth.currentUser && messageInput.length > 0) {
       const uid = signedInUser?.uid;
 
+      // TODO: channel id or chat id
+      // const cid = state.chatId ? state.chatId : state.channelId; 
       await addDoc(collection(db, 'messages'), {
-        chatId: chatId,
+        chatId: cid,
         createdAt: serverTimestamp(),
         sentBy: uid,
         text: messageInput
