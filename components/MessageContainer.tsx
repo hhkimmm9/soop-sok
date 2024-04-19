@@ -12,7 +12,7 @@ import {
 import ChatMessage from '@/components/chat-window/ChatMessage';
 import MessageInput from '@/components/chat-window/MessageInput';
 
-import { TMessage } from '@/types';
+import { TMessage, FirestoreTimestamp } from '@/types';
 
 import {
   Bars3Icon,
@@ -23,12 +23,13 @@ type MessageContainerProps = {
   cid: string,
 };
 
-const NUM_MESSAGES_PER_FETCH = 50;
+const NUM_MESSAGES_PER_FETCH = 10;
 
 const MessageContainer = ({ cid }: MessageContainerProps) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
-  // const [prevMessages, setPrevMessages] = useState<TMessage[]>([]);
-  // const [firstVisible, setFirstVisible] = useState<TMessage | null>(null);
+  const [prevMessages, setPrevMessages] = useState<TMessage[]>([]);
+  const [firstVisible, setFirstVisible] = useState<FirestoreTimestamp | null>(null);
+  const [isAll, setIsAll] = useState(false);
 
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
@@ -57,10 +58,10 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
         } as TMessage);
       });
 
-      const reversesdMessageList = messageList.reverse();
+      const reversedMessageList = messageList.reverse();
       // store the first data for pagination.
-      // setFirstVisible(reversesdMessageList[0]);
-      setMessages(reversesdMessageList);
+      setFirstVisible(reversedMessageList[0].createdAt);
+      setMessages(reversedMessageList);
 
       // scroll down to the bottom in case the total length of messages is longer than the window.
       setTimeout(() => {
@@ -105,35 +106,44 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
   // ----------------------------------------------------------------
   
   const lazyLoadMessages = async () => {
-    // const prevMessageList: TMessage[] = [];
-    // const q = query(collection(db, 'messages'),
-    //   where('chatId', '==', cid),
-    //   orderBy('createdAt', 'desc'),
-    //   startAt(firstVisible),
-    //   limit(NUM_MESSAGES_PER_FETCH)
-    // );
-    // const prevMessagesSnapshot = await getDocs(q);
+    const prevMessageList: TMessage[] = [];
+    const q = query(collection(db, 'messages'),
+      where('chatId', '==', cid),
+      orderBy('createdAt', 'desc'),
+      startAfter(firstVisible),
+      limit(NUM_MESSAGES_PER_FETCH)
+    );
+    const prevMessagesSnapshot = await getDocs(q);
 
-    // if (!prevMessagesSnapshot.empty) {
-    //   prevMessagesSnapshot.forEach((doc) => {
-    //     prevMessageList.push({
-    //       id: doc.id,
-    //       ...doc.data()
-    //     } as TMessage);
-    //   });
-    //   setPrevMessages(prevMessageList.reverse());
-    //   console.log(prevMessages);
-    // }
+    if (!prevMessagesSnapshot.empty) {
+      prevMessagesSnapshot.forEach((doc) => {
+        prevMessageList.push({
+          id: doc.id,
+          ...doc.data()
+        } as TMessage);
+      });
+      
+      const reversedMessageList = prevMessageList.reverse();
+      
+      // update the first visible value for pagination.
+      setFirstVisible(reversedMessageList[0].createdAt);
+      setPrevMessages((prev) => [ ...reversedMessageList, ...prev ]);
+    } else setIsAll(true);
   };
 
   // When the scroll hits the top of the window, lazy load previous messages.
-  const handleScroll = () => {
+  const handleScroll = async () => {
     const scrollContainer = chatWindowRef.current;
 
-    if (scrollContainer?.scrollTop === 0) {
-      // lazyLoadMessages();
+    if (scrollContainer?.scrollTop === 0 && !isAll) {
+      await lazyLoadMessages();
 
       // TODO: scroll down to the bottom.
+      setTimeout(() => {
+        if (chatWindowRef.current) {
+          chatWindowRef.current.scrollTo(0, chatWindowRef.current.clientHeight);
+        }
+      }, 300);
     }
   };
 
@@ -145,6 +155,9 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
           border border-black rounded-lg bg-white
           flex flex-col gap-5
       '>
+        { prevMessages.map((message: TMessage) => (
+          <ChatMessage key={message.id} message={message} />
+        ))}
         { messages.map((message: TMessage) => (
           <ChatMessage key={message.id} message={message} />
         ))}
