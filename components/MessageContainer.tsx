@@ -4,7 +4,7 @@ import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
-  collection, doc, query,
+  collection, onSnapshot, doc, query,
   where, orderBy, startAt, startAfter, limit,
   getDoc, getDocs, updateDoc, deleteDoc
 } from 'firebase/firestore';
@@ -23,18 +23,18 @@ type MessageContainerProps = {
   cid: string,
 };
 
-const NUM_MESSAGES_PER_FETCH = 10;
+const NUM_MESSAGES_PER_FETCH = 50;
 
 const MessageContainer = ({ cid }: MessageContainerProps) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const [prevMessages, setPrevMessages] = useState<TMessage[]>([]);
-  const [lastVisible, setLastVisible] = useState([]);
+  // const [prevMessages, setPrevMessages] = useState<TMessage[]>([]);
+  // const [firstVisible, setFirstVisible] = useState<TMessage | null>(null);
 
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const { state, dispatch } = useAppState();
 
-  // 2. Fetch messages associated with the channel ID in real time.
+  // 1. Fetch messages associated with the channel ID in real time.
   const [messagesSnapshot] = useCollection(
     query(collection(db, 'messages'),
       where('chatId', '==', cid),
@@ -45,9 +45,10 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
     }
   );
 
-  // 3. Once messages are fetched, store them into the state.
+  // 2. Once messages are fetched, store them into the state.
   useEffect(() => {
     const messageList: TMessage[] = []; 
+
     if (messagesSnapshot && !messagesSnapshot.empty) {
       messagesSnapshot.forEach((doc) => {
         messageList.push({
@@ -55,55 +56,90 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
           ...doc.data()
         } as TMessage);
       });
-      setMessages(messageList.reverse());
 
-      // TODO: scroll down to the bottom in case the total length of messages is longer than the window.
+      const reversesdMessageList = messageList.reverse();
+      // store the first data for pagination.
+      // setFirstVisible(reversesdMessageList[0]);
+      setMessages(reversesdMessageList);
 
-      // TODO: store the last data for pagination.
-      // setLastVisible(messagesSnapshot.docs[messagesSnapshot.docs.length-1])
+      // scroll down to the bottom in case the total length of messages is longer than the window.
+      setTimeout(() => {
+        if (chatWindowRef.current) {
+          chatWindowRef.current.scrollTo(0, chatWindowRef.current.scrollHeight);
+        }
+      }, 300);
     }
   }, [messagesSnapshot]);
 
-  // 1. When the scroll hits the top of the window, lazy load previous messages.
+  // useEffect(() => {
+  //   const messageList: TMessage[] = []; 
+
+  //   // 1. Fetch messages associated with the channel ID in real time.
+  //   const unsub = onSnapshot(query(collection(db, 'messages'),
+  //     where('chatId', '==', cid),
+  //     orderBy('createdAt', 'desc'),
+  //     limit(NUM_MESSAGES_PER_FETCH)
+  //   ), (docs) => {
+  //     // 2. Once messages are fetched, store them into the state.
+  //     if (!docs.empty) {
+  //       docs.forEach((doc) => {
+  //         messageList.push({
+  //           id: doc.id,
+  //           ...doc.data()
+  //         } as TMessage);
+  //       });
+  //       setMessages(messageList.reverse());
+
+  //       // TODO: scroll down to the bottom in case the total length of messages is longer than the window.
+
+  //       // TODO: store the last data for pagination.
+  //       // setLastVisible(messagesSnapshot.docs[messagesSnapshot.docs.length-1])
+  //     }
+  //   })
+
+  //   return () => {
+  //     unsub();
+  //   }
+  // }, [cid]);
+
+  // ----------------------------------------------------------------
+  
+  const lazyLoadMessages = async () => {
+    // const prevMessageList: TMessage[] = [];
+    // const q = query(collection(db, 'messages'),
+    //   where('chatId', '==', cid),
+    //   orderBy('createdAt', 'desc'),
+    //   startAt(firstVisible),
+    //   limit(NUM_MESSAGES_PER_FETCH)
+    // );
+    // const prevMessagesSnapshot = await getDocs(q);
+
+    // if (!prevMessagesSnapshot.empty) {
+    //   prevMessagesSnapshot.forEach((doc) => {
+    //     prevMessageList.push({
+    //       id: doc.id,
+    //       ...doc.data()
+    //     } as TMessage);
+    //   });
+    //   setPrevMessages(prevMessageList.reverse());
+    //   console.log(prevMessages);
+    // }
+  };
+
+  // When the scroll hits the top of the window, lazy load previous messages.
   const handleScroll = () => {
     const scrollContainer = chatWindowRef.current;
 
     if (scrollContainer?.scrollTop === 0) {
-      lazyLoadMessages();
+      // lazyLoadMessages();
 
       // TODO: scroll down to the bottom.
     }
   };
 
-  // 2. The lazy load function for fetching previous messages.
-  const lazyLoadMessages = async () => {
-    const prevMessageList: TMessage[] = [];
-    const q = query(collection(db, 'messages'),
-      where('chatId', '==', cid),
-      orderBy('createdAt', 'desc'),
-      startAt(lastVisible),
-      limit(NUM_MESSAGES_PER_FETCH)
-    );
-    const prevMessagesSnapshot = await getDocs(q);
-
-    if (!prevMessagesSnapshot.empty) {
-      prevMessagesSnapshot.forEach((doc) => {
-        prevMessageList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TMessage);
-      });
-      setPrevMessages(prevMessageList.reverse());
-      console.log(prevMessages);
-    }
-  };
-
   return (
     <>
-      {/* message container */}
-      <div
-        ref={chatWindowRef}
-        onScroll={handleScroll}
+      <div ref={chatWindowRef} onScroll={handleScroll}
         className='
           grow p-4 overflow-y-auto
           border border-black rounded-lg bg-white
@@ -118,10 +154,12 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
       <div className='flex justify-between gap-3'>
         <div className='flex items-center border border-black p-2 rounded-lg bg-white'>
           { state.currentPage === 'channel' ? (
+            // for channel chats & room chats
             <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}>
               <Bars3Icon className='h-5 w-5' />
             </div>
           ) : (
+            // for private chats
             <div onClick={() => dispatch({ type: 'LEAVE_PRIVATE_CHAT' })}>
               <ArrowLeftIcon className='h-5 w-5' />
             </div>
