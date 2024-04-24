@@ -15,6 +15,7 @@ import Banner from '@/components/chat-window/Banner';
 import MessageContainer from '../MessageContainer';
 
 import CreateChat from '@/components/chat-window/CreateChat';
+import AddBanner from '../chat-window/AddBanner';
 import ChatList from '@/components/chat-window/ChatList';
 import UserList from '@/components/chat-window/UserList';
 
@@ -97,6 +98,11 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
                       h-min py-8 flex justify-center items-center
                       border border-black rounded-lg
                   '>Create Chat</div>
+                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'add_banner' })}
+                    className='
+                      h-min py-8 flex justify-center items-center
+                      border border-black rounded-lg
+                  '>New Banner</div>
                   <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat_list' })}
                     className='
                       h-min py-8 flex justify-center items-center
@@ -124,6 +130,8 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
           )}
 
           { state.channelComponent === 'create_chat' && <CreateChat /> }
+
+          { state.channelComponent === 'add_banner' && <AddBanner /> }
 
           { state.channelComponent === 'chat_list' && <ChatList /> }
 

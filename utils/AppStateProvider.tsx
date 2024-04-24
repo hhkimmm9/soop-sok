@@ -10,6 +10,7 @@ import React, {
 type TAvailableChannelComponents = (
   | 'lobby'
   | 'features'
+  | 'add_banner'
   | 'create_chat'
   | 'chat_list'
   | 'user_list'
