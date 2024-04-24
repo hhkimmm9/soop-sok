@@ -75,14 +75,14 @@ const CreateChat = () => {
                 className='
                   grow border border-black px-2 py-1 rounded-lg
               '/>
-              <button onClick={() => { setTag(tagInput) }}
+              <button type='button' onClick={() => { setTag(tagInput) }}
                 className='border px-2 py-1 rounded-lg'
               >Add</button>
             </div>
           ) : (
             <div className='flex gap-3'>
               <p className='grow px-2 py-1 rounded-lg'>{ tag }</p>
-              <button onClick={() => { setTag(''); setTagInput(''); }}
+              <button type='button' onClick={() => { setTag(''); setTagInput(''); }}
                 className='border px-2 py-1 rounded-lg'
               >Delete</button>
             </div>
