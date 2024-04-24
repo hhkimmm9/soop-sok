@@ -51,7 +51,7 @@ const Chat = ({ chat }: ChatProps) => {
           rounded-full px-4 py-1 bg-amber-500
           text-xs text-white
         '>
-          <span>whatever</span>
+          <span>{ chat.tag }</span>
         </div>
       </div>
     </div>
