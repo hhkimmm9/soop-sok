@@ -31,27 +31,28 @@ const Chat = ({ chat }: ChatProps) => {
 
   return (
     <div onClick={enterChat} className='
-      bg-white border border-black px-3 py-2 rounded-lg
-      flex flex-col gap-1
+      px-3 py-2 rounded-lg flex flex-col gap-2 bg-stone-100 shadow-md
     '>
       {/* name */}
       <div>
-        <p className='line-clamp-1'>{ chat.name }</p>
+        <p className='line-clamp-1 font-semibold'>{ chat.name }</p>
       </div>
       
-      {/* chat info: created_at */}
-      <div className='flex justify-end'>
-        <p className='text-sm'>{ formatTimeAgo(chat.createdAt) }</p>
-      </div>
+      <div>
+        {/* created_at */}
+        <div className='flex justify-end'>
+          <p className='text-sm'>{ formatTimeAgo(chat.createdAt) }</p>
+        </div>
 
-      {/* topic, buttons */}
-      <div className='flex justify-between'>
-        {/* bubble */}
-        <div className='
-          rounded-full px-4 py-1 bg-amber-500
-          text-xs text-white
-        '>
-          <span>{ chat.tag }</span>
+        {/* topic */}
+        <div className='flex justify-between'>
+          {/* bubble */}
+          <div className='
+            rounded-full px-4 py-1 bg-stone-500
+            text-xs font-medium text-white
+          '>
+            <span>{ chat.tag }</span>
+          </div>
         </div>
       </div>
     </div>
