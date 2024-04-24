@@ -11,9 +11,11 @@ import {
 } from 'firebase/firestore';
 
 const CreateChat = () => {
-  const [capacity, setCapacity] = useState(2);
-  const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
+  const [tagInput, setTagInput] = useState('');
+  const [tag, setTag] = useState('');
+  const [capacity, setCapacity] = useState(3);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState('');
 
   const { state, dispatch } = useAppState();
@@ -31,7 +33,8 @@ const CreateChat = () => {
           isPrivate,
           name,
           numUsers: 1,
-          password
+          password,
+          tag
         });
   
         if (chatRef) {
@@ -45,6 +48,7 @@ const CreateChat = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e)} className='h-full flex flex-col gap-4'>
+      {/* options */}
       <div className='
         grow p-4 overflow-y-auto
         border border-black rounded-lg bg-white
@@ -58,6 +62,31 @@ const CreateChat = () => {
             className='
               border border-black px-2 py-1 rounded-lg
           '/>
+        </div>
+
+        {/* tag */}
+        <div className='flex flex-col gap-3'>
+          <label htmlFor='tag'>Tag</label>
+          { !tag ? (
+            <div className='flex gap-3'>
+              {/* TODO: once tag options section is created when the broadcast system is completed, change the type of input to select. and somehow fetch those tag options.  */}
+              <input type="text" id='tag' name='tag'
+                value={tagInput} onChange={(e) => setTagInput(e.target.value)}
+                className='
+                  grow border border-black px-2 py-1 rounded-lg
+              '/>
+              <button onClick={() => { setTag(tagInput) }}
+                className='border px-2 py-1 rounded-lg'
+              >Add</button>
+            </div>
+          ) : (
+            <div className='flex gap-3'>
+              <p className='grow px-2 py-1 rounded-lg'>{ tag }</p>
+              <button onClick={() => { setTag(''); setTagInput(''); }}
+                className='border px-2 py-1 rounded-lg'
+              >Delete</button>
+            </div>
+          ) }
         </div>
         
         {/* capacity */}
@@ -94,20 +123,18 @@ const CreateChat = () => {
         </div>
 
         {/* password */}
-        <div className={`flex flex-col gap-2
-          ${isPrivate ?
-            'opacity-100 pointer-events-auto ease-in duration-300' :
-            'opacity-0 pointer-events-none ease-in duration-300'
-          }`
-        }>
-          <label htmlFor="password">Password</label>
-          <input type="password" id='password' name='password'
-            value={ password } onChange={(e) => setPassword(e.target.value)}
-            className='border border-black p-1 rounded-lg'
-          />
-        </div>
+        { isPrivate && (
+          <div className='flex flex-col gap-2'>
+            <label htmlFor="password">Password</label>
+            <input type="password" id='password' name='password'
+              value={ password } onChange={(e) => setPassword(e.target.value)}
+              className='border border-black p-1 rounded-lg'
+            />
+          </div>
+        )}
       </div>
 
+      {/* buttons */}
       <div className='grid grid-cols-2 gap-2.5'>
         <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
           className='
