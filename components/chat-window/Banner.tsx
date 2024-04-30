@@ -4,20 +4,13 @@ import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, query, getDocs, where, } from 'firebase/firestore';
-import { FirestoreTimestamp } from '@/types';
+import { TBanner, FirestoreTimestamp } from '@/types';
 
 import '@/components/Marquee.css';
 
-type TBanner = {
-  cid: string;
-  content: string;
-  createdAt: FirestoreTimestamp;
-  selected: boolean;
-  tagOptions: string[];
-};
-
 const Banner = () => {
-  const [banner, setBanner] = useState<TBanner | null>(null);
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -29,7 +22,8 @@ const Banner = () => {
         const bannerSnapshop = await getDocs(q);
         if (!bannerSnapshop.empty) {
           const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
-          setBanner(selectedBanner);
+
+          dispatch({ type: "SET_CURRENT_BANNER", currentBanner: selectedBanner });
         }
       } catch (err) {
         console.error(err);
@@ -45,7 +39,7 @@ const Banner = () => {
       text-black  
     ">
       <div className="marquee w-screen">
-        <span className="inline-block px-4">{ banner?.content }</span>
+        <span className="inline-block px-4">{ state.currentBanner?.content }</span>
       </div>
     </div>
   )
