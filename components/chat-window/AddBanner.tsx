@@ -11,13 +11,13 @@ import {
 const AddBanner = () => {
   const [content, setContent] = useState('');
   const [tagOption, setTagOption] = useState('');
-  const [tagOptionList, setTagOptionList] = useState<string[]>([]);
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
 
   const { state, dispatch } = useAppState();
 
   const addToList = () => {
-    if (tagOptionList.length < 5) {
-      setTagOptionList((prev) => {
+    if (tagOptions.length < 5) {
+      setTagOptions((prev) => {
         if (!prev.includes(tagOption)) {
           return [ ...prev, tagOption ];
         } else return [ ...prev ];
@@ -29,8 +29,8 @@ const AddBanner = () => {
   };
 
   const deleteFromList = (tagOption: string) => {
-    if (tagOptionList.length > 0) {
-      setTagOptionList((prev) => prev.filter(option => option !== tagOption));
+    if (tagOptions.length > 0) {
+      setTagOptions((prev) => prev.filter(option => option !== tagOption));
     }
   };
 
@@ -42,8 +42,9 @@ const AddBanner = () => {
         const bannerRef = await addDoc(collection(db, 'banners'), {
           cid: state.channelId,
           content,
-          tagOptionList,
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
+          selected: false,
+          tagOptions,
         });
 
         if (bannerRef) {
@@ -91,7 +92,7 @@ const AddBanner = () => {
           <div>
             <div className='min-h-12 mt-3 p-3 border rounded-lg'>
               <div className='flex flex-col items-start gap-3'>
-                { tagOptionList.map((tagOption, index) => (
+                { tagOptions.map((tagOption, index) => (
                   <div key={tagOption} className='w-full flex items-center justify-between'>
                     <p className='whitespace-nowrap'>
                       { `${index+1}. ${tagOption}` }
@@ -105,7 +106,7 @@ const AddBanner = () => {
             </div>
 
             {/* instruction */}
-            { tagOptionList.length > 0 && (
+            { tagOptions.length > 0 && (
               <p className='mt-2 px-1 text-gray-400 text-sm'>Other users would only be able to choose one of the avilable options</p>
             )}
           </div>
