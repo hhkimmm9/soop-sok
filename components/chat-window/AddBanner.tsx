@@ -43,6 +43,7 @@ const AddBanner = () => {
           cid: state.channelId,
           content,
           tagOptionList,
+          createdAt: serverTimestamp()
         });
 
         if (bannerRef) {
