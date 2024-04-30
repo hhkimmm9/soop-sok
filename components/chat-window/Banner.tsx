@@ -30,7 +30,7 @@ const Banner = () => {
       }
     };
     fetchBanner();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="
