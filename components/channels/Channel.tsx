@@ -1,10 +1,11 @@
 import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc,
   addDoc, updateDoc,
 } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TChannel } from '@/types';
 
@@ -41,9 +42,9 @@ const Channel = ({ channelData } : ChannelProps) => {
 
   return (
     <div onClick={enterChannel} className={`
-      ${ channelData.numUsers < channelData.capacity ? '' : 'opacity-50'}
-      border border-black p-3 bg-white rounded-lg
-      flex flex-col gap-2
+        ${ channelData.numUsers < channelData.capacity ? '' : 'opacity-50'}
+        border border-black p-3 bg-white rounded-lg
+        flex flex-col gap-2
     `}>
       <h3>{ channelData.name }</h3>
       <p>현재 참여 인원: { channelData.numUsers } / { channelData.capacity }</p>

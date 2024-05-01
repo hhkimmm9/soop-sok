@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
 import { collection, query, getDocs, where, } from 'firebase/firestore';
+
 import { TBanner, FirestoreTimestamp } from '@/types';
 
 import '@/components/Marquee.css';
 
 const Banner = () => {
-
   const { state, dispatch } = useAppState();
 
   useEffect(() => {

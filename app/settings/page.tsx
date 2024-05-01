@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { auth, db } from '@/utils/firebase';
-import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import { doc, updateDoc } from 'firebase/firestore';
+import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 
 const Settings = () => {
   const router = useRouter();
@@ -18,30 +18,25 @@ const Settings = () => {
     if (signedInUser) {
       try {
         const userRef = doc(db, 'users', signedInUser.uid);
-        await updateDoc(userRef, {
-          isOnline: false
-        });
+        await updateDoc(userRef, { isOnline: false });
       } catch (err) {
         console.error(err);
       }
 
       const res = await signOut();
-      if (res) {
-        router.push('/');
-      }
+      if (res) router.push('/');
     }
   };
 
   return (
     <div className='flex flex-col gap-4 items-center'>
-      <Link href={`/profile/${signedInUser?.uid}`}
-        className='
-          w-full border rounded-lg p-2 bg-white text-center shadow-sm
-      '>Profile</Link>
-      <button onClick={handleSignout}
-        className='
-          w-full border rounded-lg p-2 bg-white shadow-sm
-      '>Sign Out</button>
+      <Link href={`/profile/${signedInUser?.uid}`} className='
+        w-full border rounded-lg p-2 bg-white text-center shadow-sm'
+      > Profile </Link>
+
+      <button onClick={handleSignout} className='
+        w-full border rounded-lg p-2 bg-white shadow-sm'
+      > Sign Out </button>
     </div>
   )
 };

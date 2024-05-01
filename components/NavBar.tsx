@@ -13,16 +13,17 @@ import {
 const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
+
   const { dispatch } = useAppState();
 
   const activateChats = (type: string) => {
     router.push('/components');
-    if (type === 'channels') {
+
+    if (type === 'channels')
       dispatch({ type: 'SET_TO_CHANNEL' });
-    }
-    else if (type === 'private_chats') {
+    
+    else if (type === 'private_chats')
       dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
-    }
   };
 
   const activateRegularPage = (url: string) => {
@@ -42,29 +43,29 @@ const NavBar = () => {
         ">
           {/* Channels */}
           <div onClick={() => activateChats('channels')}
-            className="rounded-full px-3
-          ">
+            className="rounded-full px-3"
+          >
             <QueueListIcon className='h-5 w-5' />
           </div>
 
           {/* Private chats */}
           <div onClick={() => activateChats('private_chats')}
-            className="rounded-full px-3
-          ">
+            className="rounded-full px-3"
+          >
             <ChatBubbleBottomCenterIcon className='h-5 w-5' />
           </div>
 
           {/* Friends List */}
           <div onClick={() => activateRegularPage('/friends')}
-            className="rounded-full px-3
-          ">
+            className="rounded-full px-3"
+          >
             <UserIcon className='h-5 w-5' />
           </div>
 
           {/* Settings */}
           <div onClick={() => activateRegularPage('/settings')}
-            className="rounded-full px-3
-          ">
+            className="rounded-full px-3"
+          >
             <Cog6ToothIcon className='h-5 w-5' />
           </div>
         </div> 

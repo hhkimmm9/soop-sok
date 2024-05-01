@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+
 import {
   BackspaceIcon
 } from '@heroicons/react/24/outline';
@@ -32,6 +34,10 @@ const AddBanner = () => {
     if (tagOptions.length > 0) {
       setTagOptions((prev) => prev.filter(option => option !== tagOption));
     }
+  };
+
+  const redirectToFeaturesPage = () => {
+    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,17 +120,15 @@ const AddBanner = () => {
       </div>
 
       <div className='grid grid-cols-2 gap-2.5'>
-        <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
-          className='
+        <div onClick={redirectToFeaturesPage} className='
           w-full py-2 bg-white
           border border-black rounded-lg shadow-sm text-center
-        '>Cancel</div>
+        '> Cancel </div>
 
-        <button type='submit'
-          className='
-            w-full py-2 bg-white
-            border border-black rounded-lg shadow-sm
-        '>Create</button>
+        <button type='submit' className='
+          w-full py-2 bg-white
+          border border-black rounded-lg shadow-sm
+        '> Create </button>
       </div>
     </form>
   );

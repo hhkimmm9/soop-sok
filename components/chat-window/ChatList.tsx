@@ -1,17 +1,20 @@
 'use client';
 
+import SearchBar from '@/components/SearchBar';
+import SortOptions from '@/components/SortOptions';
+import Chat from '@/components/chat-window/Chat';
+
 import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
   where, orderBy,
 } from 'firebase/firestore'
-import SearchBar from '@/components/SearchBar';
-import SortOptions from '@/components/SortOptions';
-import Chat from '@/components/chat-window/Chat';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollection } from 'react-firebase-hooks/firestore';
+
 import { TChat } from '@/types'
 
 const ChatList = () => {
@@ -42,6 +45,10 @@ const ChatList = () => {
       setChats(chatList);
     }
   }, [realtime_chats])
+
+  const redirectToFeaturesPage = () => {
+    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+  };
 
   return (
     <div className='h-full flex flex-col gap-4'>
@@ -82,11 +89,10 @@ const ChatList = () => {
         )) }
       </div>
 
-      <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
-        className='
+      <div onClick={redirectToFeaturesPage} className='
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
-      '>Cancel</div>
+      '> Cancel </div>
     </div>
   )
 }

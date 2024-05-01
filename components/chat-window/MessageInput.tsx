@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
 import { useAppState } from '@/utils/AppStateProvider';
+import { useParams } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import {
   ChevronDoubleLeftIcon,
@@ -18,9 +18,9 @@ type MessageinputProps = {
 const MessageInput = ({ cid }: MessageinputProps) => {
   const [messageInput, setMessageInput] = useState('');
 
-  const params = useParams();
-
   const { state, dispatch } = useAppState();
+  
+  const params = useParams();
 
   const [signedInUser] = useAuthState(auth)
 

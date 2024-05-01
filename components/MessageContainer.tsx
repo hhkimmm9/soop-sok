@@ -1,16 +1,17 @@
+import ChatMessage from '@/components/chat-window/ChatMessage';
+import MessageInput from '@/components/chat-window/MessageInput';
+
 import { useState, useEffect, useRef } from 'react'
 import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, onSnapshot, doc, query,
   where, orderBy, startAt, startAfter, limit,
   getDoc, getDocs, updateDoc, deleteDoc
 } from 'firebase/firestore';
-
-import ChatMessage from '@/components/chat-window/ChatMessage';
-import MessageInput from '@/components/chat-window/MessageInput';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { TMessage, FirestoreTimestamp } from '@/types';
 
@@ -147,6 +148,14 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
     }
   };
 
+  const redirectToFeaturesPage = () => {
+    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+  };
+
+  const leavePrivateChat = () => {
+    dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
+  };
+
   return (
     <>
       <div ref={chatWindowRef} onScroll={handleScroll}
@@ -168,12 +177,12 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
         <div className='flex items-center border border-black p-2 rounded-lg bg-white'>
           { state.currentPage === 'channel' ? (
             // for channel chats & room chats
-            <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}>
+            <div onClick={redirectToFeaturesPage}>
               <Bars3Icon className='h-5 w-5' />
             </div>
           ) : (
             // for private chats
-            <div onClick={() => dispatch({ type: 'LEAVE_PRIVATE_CHAT' })}>
+            <div onClick={leavePrivateChat}>
               <ArrowLeftIcon className='h-5 w-5' />
             </div>
           )}

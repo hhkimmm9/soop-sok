@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 import Channels from '@/components/channels/Channels';
 import PrivateChats from '@/components/private-chats/PrivateChats';
 import NavBar from "@/components/NavBar";
+
+import { useAppState } from '@/utils/AppStateProvider';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -20,15 +20,18 @@ const Wrapper = ({ children }: WrapperProps) => {
       // TODO: change the URL
       content = <Channels />;
       break;
+      
     case 'private_chat':
       // TODO: change the URL
       content = <PrivateChats />;
       break;
+
     case 'pages':
       content = children;
       break;
+
     default:
-      content = null; // 예외 처리
+      content = null;
   }
 
   return (

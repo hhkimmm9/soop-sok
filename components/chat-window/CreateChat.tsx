@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
   addDoc, getDocs,
   serverTimestamp, query, where
 } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TBanner } from '@/types';
 
@@ -41,6 +42,10 @@ const CreateChat = () => {
     fetchBanner();
   }, []);
 
+  const redirectToFeaturesPage = () => {
+    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -58,9 +63,8 @@ const CreateChat = () => {
           tag
         });
   
-        if (chatRef) {
-          dispatch({ type: 'ENTER_CHAT', chatId: chatRef.id });
-        }
+        if (chatRef) dispatch({ type: 'ENTER_CHAT', chatId: chatRef.id });
+
       } catch (err) {
         console.error(err);
       }
@@ -136,8 +140,8 @@ const CreateChat = () => {
           ${isPrivate ?
             'opacity-100 pointer-events-auto ease-in duration-300' :
             'opacity-0 pointer-events-none ease-in duration-300'
-          }`
-        }>
+          }
+        `}>
           <label htmlFor="password">Password</label>
           <input type="password" id='password' name='password'
             value={ password } onChange={(e) => setPassword(e.target.value)}
@@ -147,16 +151,14 @@ const CreateChat = () => {
       </div>
 
       <div className='grid grid-cols-2 gap-2.5'>
-        <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
-          className='
+        <div onClick={redirectToFeaturesPage} className='
           w-full py-2 bg-white
           border border-black rounded-lg shadow-sm text-center
         '>Cancel</div>
 
-        <button type='submit'
-          className='
-            w-full py-2 bg-white
-            border border-black rounded-lg shadow-sm
+        <button type='submit' className='
+          w-full py-2 bg-white
+          border border-black rounded-lg shadow-sm
         '>Create</button>
       </div>
     </form>

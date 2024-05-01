@@ -1,20 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAppState } from '@/utils/AppStateProvider';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,
   or, where, limit,
   addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
 import { TUser } from '@/types';
 import { formatTimeAgo } from '@/utils/utils';
+
 import { ChatBubbleBottomCenterIcon } from '@heroicons/react/24/outline';
 
 type FriendProps = {
@@ -24,11 +27,11 @@ type FriendProps = {
 const Friend = ({ friendId }: FriendProps ) => {
   const [friend, setFriend] = useState<TUser>();
   
+  const { dispatch } = useAppState();
+
   const router = useRouter();
 
   const [signedInUser] = useAuthState(auth);
-
-  const { dispatch } = useAppState();
 
   useEffect(() => {
     const fetchFriend = async () => {
@@ -83,20 +86,12 @@ const Friend = ({ friendId }: FriendProps ) => {
     '>
       <Link href={`/profile/${friendId}`} className='flex items-center'>
         { friend?.photoURL !== undefined ? (
-          <Image
-            src={friend?.photoURL}
-            alt=''
-            width={1324}
-            height={1827}
-            className='object-cover w-12 h-12 rounded-full'
+          <Image src={friend?.photoURL} alt=''
+            width={1324} height={1827} className='object-cover w-12 h-12 rounded-full'
           />
         ) : (
-          <Image
-            src='https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676'
-            alt=''
-            width={1324}
-            height={1827}
-            className='object-cover w-12 h-12 rounded-full'
+          <Image src='https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676' alt=''
+            width={1324} height={1827} className='object-cover w-12 h-12 rounded-full'
           />
         )} 
       </Link>

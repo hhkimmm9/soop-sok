@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useParams, useRouter } from 'next/navigation';
+
+import { auth, db } from '@/utils/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const ProfileEdit = () => {
@@ -11,10 +12,11 @@ const ProfileEdit = () => {
   const [introduction, setIntroduction] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
 
+  const [signedInUser] = useAuthState(auth);
+  
   const params = useParams();
   const router = useRouter();
 
-  const [signedInUser] = useAuthState(auth);
 
   useEffect(() => {
     const fecthUser = async () => {

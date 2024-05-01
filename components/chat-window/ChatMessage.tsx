@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAppState } from '@/utils/AppStateProvider';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useAppState } from '@/utils/AppStateProvider';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TUser, TMessage } from '@/types';
 
@@ -17,11 +18,11 @@ type MessageProps = {
 const Message = ({ message } : MessageProps) => {
   const [user, setUser] = useState<TUser | null>(null);
 
+  const { dispatch } = useAppState();
+
   const router = useRouter();
 
   // const [signedInUser, loading, error] = useAuthState(auth);
-
-  const { dispatch } = useAppState();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,16 +51,10 @@ const Message = ({ message } : MessageProps) => {
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
         <div onClick={redirectToProfile}>
-          <Image
-            src={`${user?.photoURL}`}
-            alt=''
-            width={1324}
-            height={1827}
-            className='
-              object-cover
-              w-12 h-12
-              rounded-full
-          '/>
+          <Image src={`${user?.photoURL}`} alt=''
+            width={1324} height={1827}
+            className='object-cover w-12 h-12 rounded-full'
+          />
         </div>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
@@ -68,9 +63,9 @@ const Message = ({ message } : MessageProps) => {
           px-3 py-2 rounded-lg
           bg-gradient-to-b from-sky-500 to-sky-400
         '>
-          <span className='
-            text-neutral-100
-          '>{ message.text }</span>
+          <span className='text-neutral-100'>
+            { message.text }
+          </span>
         </div>
       </div>
     </div>

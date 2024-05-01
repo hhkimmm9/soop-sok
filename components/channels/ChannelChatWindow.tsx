@@ -1,23 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import {
-  collection, doc, query,
-  where, orderBy, startAt, startAfter, limit,
-  getDoc, getDocs, updateDoc, deleteDoc
-} from 'firebase/firestore';
-
 import Banner from '@/components/chat-window/Banner';
-import MessageContainer from '../MessageContainer';
-
+import MessageContainer from '@/components/MessageContainer';
 import CreateChat from '@/components/chat-window/CreateChat';
-import AddBanner from '../chat-window/AddBanner';
+import AddBanner from '@/components/chat-window/AddBanner';
 import ChatList from '@/components/chat-window/ChatList';
 import UserList from '@/components/chat-window/UserList';
+
+import { useAppState } from '@/utils/AppStateProvider';
+
+import { auth, db } from '@/utils/firebase';
+import {
+  collection, doc, query, where,
+  getDoc, getDocs, updateDoc, deleteDoc
+} from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 type ChatWindowProps = {
   cid: string,
@@ -33,7 +30,8 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
       try {
         const channelRef = doc(db, 'channels', cid);
         const querySnapshot = await getDoc(channelRef);
-        const data = querySnapshot.data()
+        const data = querySnapshot.data();
+
         if (data) {
           await updateDoc(channelRef, {
             numUsers: data.numUsers - 1
@@ -76,70 +74,80 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
     }
   };
 
+  const renderComponent = () => {
+    switch (state.channelComponent) {
+      // message container
+      case "lobby":
+        return <MessageContainer cid={cid} />;
+
+      // features page
+      case "features":
+        return (
+          <div className='h-full flex flex-col gap-4'>
+            <div className='
+              grow p-4 overflow-y-auto
+              border border-black rounded-lg bg-white
+            '>
+              <div className='grid grid-cols-2 gap-4'>
+                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'create_chat' })}
+                  className='
+                    h-min py-8 flex justify-center items-center
+                    border border-black rounded-lg
+                '>Create Chat</div>
+                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'add_banner' })}
+                  className='
+                    h-min py-8 flex justify-center items-center
+                    border border-black rounded-lg
+                '>New Banner</div>
+                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat_list' })}
+                  className='
+                    h-min py-8 flex justify-center items-center
+                    border border-black rounded-lg
+                '>Chat List</div>
+                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' })}
+                  className='
+                    h-min py-8 flex justify-center items-center
+                    border border-black rounded-lg
+                '>User List</div>
+                <div onClick={leaveChat}
+                  className='
+                    h-min py-8 flex justify-center items-center
+                    border border-black rounded-lg
+                '>Leave</div>
+              </div>
+            </div>
+      
+            <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'lobby' })}
+              className='
+              w-full py-2 bg-white
+              border border-black rounded-lg shadow-sm text-center
+            '>Cancel</div>
+          </div>
+        );
+
+      case "create_chat":
+        return <CreateChat />;
+      
+      case "add_banner":
+        return <AddBanner />;
+      
+      case "chat_list":
+        return <ChatList />;
+
+      case "user_list":
+        return <UserList />;
+    };
+  };
+
   return (
     <div className='h-full grid grid-rows-12'>
       <Banner />
       <div className='row-start-2 row-span-11'>
         <div className='h-full flex flex-col gap-4'>
-          { state.channelComponent === 'lobby' && (
-            <MessageContainer cid={cid} />
-          )}
-
-          {/* features */}
-          { state.channelComponent === 'features' && (
-            <div className='h-full flex flex-col gap-4'>
-              <div className='
-                grow p-4 overflow-y-auto
-                border border-black rounded-lg bg-white
-              '>
-                <div className='grid grid-cols-2 gap-4'>
-                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'create_chat' })}
-                    className='
-                      h-min py-8 flex justify-center items-center
-                      border border-black rounded-lg
-                  '>Create Chat</div>
-                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'add_banner' })}
-                    className='
-                      h-min py-8 flex justify-center items-center
-                      border border-black rounded-lg
-                  '>New Banner</div>
-                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat_list' })}
-                    className='
-                      h-min py-8 flex justify-center items-center
-                      border border-black rounded-lg
-                  '>Chat List</div>
-                  <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' })}
-                    className='
-                      h-min py-8 flex justify-center items-center
-                      border border-black rounded-lg
-                  '>User List</div>
-                  <div onClick={leaveChat}
-                    className='
-                      h-min py-8 flex justify-center items-center
-                      border border-black rounded-lg
-                  '>Leave</div>
-                </div>
-              </div>
-        
-              <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'lobby' })}
-                className='
-                w-full py-2 bg-white
-                border border-black rounded-lg shadow-sm text-center
-              '>Cancel</div>
-            </div>
-          )}
-
-          { state.channelComponent === 'create_chat' && <CreateChat /> }
-
-          { state.channelComponent === 'add_banner' && <AddBanner /> }
-
-          { state.channelComponent === 'chat_list' && <ChatList /> }
-
-          { state.channelComponent === 'user_list' && <UserList /> }
+          { renderComponent() }
         </div>
       </div>
     </div>
-    
   )
 };
 

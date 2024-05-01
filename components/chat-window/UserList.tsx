@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAppState } from '@/utils/AppStateProvider';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
 import { auth, db } from '@/utils/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 
 import { TUser } from '@/types';
 
@@ -55,6 +55,10 @@ const UserList = () => {
     dispatch({ type: 'SET_TO_PAGES' });
   };
 
+  const redirectToFeatures = () => {
+    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+  };
+
   return (
     <div className='h-full flex flex-col gap-4'>
       <div className='
@@ -70,28 +74,23 @@ const UserList = () => {
             '>
               <div className='flex items-center gap-3'>
                 <Image src={activeUser.profilePicUrl} alt='Profile Picture'
-                  width={52} height={52}
-                  className='rounded-full'
+                  width={52} height={52} className='rounded-full'
                 />
                 <p>{ activeUser.displayName }</p>
               </div>
 
               <div onClick={() => redirectToProfile(activeUser.uid)}
-                className='
-                  mr-4 border px-2 py-1 rounded-lg
-              '>
-                Profile
-              </div>
+                className='mr-4 border px-2 py-1 rounded-lg'
+              > Profile </div>
             </li>
           )) }
         </ul>
       </div>
 
-      <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' })}
-        className='
+      <div onClick={redirectToFeatures} className='
         w-full py-2 bg-white
         border border-black rounded-lg shadow-sm text-center
-      '>Cancel</div>
+      '> Cancel </div>
     </div>
   )
 }

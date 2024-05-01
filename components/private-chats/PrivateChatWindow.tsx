@@ -3,7 +3,6 @@ import { useAppState } from '@/utils/AppStateProvider';
 import MessageContainer from '../MessageContainer';
 
 const ChatWindow = () => {
-
   const { state } = useAppState();
 
   return (

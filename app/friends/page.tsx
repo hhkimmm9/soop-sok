@@ -1,15 +1,17 @@
 'use client';
 
+import Friend from '@/app/friends/components/Friend';
+
 import { useState, useEffect, } from 'react';
+
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   doc, query, collection,
   setDoc, getDocs, updateDoc,
   or, where, serverTimestamp
 } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-import Friend from '@/app/friends/components/Friend';
 import { TUser } from '@/types';
 
 type TFriend = {

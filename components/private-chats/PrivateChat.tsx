@@ -1,19 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-import Image from 'next/image';
-import Link from 'next/link';
-
 import { useAppState } from '@/utils/AppStateProvider';
+import Image from 'next/image';
 
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc,
   query, where, orderBy, limit,
   getDoc, getDocs
 } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TMessage, TPrivateChat, TUser } from '@/types';
 import { formatTimeAgo } from '@/utils/utils';
@@ -25,7 +22,6 @@ type PrivateChatProps = {
 const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   const [toUser, setToUser] = useState<TUser>();
   const [latestMessage, setLatestMessage] = useState<TMessage>();
-  const [activateChatWindow, setActivateChatWindow] = useState(false);
 
   const { dispatch } = useAppState();
 
@@ -88,35 +84,29 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
           <Image
             src={toUser?.photoURL} alt=''
             width={1324} height={1827}
-            className='
-              object-cover
-              w-16 h-16
-              rounded-full
-          '/>
+            className='object-cover w-16 h-16 rounded-full'
+          />
         )}
 
-        {/*  */}
         <div className='grow w-min'>
-          {/*  */}
           <div className='flex justify-between'>
-            <p>{ toUser?.displayName }</p>
+            {/* Sender's name. */}
+            <p className='font-medium'>{ toUser?.displayName }</p>
+
+            {/* the time last message was received. */}
             { latestMessage && (
               <p>{ formatTimeAgo(latestMessage?.createdAt) }</p>
             )}
           </div>
 
-          {/*  */}
-          <div className='mt-1'>
-            <p className='
-              h-[3rem]
-              overflow-hidden
-              line-clamp-2
-            '>{ latestMessage?.text }</p>
-          </div>
+          {/* the content of the last message. */}
+          <p className='mt-1 h-[3rem] overflow-hidden line-clamp-2'>
+            { latestMessage?.text }
+          </p>
         </div>
       </div>
     </div>
   )
-}
+};
 
-export default PrivateChat
+export default PrivateChat;

@@ -8,7 +8,7 @@ const Page = () => {
 
   useEffect(() => {
     dispatch({ type: 'SET_TO_CHANNEL' });
-  }, []);
+  }, [dispatch]);
 
   return (
     <></>

@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAppState } from '@/utils/AppStateProvider';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAppState } from '@/utils/AppStateProvider';
 
 import { auth, db } from '@/utils/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection, doc, query,
   or, where, limit,
   addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TUser } from '@/types';
 
@@ -23,10 +23,10 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [isMyFriend, setIsMyFriend] = useState(false);
 
+  const { dispatch } = useAppState();
+
   const { id } = useParams();
   const router = useRouter();
-
-  const { dispatch } = useAppState();
 
   const [signedInUser] = useAuthState(auth);
 
