@@ -21,6 +21,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<TUser>();
   const [isMyProfile, setIsMyProfile] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isMyFriend, setIsMyFriend] = useState(false);
 
   const { id } = useParams();
   const router = useRouter();
@@ -48,11 +49,36 @@ const Profile = () => {
       }
       setLoading(true);
     };
+    const checkIsMyFriend = async () => {
+      if (signedInUser) {
+        const q = query(collection(db, 'friend_list'), 
+          or(
+            where("senderId", "==", id),
+            where("receiverId", "==", id),
+          )
+        )
+        try {
+          const snapshot = await getDocs(q);
+          if (!snapshot.empty) {
+            setIsMyFriend(true);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
     fetchData();
+    checkIsMyFriend();
   }, [signedInUser, id])
 
   const addUserToFriendList = async () => {
-    console.log('addUserToFriendList');
+    await addDoc(collection(db, 'friend_list'), {
+      creaetdAt: serverTimestamp(),
+      receiverId: id,
+      senderId: signedInUser?.uid,
+    });
+
+    setIsMyFriend(true);
   };
 
   const redirectToDMChat = async () => {
@@ -118,15 +144,19 @@ const Profile = () => {
           </div>
         ) : (
           <div className='w-72 flex flex-col gap-8'>
-            {/* {
-              true && (
+            {
+              isMyFriend ? (
+                <button type='button' onClick={() => {}}
+                  className='border rounded-lg py-3 bg-white text-center'
+                > Poke! (Say Hi!)</button>
+              ) : (
                 <button type='button' onClick={addUserToFriendList}
                   className='
                     border rounded-lg py-3 bg-white
                     text-center
                 '>Send Friend Request</button>
               )
-            } */}
+            }
 
             <button onClick={redirectToDMChat}
               className='
