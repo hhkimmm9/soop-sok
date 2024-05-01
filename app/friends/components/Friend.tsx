@@ -23,7 +23,6 @@ const Friend = ({ friendId }: FriendProps ) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
         setFriend(data as TUser);
-        console.log(data)
       }
     };
     fetchFriend();
