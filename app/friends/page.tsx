@@ -1,26 +1,64 @@
-import React from 'react';
+'use client';
+
+import { useState, useEffect, } from 'react';
+import { auth, db } from '@/utils/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  doc, query, collection,
+  setDoc, getDocs, updateDoc,
+  or, where, serverTimestamp
+} from 'firebase/firestore';
+
 import Friend from '@/app/friends/components/Friend';
+import { TUser } from '@/types';
+
+type TFriend = {
+  id: string;
+  receiverId: string;
+  senderId: string;
+};
 
 const Friends = () => {
-  const friends = [
-    {
-      _id: '1',
-      name: 'User 1',
-    },
-    {
-      _id: '2',
-      name: 'User 2',
-    },
-    {
-      _id: '3',
-      name: 'User 3',
-    },
-  ];
+  const [friends, setFriends] = useState<TFriend[]>([]);
+
+  const [signedInUser] = useAuthState(auth);
+
+  useEffect(() => {
+    const fetchFriendList = async () => {
+      if (signedInUser) {
+        const q = query(collection(db, "friend_list"),
+          or(
+            where("senderId", "==", signedInUser?.uid),
+            where("receiverId", "==", signedInUser?.uid),
+          )
+        );
+  
+        try {
+          const friendList: TFriend[] = [];
+          const friendsSnapshot = await getDocs(q);
+          if (!friendsSnapshot.empty) {
+            const data = friendsSnapshot.forEach((doc) => {
+              friendList.push({
+                id: doc.id,
+                ...doc.data()
+              } as TFriend)
+            });
+
+            setFriends(friendList)
+;
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    fetchFriendList();
+  }, [signedInUser]);
 
   return (
     <div className='flex flex-col gap-2'>
-      { friends.map((friend: any) => (
-        <Friend key={friend.id} friend={friend} />
+      { friends.map((friend: TFriend) => (
+        <Friend key={friend.id} friendId={signedInUser?.uid == friend.receiverId ? friend.senderId : friend.receiverId} />
       )) }
     </div>
   )
