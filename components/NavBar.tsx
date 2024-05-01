@@ -55,11 +55,11 @@ const NavBar = () => {
           </div>
 
           {/* Friends List */}
-          {/* <div onClick={() => activateRegularPage('/friends')}
+          <div onClick={() => activateRegularPage('/friends')}
             className="rounded-full px-3
           ">
             <UserIcon className='h-5 w-5' />
-          </div> */}
+          </div>
 
           {/* Settings */}
           <div onClick={() => activateRegularPage('/settings')}

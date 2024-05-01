@@ -35,7 +35,6 @@ export default function Home() {
                 createdAt: serverTimestamp(),
                 displayName: authResult.user.displayName,
                 email: authResult.user.email,
-                friendWith: [],
                 honourPoints: 0,
                 isEmailVerified: true,
                 isOnline: true,
