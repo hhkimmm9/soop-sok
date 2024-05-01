@@ -1,22 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   collection,
-  addDoc,
-  serverTimestamp
+  addDoc, getDocs,
+  serverTimestamp, query, where
 } from 'firebase/firestore';
+
+import { TBanner } from '@/types';
 
 const CreateChat = () => {
   const [capacity, setCapacity] = useState(2);
   const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [tagOptions, setTagOptions] = useState<string[]>();
+  const [tag, setTag] = useState('');
 
   const { state, dispatch } = useAppState();
+
+  useEffect(() => {
+    const fetchBanner = async () => {
+      try {
+        const q = query(collection(db, 'banners'),
+          where('selected', '==', true)
+        );
+  
+        const bannerSnapshop = await getDocs(q);
+        if (!bannerSnapshop.empty) {
+          const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
+          setTagOptions(selectedBanner.tagOptions)
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchBanner();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +54,8 @@ const CreateChat = () => {
           isPrivate,
           name,
           numUsers: 1,
-          password
+          password,
+          tag
         });
   
         if (chatRef) {
@@ -56,8 +80,22 @@ const CreateChat = () => {
           <input type="text" id='name' name='name'
             value={ name } onChange={(e) => setName(e.target.value)}
             className='
-              border border-black px-2 py-1 rounded-lg
+              border border-black p-2 rounded-lg
           '/>
+        </div>
+
+        {/* tag */}
+        <div className='flex flex-col gap-2'>
+          <label htmlFor="tag">Tag</label>
+          <select name="tag" id="tag"
+            value={tag} onChange={(e) => setTag(e.target.value)}
+            className='p-2 border border-black rounded-lg'
+          >
+             <option value="">Select...</option>
+            { tagOptions?.map(option => (
+              <option key={option} value={option}>{ option }</option>
+            ))}
+          </select>
         </div>
         
         {/* capacity */}

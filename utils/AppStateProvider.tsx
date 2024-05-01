@@ -7,9 +7,12 @@ import React, {
   useReducer,
 } from 'react';
 
+import { TBanner } from '@/types';
+
 type TAvailableChannelComponents = (
   | 'lobby'
   | 'features'
+  | 'add_banner'
   | 'create_chat'
   | 'chat_list'
   | 'user_list'
@@ -25,6 +28,7 @@ interface AppState {
   chatId: string;
   privateChatId: string;
   channelComponent: TAvailableChannelComponents;
+  currentBanner: TBanner | null;
 };
 
 type Action = (
@@ -41,6 +45,7 @@ type Action = (
       type: 'CURRENT_CHANNEL_COMPONENT',
       channelComponent: TAvailableChannelComponents
     }
+  | { type: "SET_CURRENT_BANNER", currentBanner: TBanner }
 );
 
 const initialState: AppState = {
@@ -51,7 +56,8 @@ const initialState: AppState = {
   channelId: '',
   chatId: '',
   privateChatId: '',
-  channelComponent: 'lobby'
+  channelComponent: 'lobby',
+  currentBanner: null
 }
 
 const AppStateContext = createContext<{
@@ -112,6 +118,11 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         channelComponent: action.channelComponent
+      };
+    case "SET_CURRENT_BANNER":
+      return {
+        ...state,
+        currentBanner: action.currentBanner
       };
     default:
       return state;

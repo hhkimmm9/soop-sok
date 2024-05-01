@@ -45,14 +45,16 @@ const Chat = ({ chat }: ChatProps) => {
       </div>
 
       {/* topic, buttons */}
-      <div className='flex justify-between'>
-        {/* bubble */}
-        <div className='
-          rounded-full px-4 py-1 bg-amber-500
-          text-xs text-white
-        '>
-          <span>whatever</span>
-        </div>
+      <div className='h-6 flex justify-between'>
+        { chat.tag.length > 0 && (
+          // bubble
+          <div className='
+            rounded-full px-4 py-1 bg-amber-500
+            text-xs text-white
+          '>
+            <span>{ chat.tag }</span>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -12,7 +12,8 @@ export type TChat = {
   isPrivate: boolean,
   name: string,
   numUsers: string,
-  password: string
+  password: string,
+  tag: string
 };
 export type TPrivateChat = {
   id: string,
@@ -42,6 +43,14 @@ export type TUser = {
     introduction: string,
   },
   uid: string
+};
+
+export type TBanner = {
+  cid: string;
+  content: string;
+  createdAt: FirestoreTimestamp;
+  selected: boolean;
+  tagOptions: string[];
 };
 
 export type FirestoreTimestamp = {
