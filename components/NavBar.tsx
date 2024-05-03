@@ -16,55 +16,64 @@ const NavBar = () => {
 
   const { dispatch } = useAppState();
 
-  const activateChats = (type: string) => {
-    router.push('/components');
+  const renderComponent = (page: string) => {
+    switch (page) {
+      case "channels":
+        dispatch({ type: 'SET_TO_CHANNEL' });
+        router.push('/components');
+        break;
 
-    if (type === 'channels')
-      dispatch({ type: 'SET_TO_CHANNEL' });
-    
-    else if (type === 'private_chats')
-      dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
-  };
+      case "private_chats":
+        dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
+        router.push('/components');
+        break;
 
-  const activateRegularPage = (url: string) => {
-    dispatch({ type: 'SET_TO_PAGES' });
+      case "/friends":
+        dispatch({ type: 'SET_TO_PAGES' });
+        router.push(page);
+        break;
 
-    // TODO: may need to push after the url changed.
-    router.push(url);
+      case "/settings":
+        dispatch({ type: 'SET_TO_PAGES' });
+        router.push(page);
+        break;
+
+      default:
+        break;
+    }
   };
   
   return (
     <nav>
       { pathname !== '/'  && (
         <div className="
-          absolute bottom-0 w-full h-14
-          border-t border-black
-          px-12 flex justify-between items-center
+          absolute bottom-0 w-full h-14 px-12 bg-yellow-900
+          flex justify-between items-center
         ">
           {/* Channels */}
-          <div onClick={() => activateChats('channels')}
-            className="rounded-full px-3"
+          <div onClick={() => renderComponent('channels')}
+            className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
           >
             <QueueListIcon className='h-5 w-5' />
           </div>
 
           {/* Private chats */}
-          <div onClick={() => activateChats('private_chats')}
-            className="rounded-full px-3"
+          <div onClick={() => renderComponent('private_chats')}
+            className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
           >
             <ChatBubbleBottomCenterIcon className='h-5 w-5' />
           </div>
 
           {/* Friends List */}
-          <div onClick={() => activateRegularPage('/friends')}
-            className="rounded-full px-3"
+          <div onClick={() => renderComponent('/friends')}
+            className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
           >
             <UserIcon className='h-5 w-5' />
           </div>
 
           {/* Settings */}
-          <div onClick={() => activateRegularPage('/settings')}
-            className="rounded-full px-3"
+          <div onClick={() => renderComponent('/settings')}
+            className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
           >
             <Cog6ToothIcon className='h-5 w-5' />
           </div>
