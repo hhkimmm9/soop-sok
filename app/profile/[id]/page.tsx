@@ -114,58 +114,73 @@ const Profile = () => {
     router.push('/components');
   };
 
+  const renderButtonComponents = () => {
+    // my profile
+    if (isMyProfile) return (
+      <div className='w-full flex flex-col gap-8'>
+        <Link href={`/profile/${profile?.uid}/edit`}
+          className='border rounded-lg py-2 block shadow-sm text-center'
+        > Edit Profile </Link>
+      </div>
+    )
+    
+    // other account's profile
+    else return  (
+      <div className='w-full grid grid-cols-2 gap-2'>
+        { isMyFriend ? (
+            <button type='button' onClick={() => {}}
+              className='border rounded-lg py-2 block shadow-sm
+            '> Poke! (Say Hi!) </button>
+          ) : (
+            <button type='button' onClick={addUserToFriendList}
+              className='border rounded-lg py-2 block shadow-sm
+            '> Send Friend Request </button>
+          )
+        }
+        <button type='button' onClick={redirectToDMChat}
+          className='border rounded-lg py-2 block shadow-sm
+        '> Send DM </button>
+      </div>
+    )
+  };
+
   if (profile !== undefined && loading) return (
-    <div className='pt-24 flex flex-col gap-12 items-center'>
-      <Image
-        src={profile.photoURL} alt=''
-        width={1324} height={1827}
-        className={`
-          object-cover w-72 h-72 rounded-full
-          ${profile.isOnline ? 'border-green-400' : 'border-gray-400'}
-          border-4
-      `}/>
-      <div className='flex flex-col gap-2'>
-        <p className='text-5xl font-medium'>
-          { profile.displayName }
-        </p>
-        <p>
-          { profile.profile.introduction }
-        </p>
+    <div className='pt-10 flex flex-col gap-4'>
+      {/* pic and name */}
+      <div className='w-full grid grid-cols-4'>
+        <div className='pl-2'>
+          <Image src={profile.photoURL} alt=''
+            width={128} height={128} className={`
+              cols-span-1 object-cover rounded-full
+          `}/>
+        </div>
+
+        <div className='cols-span-3 pl-6 flex flex-col gap-2'>
+          <p className='mx-auto text-center text-2xl font-medium whitespace-nowrap'>
+            { profile.displayName }
+          </p>
+
+          <p className='
+            px-3 py-1 rounded-full bg-purple-300
+            font-medium text-base text-center text-white
+          '>
+            { profile.profile.mbti }
+          </p>
+        </div>
+      </div>
+
+      {/* buttons */}
+      <div>
+        { renderButtonComponents() }
       </div>
       
-      <div className=''>
-        { isMyProfile ? (
-          <div className='w-72 flex flex-col gap-8'>
-            <Link href={`/profile/${profile.uid}/edit`}
-              className='
-                border rounded-lg py-3 bg-white
-                text-center
-            '>Edit Profile</Link>
-          </div>
-        ) : (
-          <div className='w-72 flex flex-col gap-8'>
-            {
-              isMyFriend ? (
-                <button type='button' onClick={() => {}}
-                  className='border rounded-lg py-3 bg-white text-center'
-                > Poke! (Say Hi!)</button>
-              ) : (
-                <button type='button' onClick={addUserToFriendList}
-                  className='
-                    border rounded-lg py-3 bg-white
-                    text-center
-                '>Send Friend Request</button>
-              )
-            }
-
-            <button onClick={redirectToDMChat}
-              className='
-                border rounded-lg py-3 bg-white
-                text-center
-            '>Send DM</button>
-          </div>
-        )}
+      {/*  */}
+      <div className='flex flex-col gap-4'>
+        <div className='h-68 p-2 border rounded-lg overflow-y-auto'>
+          <p>{ profile.profile.introduction }</p>
+        </div>
       </div>
+
     </div>
   )
 };

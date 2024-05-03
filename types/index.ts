@@ -40,6 +40,7 @@ export type TUser = {
   profile: {
     interests: string[],
     introduction: string,
+    mbti: string,
   },
   uid: string
 };
