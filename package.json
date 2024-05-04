@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.16",
     "firebase": "^10.8.0",
     "firebase-admin": "^12.0.0",
     "firebaseui": "^6.1.0",
