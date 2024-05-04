@@ -30,35 +30,40 @@ const db = admin.firestore();
 
 async function updateBanner() {
   try {
-    // banners 컬렉션에서 랜덤하게 document 하나를 가져옵니다.
+    // banners 컬렉션에서 각 cid 별로 그룹화하여 배너를 랜덤하게 선택합니다.
+    const bannersByCid = {};
     const snapshot = await db.collection("banners").get();
-    const banners = [];
     snapshot.forEach((doc) => {
-      banners.push({ id: doc.id, ...doc.data() });
-    });
-
-    if (banners.length === 0) {
-      console.log("No banners found.");
-      return;
-    }
-
-    // 랜덤하게 선택된 document를 선택합니다.
-    const randomIndex = Math.floor(Math.random() * banners.length);
-    const selectedBanner = banners[randomIndex];
-
-    // 선택된 document의 selected 속성을 true로 업데이트합니다.
-    await db.collection("banners").doc(selectedBanner.id).update({
-      selected: true,
-    });
-
-    // 선택된 document 이외의 모든 document를 삭제합니다.
-    const batch = db.batch();
-    banners.forEach((banner) => {
-      if (banner.id !== selectedBanner.id) {
-        const docRef = db.collection("banners").doc(banner.id);
-        batch.delete(docRef);
+      const banner = { id: doc.id, ...doc.data() };
+      const cid = banner.cid;
+      if (!bannersByCid[cid]) {
+        bannersByCid[cid] = [banner];
+      } else {
+        bannersByCid[cid].push(banner);
       }
     });
+
+    // 각 cid 그룹에서 랜덤하게 선택된 배너를 업데이트하고, 나머지 배너를 삭제합니다.
+    const batch = db.batch();
+    for (const cid in bannersByCid) {
+      const banners = bannersByCid[cid];
+      if (banners.length > 0) {
+        // 랜덤하게 선택된 document를 선택합니다.
+        const randomIndex = Math.floor(Math.random() * banners.length);
+        const selectedBanner = banners[randomIndex];
+        // 선택된 document의 selected 속성을 true로 업데이트합니다.
+        const selectedDocRef = db.collection("banners").doc(selectedBanner.id);
+        batch.update(selectedDocRef, { selected: true });
+        // 선택된 document 이외의 모든 document를 삭제합니다.
+        banners.forEach((banner) => {
+          if (banner.id !== selectedBanner.id) {
+            const docRef = db.collection("banners").doc(banner.id);
+            batch.delete(docRef);
+          }
+        });
+      }
+    }
+
     await batch.commit();
 
     console.log("Selected banner updated and other banners deleted successfully.");
