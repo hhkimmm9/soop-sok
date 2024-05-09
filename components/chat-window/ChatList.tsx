@@ -1,7 +1,6 @@
 'use client';
 
 import SearchBar from '@/components/SearchBar';
-import SortOptions from '@/components/SortOptions';
 import Chat from '@/components/chat-window/Chat';
 
 import { useState, useEffect } from 'react';
@@ -18,8 +17,6 @@ import { TChat } from '@/types'
 
 const ChatList = () => {
   const [chats, setChats] = useState<TChat[]>([]);
-  const [activateSearch, setActivateSearch] = useState(false);
-  const [activateSort, setActivateSort] = useState(false);
   
   const { state, dispatch } = useAppState();
 
@@ -51,31 +48,9 @@ const ChatList = () => {
 
   return (
     <div className='h-full flex flex-col gap-4'>
-      {/* { !activateSearch && !activateSort && (
-        <div className='grid grid-cols-2 gap-2'>
-          <button onClick={() => setActivateSearch(true)}
-            className='bg-white border border-black py-2 rounded-lg shadow-sm
-          '>Search</button>
-          <button onClick={() => setActivateSort(true)}
-            className='bg-white border border-black py-2 rounded-lg shadow-sm
-          '>Sort</button>
-        </div>
-      )}
-
-      { activateSearch && (
-        <SearchBar
-          goBack={() => setActivateSearch(false) }
-          onSubmit={(searchQuery: string) => console.log(searchQuery) }
-        />
-      )}
-
-      { activateSort && (
-        <SortOptions
-          goBack={() => setActivateSort(false)}
-          options={['Option A', 'Option B']}
-          onSelect={(selectedValue: string) => console.log(selectedValue) }
-        />
-      )} */}
+      <SearchBar
+        onSubmit={(searchQuery: string) => console.log(searchQuery) }
+      />
 
       {/* chat list */}
       <div className='
