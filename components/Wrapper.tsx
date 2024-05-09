@@ -1,3 +1,4 @@
+// TODO: Leverage SSR.
 'use client';
 
 import Channels from '@/components/channels/Channels';
@@ -13,36 +14,33 @@ type WrapperProps = {
 const Wrapper = ({ children }: WrapperProps) => {
   const { state } = useAppState();
 
-  let content;
-
-  switch (state.currentPage) {
-    case 'channel':
-      // TODO: change the URL
-      content = <Channels />;
-      break;
-      
-    case 'private_chat':
-      // TODO: change the URL
-      content = <PrivateChats />;
-      break;
-
-    case 'pages':
-      content = children;
-      break;
-
-    default:
-      content = null;
+  const renderComponent = () => {
+    switch (state.currentPage) {
+      case 'channel':
+        // TODO: change the URL
+        return <Channels />;
+        
+      case 'private_chat':
+        // TODO: change the URL
+        return <PrivateChats />;
+  
+      case 'pages':
+        return children;
+  
+      default:
+        return null;
+    }
   }
 
   return (
     <section className="
-      relative mx-auto
-      min-w-80 w-screen max-w-[430px]
-      min-h-[667px] h-screen
+      relative min-w-80 w-screen max-w-[430px]
+      min-h-[667px] h-screen mx-auto
       border border-black bg-white
     ">
-      <main className='min-h-[calc(667px-3.5rem)] h-[calc(100vh-3.5rem)] px-4 pt-4 pb-6'>
-        { content }
+      {/*  */}
+      <main className='min-h-[calc(667px-3.5rem)] h-[calc(100vh-3.5rem)]'>
+        { renderComponent() }
       </main>
       <NavBar />
     </section>

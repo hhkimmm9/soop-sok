@@ -119,7 +119,7 @@ const Profile = () => {
     if (isMyProfile) return (
       <div className='w-full flex flex-col gap-8'>
         <Link href={`/profile/${profile?.uid}/edit`}
-          className='border rounded-lg py-2 block shadow-sm text-center'
+          className='border rounded-lg py-2 block shadow-sm text-center bg-white'
         > Edit Profile </Link>
       </div>
     )
@@ -129,16 +129,16 @@ const Profile = () => {
       <div className='w-full grid grid-cols-2 gap-2'>
         { isMyFriend ? (
             <button type='button' onClick={() => {}}
-              className='border rounded-lg py-2 block shadow-sm
+              className='border rounded-lg py-2 block shadow-sm bg-white
             '> Poke! (Say Hi!) </button>
           ) : (
             <button type='button' onClick={addUserToFriendList}
-              className='border rounded-lg py-2 block shadow-sm
+              className='border rounded-lg py-2 block shadow-sm bg-white
             '> Send Friend Request </button>
           )
         }
         <button type='button' onClick={redirectToDMChat}
-          className='border rounded-lg py-2 block shadow-sm
+          className='border rounded-lg py-2 block shadow-sm bg-white
         '> Send DM </button>
       </div>
     )
@@ -176,7 +176,7 @@ const Profile = () => {
       
       {/*  */}
       <div className='flex flex-col gap-4'>
-        <div className='h-68 p-2 border rounded-lg overflow-y-auto'>
+        <div className='h-68 p-2 border rounded-lg overflow-y-auto bg-white'>
           <p>{ profile.profile.introduction }</p>
         </div>
       </div>

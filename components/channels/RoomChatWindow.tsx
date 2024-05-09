@@ -107,7 +107,7 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
   };
 
   return (
-    <div className='h-full grid grid-rows-12'>
+    <div className='h-full p-4 grid grid-rows-12 bg-stone-100'>
       <Banner />
       <div className='row-start-2 row-span-11'>
         <div className='h-full flex flex-col gap-4'>
