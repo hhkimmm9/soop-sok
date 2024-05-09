@@ -57,7 +57,6 @@ const PrivateChats = () => {
       <div className='flex flex-col gap-6'>
         {/* interaction area */}
         <SearchBar
-          goBack={() => {}}
           onSubmit={(searchQuery: string) => console.log(searchQuery) }
         />
 
