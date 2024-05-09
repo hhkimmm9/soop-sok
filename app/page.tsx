@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+
 import { auth, db } from '@/utils/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
 import 'firebaseui/dist/firebaseui.css'
@@ -11,64 +12,70 @@ import {
   setDoc, getDoc, updateDoc,
   serverTimestamp
 } from 'firebase/firestore';
+
 import Cookies from 'universal-cookie';
 
 export default function Home() {
   const [firebaseui, setFirebaseUI] = useState<any>(null);
+
   const router = useRouter();
-  const cookies = new Cookies();
+  
+  const uiConfig = useMemo(() => {
+    const cookies = new Cookies();
 
-  // Initialize the FirebaseUI Widget using Firebase.
-  const uiConfig = {
-    callbacks: {
-      signInSuccessWithAuthResult: (authResult: any) => {
-        // store the auth token into the cookie
-        // https://www.npmjs.com/package/cookies
-        cookies.set('auth-token', authResult.credential.accessToken);
+    // Initialize the FirebaseUI Widget using Firebase.
+    const config = {
+      callbacks: {
+        signInSuccessWithAuthResult: (authResult: any) => {
+          // store the auth token into the cookie
+          // https://www.npmjs.com/package/cookies
+          cookies.set('auth-token', authResult.credential.accessToken);
 
-        const userRef = doc(db, 'users', authResult.user.uid);
-        getDoc(userRef)
-          .then((querySnapshot) => {
-            // if this is the first time sign in, create a new user data and store it.)
-            if (!querySnapshot.exists()) {
-              setDoc(doc(db, 'users', authResult.user.uid), {
-                createdAt: serverTimestamp(),
-                displayName: authResult.user.displayName,
-                email: authResult.user.email,
-                honourPoints: 0,
-                isEmailVerified: true,
-                isOnline: true,
-                lastLoginTime: serverTimestamp(),
-                photoURL: authResult.user.photoURL,
-                profile: {
-                  introduction: '',
-                  interests: []
-                },
-                uid: authResult.user.uid
-              });
-            }
-            // otherwise, update the isOnline status
-            else {
-              updateDoc(userRef, {
-                isOnline: true,
-                lastLoginTime: serverTimestamp()
-              });
-            };
-            router.push('/components');
-          })
-          .catch((err) => {
-            console.error('Error getting document:', err);
-          })
+          const userRef = doc(db, 'users', authResult.user.uid);
+          getDoc(userRef)
+            .then((querySnapshot) => {
+              // if this is the first time sign in, create a new user data and store it.)
+              if (!querySnapshot.exists()) {
+                setDoc(doc(db, 'users', authResult.user.uid), {
+                  createdAt: serverTimestamp(),
+                  displayName: authResult.user.displayName,
+                  email: authResult.user.email,
+                  honourPoints: 0,
+                  isEmailVerified: true,
+                  isOnline: true,
+                  lastLoginTime: serverTimestamp(),
+                  photoURL: authResult.user.photoURL,
+                  profile: {
+                    introduction: '',
+                    interests: []
+                  },
+                  uid: authResult.user.uid
+                });
+              }
+              // otherwise, update the isOnline status
+              else {
+                updateDoc(userRef, {
+                  isOnline: true,
+                  lastLoginTime: serverTimestamp()
+                });
+              };
+              router.push('/components');
+            })
+            .catch((err) => {
+              console.error('Error getting document:', err);
+            })
 
-        return true;
+          return true;
+        },
       },
-    },
-    signinFlow: 'popup',
-    signInSuccessUrl: '/components',
-    signInOptions: [
-      GoogleAuthProvider.PROVIDER_ID
-    ]
-  };
+      signinFlow: 'popup',
+      signInSuccessUrl: '/components',
+      signInOptions: [
+        GoogleAuthProvider.PROVIDER_ID
+      ]
+    };
+    return config;
+  }, [router]);
 
   useEffect(() => {
     const loadFirebaseUI = async () => {
@@ -83,7 +90,7 @@ export default function Home() {
       const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
       ui.start('#firebaseui-auth-container', uiConfig);
     }
-  }, [firebaseui]);
+  }, [firebaseui, uiConfig]);
 
   if (firebaseui) return (
     <div className="pt-24 flex flex-col gap-64 items-center">
