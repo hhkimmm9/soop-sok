@@ -45,7 +45,7 @@ const InChannel = () => {
       <ChannelChatWindow cid={state.channelId} />  
     );
 
-    else if (state.activateChatChat) return (
+    else if (state.activateRoomChat) return (
       <RoomChatWindow cid={state.chatId} />  
     );
 

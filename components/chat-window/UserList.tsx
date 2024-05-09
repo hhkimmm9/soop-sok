@@ -24,7 +24,7 @@ const UserList = () => {
   if (state.activateChannelChat) {
     cid = state.channelId
   }
-  else if (state.activateChatChat) {
+  else if (state.activateRoomChat) {
     cid = state.chatId
   }
 
