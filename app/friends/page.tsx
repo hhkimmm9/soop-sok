@@ -10,9 +10,6 @@ import {
   setDoc, getDocs, updateDoc,
   or, where, serverTimestamp
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
-
-import { TUser } from '@/types';
 
 type TFriend = {
   id: string;
@@ -23,15 +20,13 @@ type TFriend = {
 const Friends = () => {
   const [friends, setFriends] = useState<TFriend[]>([]);
 
-  const [signedInUser] = useAuthState(auth);
-
   useEffect(() => {
     const fetchFriendList = async () => {
-      if (signedInUser) {
+      if (auth.currentUser) {
         const q = query(collection(db, "friend_list"),
           or(
-            where("senderId", "==", signedInUser?.uid),
-            where("receiverId", "==", signedInUser?.uid),
+            where("senderId", "==", auth.currentUser?.uid),
+            where("receiverId", "==", auth.currentUser?.uid),
           )
         );
   
@@ -55,15 +50,15 @@ const Friends = () => {
       }
     };
     fetchFriendList();
-  }, [signedInUser]);
+  }, []);
 
   return (
     <div className='flex flex-col gap-2'>
       { friends.map((friend: TFriend) => (
-        <Friend key={friend.id} friendId={signedInUser?.uid == friend.receiverId ? friend.senderId : friend.receiverId} />
+        <Friend key={friend.id} friendId={auth.currentUser?.uid == friend.receiverId ? friend.senderId : friend.receiverId} />
       )) }
     </div>
   )
-}
+};
 
-export default Friends
+export default Friends;

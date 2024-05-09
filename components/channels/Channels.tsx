@@ -5,12 +5,11 @@ import RoomChatWindow from '@/components/channels/RoomChatWindow';
 import Channel from '@/components/channels/Channel';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { collection, query, orderBy } from 'firebase/firestore';
 
 import { TChannel } from '@/types';
 
@@ -19,7 +18,7 @@ const InChannel = () => {
   
   const { state } = useAppState();
 
-  const [channelsSnapshot, loading, error] = useCollection(
+  const [channelsSnapshot] = useCollection(
     query(collection(db, 'channels'),
       orderBy('orderId', 'asc')
     ), {

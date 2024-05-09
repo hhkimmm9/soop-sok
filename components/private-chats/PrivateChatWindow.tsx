@@ -1,6 +1,7 @@
-import { useAppState } from '@/utils/AppStateProvider';
-
 import MessageContainer from '../MessageContainer';
+
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth } from '@/utils/firebase';
 
 const ChatWindow = () => {
   const { state } = useAppState();

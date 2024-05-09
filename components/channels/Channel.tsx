@@ -5,7 +5,6 @@ import {
   collection, doc,
   addDoc, updateDoc,
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TChannel } from '@/types';
 
@@ -15,8 +14,6 @@ type ChannelProps = {
 
 const Channel = ({ channelData } : ChannelProps) => {
   const { dispatch } = useAppState();
-
-  const [signedInUser] = useAuthState(auth);
 
   const enterChannel = async () => {
     // enable entering to the channel only if the channel is not full
@@ -30,9 +27,9 @@ const Channel = ({ channelData } : ChannelProps) => {
       const statusRef = collection(db, 'status_board');
       await addDoc(statusRef, {
         cid: channelData.id,
-        displayName: signedInUser?.displayName,
-        profilePicUrl: signedInUser?.photoURL,
-        uid: signedInUser?.uid
+        displayName: auth.currentUser?.displayName,
+        profilePicUrl: auth.currentUser?.photoURL,
+        uid: auth.currentUser?.uid
       });
   
       // redriect to the selected channel page.
@@ -47,7 +44,7 @@ const Channel = ({ channelData } : ChannelProps) => {
         flex flex-col gap-2
     `}>
       <h3>{ channelData.name }</h3>
-      <p>현재 참여 인원: { channelData.numUsers } / { channelData.capacity }</p>
+      <p># of users: { channelData.numUsers } / { channelData.capacity }</p>
     </div>
   )
 }

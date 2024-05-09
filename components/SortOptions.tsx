@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { auth, db } from '@/utils/firebase';
+
 import {
   ChevronDoubleLeftIcon,
   MagnifyingGlassIcon,

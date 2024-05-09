@@ -5,15 +5,14 @@ import SortOptions from '@/components/SortOptions';
 import Chat from '@/components/chat-window/Chat';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
   where, orderBy,
 } from 'firebase/firestore'
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { TChat } from '@/types'
 

@@ -8,13 +8,11 @@ import ChatList from '@/components/chat-window/ChatList';
 import UserList from '@/components/chat-window/UserList';
 
 import { useAppState } from '@/utils/AppStateProvider';
-
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query, where,
   getDoc, getDocs, updateDoc, deleteDoc
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 type ChatWindowProps = {
   cid: string,
@@ -23,10 +21,8 @@ type ChatWindowProps = {
 const ChatWindow = ({ cid }: ChatWindowProps) => {
   const { state, dispatch } = useAppState();
 
-  const [signedInUser] = useAuthState(auth);
-  
   const leaveChat = async () => {
-    if (signedInUser) {
+    if (auth.currentUser) {
       try {
         const channelRef = doc(db, 'channels', cid);
         const querySnapshot = await getDoc(channelRef);
@@ -45,7 +41,7 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
         // find the document id
         const statusRef = query(collection(db, 'status_board'),
           where('cid', '==', cid),
-          where('uid', '==', signedInUser?.uid)
+          where('uid', '==', auth.currentUser?.uid)
         );
         const statusSnapshot = await getDocs(statusRef);
   

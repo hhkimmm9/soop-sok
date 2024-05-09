@@ -5,16 +5,15 @@ import PrivateChatWindow from '@/components/private-chats/PrivateChatWindow';
 import PrivateChat from '@/components/private-chats/PrivateChat';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, doc,
   query, or, where,
   getDoc, getDocs
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { TUser, TPrivateChat } from '@/types';
 
@@ -23,13 +22,11 @@ const PrivateChats = () => {
 
   const { state, dispatch } = useAppState();
 
-  const [signedInUser] = useAuthState(auth);
-
-  const [realtime_chats, loading, error] = useCollection(
+  const [realtime_chats] = useCollection(
     query(collection(db, 'private_chats'),
       or(
-        where('from', '==', signedInUser?.uid),
-        where('to', '==', signedInUser?.uid),
+        where('from', '==', auth.currentUser?.uid),
+        where('to', '==', auth.currentUser?.uid),
       )
     ), {
       snapshotListenOptions: { includeMetadataChanges: true },

@@ -5,10 +5,11 @@ import MessageContainer from '@/components/MessageContainer';
 import UserList from '@/components/chat-window/UserList';
 
 import { useAppState } from '@/utils/AppStateProvider';
-
 import { auth, db } from '@/utils/firebase';
-import { collection, doc, query, where, getDocs, deleteDoc, } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  collection, doc, query, where,
+  getDocs, deleteDoc,
+} from 'firebase/firestore';
 
 type ChatWindowProps = {
   cid: string;
@@ -16,8 +17,6 @@ type ChatWindowProps = {
 
 const ChatWindow = ({ cid }: ChatWindowProps) => {
   const { state, dispatch } = useAppState();
-
-  const [signedInUser] = useAuthState(auth);
 
   const redirectToUserList = () => {
     dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' });
@@ -28,7 +27,7 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
   };
 
   const leaveChat = async () => {
-    if (signedInUser) {
+    if (auth.currentUser) {
       // try {
       //   const channelRef = doc(db, 'channels', cid);
       //   const querySnapshot = await getDoc(channelRef);
@@ -46,7 +45,7 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
         // find the document id
         const statusRef = query(collection(db, 'status_board'),
           where('cid', '==', cid),
-          where('uid', '==', signedInUser?.uid)
+          where('uid', '==', auth.currentUser?.uid)
         );
         const statusSnapshot = await getDocs(statusRef);
   

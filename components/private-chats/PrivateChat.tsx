@@ -1,19 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 import Image from 'next/image';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc,
   query, where, orderBy, limit,
   getDoc, getDocs
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { TMessage, TPrivateChat, TUser } from '@/types';
 import { formatTimeAgo } from '@/utils/utils';
+import { TMessage, TPrivateChat, TUser } from '@/types';
 
 type PrivateChatProps = {
   privateChat: TPrivateChat
@@ -25,15 +24,13 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
 
   const { dispatch } = useAppState();
 
-  const [signedInUser] = useAuthState(auth);
-
   // fetch user data based on the given user id,
   // or, store user data into the private_chat collection.
   useEffect(() => {
     const fetchToUser = async () => {
-      if (signedInUser) {
+      if (auth.currentUser) {
         try {
-          const uid = privateChat.to === signedInUser.uid ?
+          const uid = privateChat.to === auth.currentUser.uid ?
             privateChat.from : privateChat.to;
   
           const userSnapshot = await getDoc(doc(db, 'users', uid));
@@ -47,7 +44,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
       }
     };
     fetchToUser();
-  }, [privateChat.to, privateChat.from, signedInUser]);
+  }, [privateChat.to, privateChat.from]);
 
   // fetch the latest message associated with this private chat
   // to display when it is sent and the content of it.
