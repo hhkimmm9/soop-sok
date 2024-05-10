@@ -160,8 +160,7 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
     <>
       <div ref={chatWindowRef} onScroll={handleScroll}
         className='
-          grow p-4 overflow-y-auto
-          border border-black rounded-lg bg-white
+          grow p-4 rounded-lg overflow-y-auto shadow-sm bg-white
           flex flex-col gap-5
       '>
         { prevMessages.map((message: TMessage) => (
@@ -174,7 +173,7 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
 
       {/* features and message input box */}
       <div className='flex justify-between gap-3'>
-        <div className='flex items-center border border-black p-2 rounded-lg bg-white'>
+        <div className='p-2 shadow-sm rounded-lg bg-white flex items-center'>
           { state.currentPage === 'channel' ? (
             // for channel chats & room chats
             <div onClick={redirectToFeaturesPage}>

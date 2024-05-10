@@ -1,6 +1,14 @@
 'use client';
 
-import { Avatar, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
+} from '@mui/material';
 
 import { useState, useEffect, ChangeEvent, SetStateAction } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -101,7 +109,7 @@ const ProfileEdit = () => {
       {/* profile picture */}
       <div className='flex justify-center'>
         <label htmlFor="profilePic">
-          <Avatar alt="Profile Picture" src={profile.photoURL} sx={{ width: 192, height: 192 }} />
+          <Avatar src={profile.photoURL} alt="Profile Picture" sx={{ width: 192, height: 192 }} />
         </label>
 
         <input type="file" id="profilePic"
@@ -128,13 +136,10 @@ const ProfileEdit = () => {
         {/* mbti */}
         <div className='flex flex-col gap-2'>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">MBTI</InputLabel>
+            <InputLabel id="mbti-select-label">MBTI</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={mbti}
-              label="Age"
-              onChange={(e) => handleMBTIChange(e.target.value)}
+              labelId="mbti-select-label" id="mbti-select" label="MBTI"
+              value={mbti} onChange={(e) => handleMBTIChange(e.target.value)}
             >
               { MBTIOptions.map((option) => (
                 <MenuItem key={option[0]} value={option[0]}>{ option[1] }</MenuItem>  

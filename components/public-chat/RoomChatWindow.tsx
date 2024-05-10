@@ -1,8 +1,8 @@
 'use client';
 
 import Banner from '@/components/chat-window/Banner';
-import MessageContainer from '@/components/MessageContainer';
-import UserList from '@/components/chat-window/UserList';
+import MessageContainer from '@/components/chat-window/MessageContainer';
+import UserList from '@/components/chat-window/features/UserList';
 
 import { useAppState } from '@/utils/AppStateProvider';
 
@@ -107,7 +107,7 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
   };
 
   return (
-    <div className='h-full grid grid-rows-12'>
+    <div className='h-full p-4 grid grid-rows-12 bg-stone-100'>
       <Banner />
       <div className='row-start-2 row-span-11'>
         <div className='h-full flex flex-col gap-4'>
