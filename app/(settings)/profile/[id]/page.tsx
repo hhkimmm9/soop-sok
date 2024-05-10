@@ -154,14 +154,14 @@ const Profile = () => {
           `}/>
         </div>
 
-        <div className='cols-span-3 pl-6 flex flex-col gap-2'>
-          <p className='mx-auto text-center text-2xl font-medium whitespace-nowrap'>
+        <div className='cols-span-3 pl-6 flex flex-col gap-3'>
+          <p className='mx-auto font-medium text-3xl whitespace-nowrap'>
             { profile.displayName }
           </p>
 
           <p className='
-            px-3 py-1 rounded-full bg-purple-300
-            font-medium text-base text-center text-white
+            px-2 py-1 rounded-full bg-purple-300
+            font-medium text-center uppercase text-white
           '>
             { profile.profile.mbti }
           </p>
@@ -175,7 +175,7 @@ const Profile = () => {
       
       {/*  */}
       <div className='flex flex-col gap-4'>
-        <div className='h-68 p-2 border rounded-lg overflow-y-auto bg-white'>
+        <div className='h-52 p-4 border rounded-lg overflow-y-auto bg-white'>
           <p>{ profile.profile.introduction }</p>
         </div>
       </div>
