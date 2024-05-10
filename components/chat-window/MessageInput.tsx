@@ -42,7 +42,7 @@ const MessageInput = ({ cid }: MessageinputProps) => {
     <div className='flex gap-3 items-center'>
 
       {/* search input field */}
-      <div className='grow p-0.5 rounded-lg border border-black bg-white'>
+      <div className='grow p-0.5 rounded-lg shadow-sm bg-white'>
         <form onSubmit={(e) => handleSubmit(e)}
           className='h-8 flex items-center justify-between'>
           <input type="text"

@@ -1,11 +1,11 @@
 'use client';
 
 import Banner from '@/components/chat-window/Banner';
-import MessageContainer from '@/components/MessageContainer';
-import CreateChat from '@/components/chat-window/CreateChat';
-import AddBanner from '@/components/chat-window/AddBanner';
-import ChatList from '@/components/chat-window/ChatList';
-import UserList from '@/components/chat-window/UserList';
+import MessageContainer from '@/components/chat-window/MessageContainer';
+import CreateChat from '@/components/chat-window/features/CreateChat';
+import AddBanner from '@/components/chat-window/features/AddBanner';
+import ChatList from '@/components/chat-window/features/ChatList';
+import UserList from '@/components/chat-window/features/UserList';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
@@ -14,6 +14,16 @@ import {
   getDoc, getDocs, updateDoc, deleteDoc
 } from 'firebase/firestore';
 
+import { TAvailableChannelComponents } from "@/utils/AppStateProvider";
+
+import {
+  PlusIcon,
+  MegaphoneIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  UsersIcon,
+  ArrowLeftStartOnRectangleIcon,
+} from '@heroicons/react/24/outline';
+
 type ChatWindowProps = {
   cid: string,
 };
@@ -21,6 +31,10 @@ type ChatWindowProps = {
 const ChatWindow = ({ cid }: ChatWindowProps) => {
   const { state, dispatch } = useAppState();
 
+  const redirectTo = (component: TAvailableChannelComponents) => {
+    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: component })
+  };
+  
   const leaveChat = async () => {
     if (auth.currentUser) {
       try {
@@ -80,44 +94,51 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
       case "features":
         return (
           <div className='h-full flex flex-col gap-4'>
-            <div className='
-              grow p-4 overflow-y-auto
-              border border-black rounded-lg bg-white
-            '>
-              <div className='grid grid-cols-2 gap-4'>
-                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'create_chat' })}
-                  className='
-                    h-min py-8 flex justify-center items-center
-                    border border-black rounded-lg
-                '>Create Chat</div>
-                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'add_banner' })}
-                  className='
-                    h-min py-8 flex justify-center items-center
-                    border border-black rounded-lg
-                '>New Banner</div>
-                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat_list' })}
-                  className='
-                    h-min py-8 flex justify-center items-center
-                    border border-black rounded-lg
-                '>Chat List</div>
-                <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' })}
-                  className='
-                    h-min py-8 flex justify-center items-center
-                    border border-black rounded-lg
-                '>User List</div>
+            <div className="grow p-4 rounded-lg overflow-y-auto bg-white">
+              <div className='flex flex-col gap-4'>
+                <div onClick={() => redirectTo('create_chat')}
+                  className="
+                    py-6 rounded-lg bg-stone-100
+                    transition duration-300 ease-in-out hover:bg-stone-200
+                    flex justify-center"
+                > <PlusIcon className='h-8' /> </div>
+
+                <div onClick={() => redirectTo('add_banner')}
+                  className="
+                    py-6 rounded-lg bg-stone-100
+                    transition duration-300 ease-in-out hover:bg-stone-200
+                    flex justify-center"
+                > <MegaphoneIcon className='h-8' /> </div>
+
+                <div onClick={() => redirectTo('chat_list')}
+                  className="
+                    py-6 rounded-lg bg-stone-100
+                    transition duration-300 ease-in-out hover:bg-stone-200
+                    flex justify-center"
+                > <ChatBubbleOvalLeftEllipsisIcon className='h-8' /> </div>
+
+                <div onClick={() => redirectTo('user_list')}
+                  className="
+                    py-6 rounded-lg bg-stone-100
+                    transition duration-300 ease-in-out hover:bg-stone-200
+                    flex justify-center"
+                > <UsersIcon className='h-8' /> </div>
+
                 <div onClick={leaveChat}
-                  className='
-                    h-min py-8 flex justify-center items-center
-                    border border-black rounded-lg
-                '>Leave</div>
+                  className="
+                    py-6 rounded-lg bg-stone-100
+                    transition duration-300 ease-in-out hover:bg-stone-200
+                    flex justify-center"
+                > <ArrowLeftStartOnRectangleIcon className='h-8' /> </div>
               </div>
             </div>
       
-            <div onClick={() => dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'lobby' })}
-              className='
-              w-full py-2 bg-white
-              border border-black rounded-lg shadow-sm text-center
-            '>Cancel</div>
+            <button type="button" onClick={() => redirectTo('lobby')}
+              className="
+                w-full py-4 rounded-lg shadow-sm bg-white
+                hover:bg-stone-200 transition duration-300 ease-in-out
+              "
+            > Cancel </button>
           </div>
         );
 
@@ -136,8 +157,10 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
   };
 
   return (
-    <div className='h-full grid grid-rows-12'>
+    <div className='h-full p-4 grid grid-rows-12 bg-stone-100'>
       <Banner />
+
+      {/*  */}
       <div className='row-start-2 row-span-11'>
         <div className='h-full flex flex-col gap-4'>
           { renderComponent() }

@@ -23,6 +23,8 @@ type FriendProps = {
   friendId: string
 };
 
+const NO_PIC_PLACEHOLDER = "https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676";
+
 const Friend = ({ friendId }: FriendProps ) => {
   const [friend, setFriend] = useState<TUser>();
 
@@ -52,8 +54,7 @@ const Friend = ({ friendId }: FriendProps ) => {
       or(
         (where('from', '==', myId), where('to', '==', opponentId)),
         (where('to', '==', myId), where('from', '==', opponentId))
-      ),
-      limit(1)
+      )
     );
     const querySnapshot = await getDocs(q);
 
@@ -77,18 +78,18 @@ const Friend = ({ friendId }: FriendProps ) => {
   };
 
   if (friend) return (
-    <div className='
-      border border-black bg-white p-4 rounded-lg shadow-sm
-      flex gap-4
-    '>
+    <div className='p-5 rounded-lg shadow-md bg-white flex gap-4'>
       <Link href={`/profile/${friendId}`} className='flex items-center'>
         { friend?.photoURL !== undefined ? (
           <Image src={friend?.photoURL} alt=''
             width={1324} height={1827} className='object-cover w-12 h-12 rounded-full'
           />
         ) : (
-          <Image src='https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676' alt=''
-            width={1324} height={1827} className='object-cover w-12 h-12 rounded-full'
+          <Image
+            src={NO_PIC_PLACEHOLDER}
+            alt=''
+            width={1324} height={1827}
+            className='object-cover w-12 h-12 rounded-full'
           />
         )} 
       </Link>
@@ -96,13 +97,20 @@ const Friend = ({ friendId }: FriendProps ) => {
       <div className='grow grid grid-cols-6'>
         <div className='col-span-4'>
           {/* last signed in, where they are */}
-          <p className='text-lg font-semibold'>{ friend.displayName }</p>
-          <p>status: { friend.isOnline === true ? "Online" : "Offline" }</p>
+          <div className='flex gap-4 items-center'>
+            <p className='text-lg font-semibold'>{ friend.displayName }</p>
+            { friend.isOnline === true ? (
+              <p className='px-2 rounded-full bg-lime-400'>Online</p>
+            ) : (
+              <p className='px-2 rounded-full bg-red-400'>Offline</p>
+            )}
+            
+          </div>
           <p>Last login: { formatTimeAgo(friend?.lastLoginTime) }</p>
         </div>
 
         <div className='col-span-2 flex items-center justify-end'>
-          <div onClick={redirectToDMChat} className='border rounded-full p-3'>
+          <div onClick={redirectToDMChat} className='p-3 rounded-full border'>
             <ChatBubbleBottomCenterIcon className="w-5 h-5" />
           </div>
         </div>

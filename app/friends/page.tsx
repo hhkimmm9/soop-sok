@@ -1,6 +1,6 @@
 'use client';
 
-import Friend from '@/app/friends/components/Friend';
+import Friend from '@/app/friends/Friend';
 
 import { useState, useEffect, } from 'react';
 

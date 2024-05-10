@@ -1,7 +1,7 @@
 'use client';
 
 import SearchBar from '@/components/SearchBar';
-import Chat from '@/components/chat-window/Chat';
+import Chat from '@/components/chat-window/features/Chat';
 
 import { useState, useEffect } from 'react';
 
@@ -54,8 +54,7 @@ const ChatList = () => {
 
       {/* chat list */}
       <div className='
-        grow row-span-11 p-4 overflow-y-auto
-        border border-black rounded-lg bg-white
+        row-span-11 grow p-4 overflow-y-auto rounded-lg bg-white
         flex flex-col gap-3
       '>
         { chats.map((chat: TChat) => (
@@ -63,10 +62,10 @@ const ChatList = () => {
         )) }
       </div>
 
-      <div onClick={redirectToFeaturesPage} className='
-        w-full py-2 bg-white
-        border border-black rounded-lg shadow-sm text-center
-      '> Cancel </div>
+      <button type="button" onClick={redirectToFeaturesPage} className='
+        w-full py-4 rounded-lg shadow-sm bg-white
+        transition duration-300 ease-in-out hover:bg-stone-200
+      '> Cancel </button>
     </div>
   )
 }

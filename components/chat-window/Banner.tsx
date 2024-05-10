@@ -34,11 +34,7 @@ const Banner = () => {
   }, [dispatch]);
 
   return (
-    <div className="
-      h-min mt-1 py-2 overflow-hidden
-      border border-black rounded-lg bg-white
-      text-black  
-    ">
+    <div className="h-min mt-1 py-2 rounded-lg overflow-hidden shadow-sm bg-white">
       <div className="marquee w-screen">
         <span className="inline-block px-4">{ state.currentBanner?.content }</span>
       </div>

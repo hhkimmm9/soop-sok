@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  Avatar,
+} from '@mui/material';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -23,12 +27,11 @@ const Message = ({ message } : MessageProps) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      var user: TUser;
       try {
         const userRef = doc(db, 'users', message.sentBy);
         const userSnapshot = await getDoc(userRef);
         if (userSnapshot.exists()) {
-          const userData = { ... userSnapshot.data() } as TUser;
+          const userData = { ...userSnapshot.data() } as TUser;
           setUser(userData);
         }
       } catch (err) {
@@ -48,10 +51,7 @@ const Message = ({ message } : MessageProps) => {
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
         <div onClick={redirectToProfile}>
-          <Image src={`${user?.photoURL}`} alt=''
-            width={1324} height={1827}
-            className='object-cover w-12 h-12 rounded-full'
-          />
+          <Avatar src={user.photoURL} alt="Profile Picture" sx={{ width: 48, height: 48 }} />
         </div>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>

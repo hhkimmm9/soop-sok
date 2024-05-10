@@ -40,7 +40,8 @@ const Channel = ({ channelData } : ChannelProps) => {
   return (
     <div onClick={enterChannel} className={`
         ${ channelData.numUsers < channelData.capacity ? '' : 'opacity-50'}
-        border border-black p-3 bg-white rounded-lg
+        p-4 rounded-lg shadow-sm bg-white
+        transition duration-300 ease-in-out hover:bg-stone-200
         flex flex-col gap-2
     `}>
       <h3>{ channelData.name }</h3>

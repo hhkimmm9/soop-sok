@@ -9,7 +9,7 @@ import React, {
 
 import { TBanner } from '@/types';
 
-type TAvailableChannelComponents = (
+export type TAvailableChannelComponents = (
   | 'lobby'
   | 'features'
   | 'add_banner'

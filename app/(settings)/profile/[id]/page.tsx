@@ -88,8 +88,7 @@ const Profile = () => {
       or(
         (where('from', '==', myId), where('to', '==', opponentId)),
         (where('to', '==', myId), where('from', '==', opponentId))
-      ),
-      limit(1)
+      )
     );
     const querySnapshot = await getDocs(q);
 
@@ -117,7 +116,7 @@ const Profile = () => {
     if (isMyProfile) return (
       <div className='w-full flex flex-col gap-8'>
         <Link href={`/profile/${profile?.uid}/edit`}
-          className='border rounded-lg py-2 block shadow-sm text-center'
+          className='border rounded-lg py-2 block shadow-sm text-center bg-white'
         > Edit Profile </Link>
       </div>
     )
@@ -127,16 +126,16 @@ const Profile = () => {
       <div className='w-full grid grid-cols-2 gap-2'>
         { isMyFriend ? (
             <button type='button' onClick={() => {}}
-              className='border rounded-lg py-2 block shadow-sm
+              className='border rounded-lg py-2 block shadow-sm bg-white
             '> Poke! (Say Hi!) </button>
           ) : (
             <button type='button' onClick={addUserToFriendList}
-              className='border rounded-lg py-2 block shadow-sm
+              className='border rounded-lg py-2 block shadow-sm bg-white
             '> Send Friend Request </button>
           )
         }
         <button type='button' onClick={redirectToDMChat}
-          className='border rounded-lg py-2 block shadow-sm
+          className='border rounded-lg py-2 block shadow-sm bg-white
         '> Send DM </button>
       </div>
     )
@@ -153,14 +152,14 @@ const Profile = () => {
           `}/>
         </div>
 
-        <div className='cols-span-3 pl-6 flex flex-col gap-2'>
-          <p className='mx-auto text-center text-2xl font-medium whitespace-nowrap'>
+        <div className='cols-span-3 pl-6 flex flex-col gap-3'>
+          <p className='mx-auto font-medium text-3xl whitespace-nowrap'>
             { profile.displayName }
           </p>
 
           <p className='
-            px-3 py-1 rounded-full bg-purple-300
-            font-medium text-base text-center text-white
+            px-2 py-1 rounded-full bg-purple-300
+            font-medium text-center uppercase text-white
           '>
             { profile.profile.mbti }
           </p>
@@ -174,7 +173,7 @@ const Profile = () => {
       
       {/*  */}
       <div className='flex flex-col gap-4'>
-        <div className='h-68 p-2 border rounded-lg overflow-y-auto'>
+        <div className='h-52 p-4 border rounded-lg overflow-y-auto bg-white'>
           <p>{ profile.profile.introduction }</p>
         </div>
       </div>
