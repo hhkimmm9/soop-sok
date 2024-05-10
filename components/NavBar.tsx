@@ -1,13 +1,8 @@
-'use client';
-
-import {
-  Badge
-} from '@mui/material';
+import { Badge, } from '@mui/material';
 
 import { useRouter, usePathname } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
 
 import {
   QueueListIcon,

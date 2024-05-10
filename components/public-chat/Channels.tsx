@@ -5,6 +5,7 @@ import RoomChatWindow from '@/components/public-chat/RoomChatWindow';
 import Channel from '@/components/public-chat/Channel';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
@@ -16,9 +17,13 @@ import { TChannel } from '@/types';
 const InChannel = () => {
   const [channels, setChannels] = useState<TChannel[]>([]);
   
+  const router = useRouter();
+  
   const { state } = useAppState();
 
-  const [channelsSnapshot] = useCollection(
+  /* 2. The effect of useCollection is triggered whenever the collection changes
+    or when the component mounts. */
+  const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'channels'),
       orderBy('orderId', 'asc')
     ), {
@@ -26,18 +31,29 @@ const InChannel = () => {
     }
   );
 
+  /* 1. When the component mounts for the first time, the first useEffect hook
+    runs due to the empty dependency array. */
   useEffect(() => {
-    const channels: TChannel[] = [];
-    if (channelsSnapshot && !channelsSnapshot.empty) {
-      channelsSnapshot.forEach((doc) => {
-        channels.push({
+    if (!auth) {
+      router.push('/');
+      return;
+    }
+  }, [auth]);
+
+  /* 3. Once the collectionSnapshot is updated with the data from Firestore,
+    the second useEffect hook updates the state with the retrieved channels. */
+  useEffect(() => {
+    const container: TChannel[] = [];
+    if (collectionSnapshot && !collectionSnapshot.empty) {
+      collectionSnapshot.forEach((doc) => {
+        container.push({
           id: doc.id,
           ...doc.data()
         } as TChannel);
       });
-      setChannels(channels);
+      setChannels(container);
     }
-  }, [channelsSnapshot])
+  }, [collectionSnapshot]);
 
   const renderComponent = () => {
     if (state.activateChannelChat) return (
@@ -52,7 +68,7 @@ const InChannel = () => {
       <div className='h-full bg-stone-100'>
         <div className='p-4 flex flex-col gap-3'>
           { channels.map(channel => (
-            <Channel key={channel.id} channelData={channel} />  
+            <Channel key={channel.id} channel={channel} />  
           )) }
         </div>
       </div>

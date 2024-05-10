@@ -18,7 +18,7 @@ const MessageInput = ({ cid }: MessageinputProps) => {
     e.preventDefault();
     
     // check if the user is signed in and the length of the input is greater than 0.
-    if (auth.currentUser && messageInput.length > 0) {
+    if (auth && auth.currentUser && messageInput.length > 0) {
       const uid = auth.currentUser.uid;
 
       // TODO: channel id or chat id

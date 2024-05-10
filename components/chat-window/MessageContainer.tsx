@@ -148,11 +148,11 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
   };
 
   const redirectToFeaturesPage = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   const leavePrivateChat = () => {
-    dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
+    if (auth) dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
   };
 
   return (
@@ -191,6 +191,6 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
       </div>
     </>  
   )
-}
+};
 
-export default MessageContainer
+export default MessageContainer;

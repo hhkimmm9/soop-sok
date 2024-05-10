@@ -1,5 +1,3 @@
-'use client';
-
 import {
   TextField,
   FormControl, InputLabel, Select, MenuItem,
@@ -30,18 +28,20 @@ const CreateChat = () => {
 
   useEffect(() => {
     const fetchBanner = async () => {
-      try {
-        const q = query(collection(db, 'banners'),
-          where('selected', '==', true)
-        );
-  
-        const bannerSnapshop = await getDocs(q);
-        if (!bannerSnapshop.empty) {
-          const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
-          setTagOptions(selectedBanner.tagOptions)
+      if (auth) {
+        try {
+          const q = query(collection(db, 'banners'),
+            where('selected', '==', true)
+          );
+    
+          const bannerSnapshop = await getDocs(q);
+          if (!bannerSnapshop.empty) {
+            const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
+            setTagOptions(selectedBanner.tagOptions)
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
       }
     };
     fetchBanner();
@@ -52,14 +52,14 @@ const CreateChat = () => {
   };
 
   const redirectToFeaturesPage = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // validate the inputs
-    if (auth.currentUser && name.length > 0) {
+    if (auth && auth.currentUser && name.length > 0) {
       try {
         const chatRef = await addDoc(collection(db, 'chats'), {
           capacity,

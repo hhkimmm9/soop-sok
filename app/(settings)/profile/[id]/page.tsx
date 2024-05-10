@@ -30,7 +30,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (auth.currentUser) {
+      if (auth) {
         try {
           // fetch profile data with the given id in the URL.
           const profileRef = doc(db, 'users', id.toString());
@@ -39,7 +39,7 @@ const Profile = () => {
           if (profileSnapshot.exists()) {
             const profileData = { ...profileSnapshot.data() } as TUser;
             setProfile(profileData);
-            setIsMyProfile(auth.currentUser.uid === id);
+            setIsMyProfile(auth.currentUser?.uid === id);
           }
         } catch (err) {
           console.error(err);
@@ -48,7 +48,7 @@ const Profile = () => {
       setIsLoading(true);
     };
     const checkIsMyFriend = async () => {
-      if (auth.currentUser) {
+      if (auth) {
         const q = query(collection(db, 'friend_list'), 
           or(
             where("senderId", "==", id),

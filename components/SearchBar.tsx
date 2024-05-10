@@ -1,8 +1,4 @@
-'use client';
-
 import { useState } from 'react';
-
-import { auth, db } from '@/utils/firebase';
 
 import {
   MagnifyingGlassIcon,

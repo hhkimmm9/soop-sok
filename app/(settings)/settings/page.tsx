@@ -13,7 +13,7 @@ const Settings = () => {
   const [signOut] = useSignOut(auth);
 
   const handleSignout = async () => {
-    if (auth.currentUser) {
+    if (auth && auth.currentUser) {
       try {
         const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, { isOnline: false });

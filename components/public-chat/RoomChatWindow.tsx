@@ -4,11 +4,14 @@ import Banner from '@/components/chat-window/Banner';
 import MessageContainer from '@/components/chat-window/MessageContainer';
 import UserList from '@/components/chat-window/features/UserList';
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query, where,
-  getDocs, deleteDoc,
+  getDoc, getDocs, updateDoc, deleteDoc,
 } from 'firebase/firestore';
 
 type ChatWindowProps = {
@@ -18,34 +21,45 @@ type ChatWindowProps = {
 const ChatWindow = ({ cid }: ChatWindowProps) => {
   const { state, dispatch } = useAppState();
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!auth) {
+      router.push('/');
+      return;
+    }
+  }, [auth]);
+
   const redirectToUserList = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'user_list' });
   };
 
   const redirectToChatWindow = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'chat' });
   };
 
   const leaveChat = async () => {
-    if (auth.currentUser) {
-      // try {
-      //   const channelRef = doc(db, 'channels', cid);
-      //   const querySnapshot = await getDoc(channelRef);
-      //   const data = querySnapshot.data()
-      //   if (data) {
-      //     await updateDoc(channelRef, {
-      //       numUsers: data.numUsers - 1
-      //     });
-      //   }
-      // } catch (err) {
-      //   console.error(err);
-      // }
+    if (auth && auth.currentUser) {
+      try {
+        const channelRef = doc(db, 'channels', cid);
+
+        const querySnapshot = await getDoc(channelRef);
+        if (querySnapshot.exists()) {
+          const channel = querySnapshot.data();
+
+          await updateDoc(channelRef, {
+            numUsers: channel.numUsers - 1
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
       
       try {
         // find the document id
         const statusRef = query(collection(db, 'status_board'),
           where('cid', '==', cid),
-          where('uid', '==', auth.currentUser?.uid)
+          where('uid', '==', auth.currentUser.uid)
         );
         const statusSnapshot = await getDocs(statusRef);
   
@@ -53,10 +67,6 @@ const ChatWindow = ({ cid }: ChatWindowProps) => {
         if (!statusSnapshot.empty) {
           const deleteRef = doc(db, 'status_board', statusSnapshot.docs[0].id);
           await deleteDoc(deleteRef);
-        }
-        else {
-          // Handle the case where no documents match the query
-          // You might want to redirect or display a message to the user
         }
 
         dispatch({ type: 'LEAVE_CHAT' });

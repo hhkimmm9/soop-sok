@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
@@ -28,7 +26,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   // or, store user data into the private_chat collection.
   useEffect(() => {
     const fetchToUser = async () => {
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         try {
           const uid = privateChat.to === auth.currentUser.uid ?
             privateChat.from : privateChat.to;
@@ -43,12 +41,6 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
         }
       }
     };
-    fetchToUser();
-  }, [privateChat.to, privateChat.from]);
-
-  // fetch the latest message associated with this private chat
-  // to display when it is sent and the content of it.
-  useEffect(() => {
     const fetchLatestMessage = async () => {
       const messageQuery = query(collection(db, 'messages'),
         where('chatId', '==', privateChat.id),
@@ -64,11 +56,15 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
         setLatestMessage(data);
       }
     };
+    fetchToUser();
     fetchLatestMessage();
-  }, [privateChat.id]);
+  }, [privateChat]);
+
+  // fetch the latest message associated with this private chat
+  // to display when it is sent and the content of it.
 
   const enterPrivateChat = () => {
-    dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: privateChat.id });
+    if (auth && auth.currentUser) dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: privateChat.id });
   };
 
   return (

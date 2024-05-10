@@ -6,7 +6,6 @@ import {
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
@@ -43,8 +42,10 @@ const Message = ({ message } : MessageProps) => {
   }, [message.sentBy]);
 
   const redirectToProfile = () => {
-    router.push(`/profile/${user?.uid}`);
-    dispatch({ type: 'SET_TO_PAGES' });
+    if (auth) {
+      router.push(`/profile/${user?.uid}`);
+      dispatch({ type: 'SET_TO_PAGES' });
+    }
   };
 
   if (user) return (

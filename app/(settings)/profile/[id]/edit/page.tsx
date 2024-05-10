@@ -53,7 +53,7 @@ const ProfileEdit = () => {
     setIsLoading(true);
 
     const fecthUser = async () => {
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         try {
           const userRef = doc(db, 'users', auth.currentUser.uid);
           const querySnapshot = await getDoc(userRef);
@@ -85,7 +85,7 @@ const ProfileEdit = () => {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (auth.currentUser) {
+    if (auth && auth.currentUser) {
       try {
         const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, {

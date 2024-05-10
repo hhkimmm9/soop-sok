@@ -22,7 +22,7 @@ const Friends = () => {
 
   useEffect(() => {
     const fetchFriendList = async () => {
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         const q = query(collection(db, "friend_list"),
           or(
             where("senderId", "==", auth.currentUser?.uid),

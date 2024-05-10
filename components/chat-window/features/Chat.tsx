@@ -1,5 +1,3 @@
-'use client';
-
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -15,15 +13,17 @@ const Chat = ({ chat }: ChatProps) => {
   const { dispatch } = useAppState();
 
   const enterChat = async () => {
-    const statusRef = collection(db, 'status_board');
-    await addDoc(statusRef, {
-      cid: chat.id,
-      displayName: auth.currentUser?.displayName,
-      profilePicUrl: auth.currentUser?.photoURL,
-      uid: auth.currentUser?.uid
-    });
-
-    dispatch({ type: 'ENTER_CHAT', chatId: chat.id });
+    if (auth) {
+      const statusRef = collection(db, 'status_board');
+      await addDoc(statusRef, {
+        cid: chat.id,
+        displayName: auth.currentUser?.displayName,
+        profilePicUrl: auth.currentUser?.photoURL,
+        uid: auth.currentUser?.uid
+      });
+  
+      dispatch({ type: 'ENTER_CHAT', chatId: chat.id });
+    }
   };
 
   return (
