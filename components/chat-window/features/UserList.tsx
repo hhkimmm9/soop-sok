@@ -1,10 +1,12 @@
 'use client';
 
+import {
+  Avatar,
+} from '@mui/material';
+
 import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
 
 import { auth, db } from '@/utils/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -62,35 +64,29 @@ const UserList = () => {
   return (
     <div className='h-full flex flex-col gap-4'>
       <div className='
-        grow p-4 overflow-y-auto
-        border border-black rounded-lg bg-white
+        grow p-4 overflow-y-auto rounded-lg shadow-sm bg-white
         flex flex-col gap-4
       '>
-        <ul className='flex flex-col gap-2'>
+        <ul className='flex flex-col gap-3'>
           { activeUsers.map((activeUser: any) => (
-            <li key={activeUser.id} className='
-              border border-black p-2 rounded-lg
+            <li key={activeUser.id}
+              onClick={() => redirectToProfile(activeUser.uid)} className='
+              p-3 rounded-lg shadow-sm bg-stone-200
               flex items-center justify-between
             '>
               <div className='flex items-center gap-3'>
-                <Image src={activeUser.profilePicUrl} alt='Profile Picture'
-                  width={52} height={52} className='rounded-full'
-                />
+                <Avatar src={activeUser.profilePicUrl} alt="Profile Picture" sx={{ width: 52, height: 52 }} />
                 <p>{ activeUser.displayName }</p>
               </div>
-
-              <div onClick={() => redirectToProfile(activeUser.uid)}
-                className='mr-4 border px-2 py-1 rounded-lg'
-              > Profile </div>
             </li>
           )) }
         </ul>
       </div>
 
-      <div onClick={redirectToFeatures} className='
-        w-full py-2 bg-white
-        border border-black rounded-lg shadow-sm text-center
-      '> Cancel </div>
+      <button type="button" onClick={redirectToFeatures} className='
+        w-full py-4 rounded-lg shadow-sm bg-white
+        transition duration-300 ease-in-out hover:bg-stone-200
+      '> Cancel </button>
     </div>
   )
 }

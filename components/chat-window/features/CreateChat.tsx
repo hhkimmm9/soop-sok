@@ -172,12 +172,12 @@ const CreateChat = () => {
 
       <div className='grid grid-cols-2 gap-2.5'>
         <button type="button" onClick={redirectToFeaturesPage} className='
-          w-full py-2 rounded-lg shadow-sm bg-white
+          w-full py-4 rounded-lg shadow-sm bg-white
           transition duration-300 ease-in-out hover:bg-stone-200
         '> Cancel </button>
 
         <button type='submit' className='
-          w-full py-2 rounded-lg shadow-sm bg-white
+          w-full py-4 rounded-lg shadow-sm bg-white
           transition duration-300 ease-in-out hover:bg-stone-200
         '> Create </button>
       </div>

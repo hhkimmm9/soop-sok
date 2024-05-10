@@ -32,7 +32,7 @@ const Chat = ({ chat }: ChatProps) => {
 
   return (
     <div onClick={enterChat} className='
-      bg-white border border-black px-3 py-2 rounded-lg
+      px-3 py-2 rounded-lg bg-stone-100
       flex flex-col gap-1
     '>
       {/* name */}

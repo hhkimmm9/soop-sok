@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  TextField, Button,
+} from '@mui/material';
+
 import { useState } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';
 
@@ -65,38 +69,29 @@ const AddBanner = () => {
   return (
     <form onSubmit={(e) => handleSubmit(e)} className='h-full flex flex-col gap-4'>
       <div className='
-        grow p-4 overflow-y-auto
-        border border-black rounded-lg bg-white
-        flex flex-col gap-6
+        grow p-4 overflow-y-auto rounded-lg bg-white
+        flex flex-col gap-2
       '>
         {/* name */}
-        <div className='flex flex-col gap-2'>
-          <label htmlFor="name">Content</label>
-          <input type="text" id='name' name='name'
-            value={ content } onChange={(e) => setContent(e.target.value)}
-            className='
-              border border-black px-2 py-1 rounded-lg
-          '/>
-        </div>
+        <TextField id="outlined-basic" label="Banner" variant="outlined"
+          value={content} onChange={(e) => setContent(e.target.value)}
+        />
 
         {/* tag options */}
-        <div>
-          <div>
-            <label htmlFor="tagOption">Tag Options</label>
-            <div className='mt-2 flex gap-2'>
-              <input type="text" id='tagOption' name='tagOption'
-                value={tagOption} onChange={(e) => setTagOption(e.target.value)}
-                className='grow border rounded-lg px-2 py-1'
-              />
-              <button type='button' onClick={() => { addToList(); setTagOption(''); }}
-                className='px-2 py-1 border rounded-lg'
-              >Add</button>
-            </div>
+        <div className='flex flex-col gap-4'>
+          <div className='mt-2 flex gap-2'>
+            <TextField id="outlined-basic" label="Tag Option" variant="outlined"
+              value={tagOption} onChange={(e) => setTagOption(e.target.value)}
+              className='grow'
+            />
+            <Button variant="outlined" onClick={() => { addToList(); setTagOption(''); }}>
+              Add
+            </Button>
           </div>
 
           {/* container for tag options */}
           <div>
-            <div className='min-h-12 mt-3 p-3 border rounded-lg'>
+            <div className='min-h-14 p-3 border border-gray-300 rounded-sm'>
               <div className='flex flex-col items-start gap-3'>
                 { tagOptions.map((tagOption, index) => (
                   <div key={tagOption} className='w-full flex items-center justify-between'>
@@ -120,14 +115,14 @@ const AddBanner = () => {
       </div>
 
       <div className='grid grid-cols-2 gap-2.5'>
-        <div onClick={redirectToFeaturesPage} className='
-          w-full py-2 bg-white
-          border border-black rounded-lg shadow-sm text-center
-        '> Cancel </div>
+        <button type="button" onClick={redirectToFeaturesPage} className='
+          w-full py-4 rounded-lg shadow-sm bg-white
+          transition duration-300 ease-in-out hover:bg-stone-200
+        '> Cancel </button>
 
         <button type='submit' className='
-          w-full py-2 bg-white
-          border border-black rounded-lg shadow-sm
+          w-full py-4 rounded-lg shadow-sm bg-white
+          transition duration-300 ease-in-out hover:bg-stone-200
         '> Create </button>
       </div>
     </form>
