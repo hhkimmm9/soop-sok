@@ -57,8 +57,7 @@ const Friend = ({ friendId }: FriendProps ) => {
       or(
         (where('from', '==', myId), where('to', '==', opponentId)),
         (where('to', '==', myId), where('from', '==', opponentId))
-      ),
-      limit(1)
+      )
     );
     const querySnapshot = await getDocs(q);
 
