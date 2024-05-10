@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  Badge
+} from '@mui/material';
+
 import { useRouter, usePathname } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
@@ -59,18 +63,22 @@ const NavBar = () => {
           </div>
 
           {/* Private chats */}
-          <div onClick={() => renderComponent('private_chats')}
-            className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
-          >
-            <ChatBubbleBottomCenterIcon className='h-5 w-5' />
-          </div>
+          <Badge badgeContent={256} color="primary">
+            <div onClick={() => renderComponent('private_chats')}
+              className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
+            >
+              <ChatBubbleBottomCenterIcon className='h-5 w-5' />
+            </div>
+          </Badge>
 
           {/* Friends List */}
-          <div onClick={() => renderComponent('/friends')}
-            className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
-          >
-            <UserIcon className='h-5 w-5' />
-          </div>
+          <Badge badgeContent={1} color="primary">
+            <div onClick={() => renderComponent('/friends')}
+              className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
+            >
+              <UserIcon className='h-5 w-5' />
+            </div>
+          </Badge>
 
           {/* Settings */}
           <div onClick={() => renderComponent('/settings')}
