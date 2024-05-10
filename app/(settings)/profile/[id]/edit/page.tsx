@@ -1,6 +1,14 @@
 'use client';
 
-import { Avatar, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
+} from '@mui/material';
 
 import { useState, useEffect, ChangeEvent, SetStateAction } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';

@@ -32,13 +32,13 @@ const Settings = () => {
     <div className='flex flex-col gap-4 items-center'>
       <Link href={`/profile/${signedInUser?.uid}`} className='
         w-full py-4 rounded-lg shadow-md bg-green-800
-        font-medium text-center text-xl text-white
+        font-medium text-center text-base text-white
         transition duration-300 ease-in-out hover:bg-green-600
       '> Profile </Link>
 
       <button onClick={handleSignout} className='
         w-full py-4 rounded-lg shadow-md bg-green-800
-        font-medium text-xl text-white
+        font-medium text-base text-white
         transition duration-300 ease-in-out hover:bg-red-500
       '> Sign Out </button>
     </div>
