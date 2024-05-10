@@ -1,8 +1,8 @@
 'use client';
 
-import ChannelChatWindow from '@/components/channels/ChannelChatWindow';
-import RoomChatWindow from '@/components/channels/RoomChatWindow';
-import Channel from '@/components/channels/Channel';
+import ChannelChatWindow from '@/components/public-chat/ChannelChatWindow';
+import RoomChatWindow from '@/components/public-chat/RoomChatWindow';
+import Channel from '@/components/public-chat/Channel';
 
 import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';

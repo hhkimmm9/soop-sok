@@ -1,7 +1,7 @@
 'use client';
 
 import SearchBar from '@/components/SearchBar';
-import Chat from '@/components/chat-window/Chat';
+import Chat from '@/components/chat-window/features/Chat';
 
 import { useState, useEffect } from 'react';
 import { useAppState } from '@/utils/AppStateProvider';

@@ -1,6 +1,6 @@
 import { useAppState } from '@/utils/AppStateProvider';
 
-import MessageContainer from '../MessageContainer';
+import MessageContainer from '../chat-window/MessageContainer';
 
 const ChatWindow = () => {
   const { state } = useAppState();

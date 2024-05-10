@@ -1,11 +1,11 @@
 'use client';
 
 import Banner from '@/components/chat-window/Banner';
-import MessageContainer from '@/components/MessageContainer';
-import CreateChat from '@/components/chat-window/CreateChat';
-import AddBanner from '@/components/chat-window/AddBanner';
-import ChatList from '@/components/chat-window/ChatList';
-import UserList from '@/components/chat-window/UserList';
+import MessageContainer from '@/components/chat-window/MessageContainer';
+import CreateChat from '@/components/chat-window/features/CreateChat';
+import AddBanner from '@/components/chat-window/features/AddBanner';
+import ChatList from '@/components/chat-window/features/ChatList';
+import UserList from '@/components/chat-window/features/UserList';
 
 import { useAppState } from '@/utils/AppStateProvider';
 

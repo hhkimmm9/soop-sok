@@ -1,7 +1,7 @@
 // TODO: Leverage SSR.
 'use client';
 
-import Channels from '@/components/channels/Channels';
+import Channels from '@/components/public-chat/Channels';
 import PrivateChats from '@/components/private-chats/PrivateChats';
 import NavBar from "@/components/NavBar";
 
