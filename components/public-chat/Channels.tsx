@@ -51,7 +51,7 @@ const InChannel = () => {
 
     else return (
       <div className='h-full bg-stone-100'>
-        <div className='p-4 flex flex-col gap-2'>
+        <div className='p-4 flex flex-col gap-3'>
           { channels.map(channel => (
             <Channel key={channel.id} channelData={channel} />  
           )) }
