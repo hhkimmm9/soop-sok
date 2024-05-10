@@ -5,31 +5,27 @@ import PrivateChatWindow from '@/components/private-chats/PrivateChatWindow';
 import PrivateChat from '@/components/private-chats/PrivateChat';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
+
 import { useAppState } from '@/utils/AppStateProvider';
-
 import { auth, db } from '@/utils/firebase';
-import {
-  collection, doc,
-  query, or, where,
-  getDoc, getDocs
-} from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { collection, query, or, where, } from 'firebase/firestore';
 
-import { TUser, TPrivateChat } from '@/types';
+import { TPrivateChat } from '@/types';
 
 const PrivateChats = () => {
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>();
 
   const { state, dispatch } = useAppState();
 
-  const [signedInUser] = useAuthState(auth);
+  const router = useRouter();
 
-  const [realtime_chats, loading, error] = useCollection(
+  const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'private_chats'),
       or(
-        where('from', '==', signedInUser?.uid),
-        where('to', '==', signedInUser?.uid),
+        where('from', '==', auth.currentUser?.uid),
+        where('to', '==', auth.currentUser?.uid),
       )
     ), {
       snapshotListenOptions: { includeMetadataChanges: true },
@@ -37,17 +33,24 @@ const PrivateChats = () => {
   );
 
   useEffect(() => {
-    const messageContainer: TPrivateChat[] = []
-    if (realtime_chats && !realtime_chats.empty) {
-      realtime_chats.forEach((doc) => {
-        messageContainer.push({
+    if (!auth) {
+      router.push('/');
+      return;
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    const container: TPrivateChat[] = []
+    if (collectionSnapshot && !collectionSnapshot.empty) {
+      collectionSnapshot.forEach((doc) => {
+        container.push({
           id: doc.id,
           ...doc.data()
         } as TPrivateChat)
       });
-      setPrivateChats(messageContainer);
+      setPrivateChats(container);
     }
-  }, [realtime_chats]);
+  }, [collectionSnapshot]);
 
   const renderComponent = () => {
     if (state.activatePrivateChat)

@@ -1,18 +1,15 @@
-'use client';
-
 import SearchBar from '@/components/SearchBar';
 import Chat from '@/components/chat-window/features/Chat';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
   where, orderBy,
 } from 'firebase/firestore'
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { TChat } from '@/types'
 
@@ -21,7 +18,7 @@ const ChatList = () => {
   
   const { state, dispatch } = useAppState();
 
-  const [realtime_chats, loading, error] = useCollection(
+  const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'chats'),
       where('channelId', '==', state.channelId),
       orderBy('createdAt', 'asc')
@@ -32,8 +29,8 @@ const ChatList = () => {
 
   useEffect(() => {
     const chatList: TChat[] = [];
-    if (realtime_chats && !realtime_chats.empty) {
-      realtime_chats.forEach((doc) => {
+    if (collectionSnapshot && !collectionSnapshot.empty) {
+      collectionSnapshot.forEach((doc) => {
         chatList.push({
           id: doc.id,
           ...doc.data()
@@ -41,10 +38,10 @@ const ChatList = () => {
       });
       setChats(chatList);
     }
-  }, [realtime_chats])
+  }, [collectionSnapshot])
 
   const redirectToFeaturesPage = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   return (

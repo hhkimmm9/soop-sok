@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query,
@@ -13,7 +13,6 @@ import {
   addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TUser } from '@/types';
 import { formatTimeAgo } from '@/utils/utils';
@@ -28,12 +27,10 @@ const NO_PIC_PLACEHOLDER = "https://firebasestorage.googleapis.com/v0/b/chat-pla
 
 const Friend = ({ friendId }: FriendProps ) => {
   const [friend, setFriend] = useState<TUser>();
-  
-  const { dispatch } = useAppState();
 
   const router = useRouter();
 
-  const [signedInUser] = useAuthState(auth);
+  const { dispatch } = useAppState();
 
   useEffect(() => {
     const fetchFriend = async () => {
@@ -49,7 +46,7 @@ const Friend = ({ friendId }: FriendProps ) => {
   }, [friendId]);
   
   const redirectToDMChat = async () => {
-    const myId = signedInUser?.uid;
+    const myId = auth.currentUser?.uid;
     const opponentId = friendId;
 
     // check if their dm chat exists

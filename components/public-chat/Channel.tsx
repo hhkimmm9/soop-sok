@@ -5,52 +5,48 @@ import {
   collection, doc,
   addDoc, updateDoc,
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TChannel } from '@/types';
 
 type ChannelProps = {
-  channelData: TChannel
+  channel: TChannel
 };
 
-const Channel = ({ channelData } : ChannelProps) => {
+const Channel = ({ channel } : ChannelProps) => {
   const { dispatch } = useAppState();
 
-  const [signedInUser] = useAuthState(auth);
-
   const enterChannel = async () => {
-    // enable entering to the channel only if the channel is not full
-    if (channelData.numUsers < channelData.capacity) {
-      // update the status of the channel.
-      const channelRef = doc(db, 'channels', channelData.id)
-      await updateDoc(channelRef, {
-        numUsers: channelData.numUsers + 1
+    // Allow entry into the channel only if it is not full.
+    if (auth && auth.currentUser && channel.numUsers < channel.capacity) {
+      // Update the capacity of the channel.
+      await updateDoc(doc(db, 'channels', channel.id), {
+        numUsers: channel.numUsers + 1
       })
   
-      const statusRef = collection(db, 'status_board');
-      await addDoc(statusRef, {
-        cid: channelData.id,
-        displayName: signedInUser?.displayName,
-        profilePicUrl: signedInUser?.photoURL,
-        uid: signedInUser?.uid
+      // Log where the user is in.
+      await addDoc(collection(db, 'status_board'), {
+        cid: channel.id,
+        displayName: auth.currentUser.displayName,
+        profilePicUrl: auth.currentUser.photoURL,
+        uid: auth.currentUser.uid
       });
   
-      // redriect to the selected channel page.
-      dispatch({ type: 'ENTER_CHANNEL', channelId: channelData.id });
+      // Redriect to the selected channel page.
+      dispatch({ type: 'ENTER_CHANNEL', channelId: channel.id });
     }
   };
 
   return (
     <div onClick={enterChannel} className={`
-        ${ channelData.numUsers < channelData.capacity ? '' : 'opacity-50'}
+        ${ channel.numUsers < channel.capacity ? '' : 'opacity-50'}
         p-4 rounded-lg shadow-sm bg-white
         transition duration-300 ease-in-out hover:bg-stone-200
         flex flex-col gap-2
     `}>
-      <h3>{ channelData.name }</h3>
-      <p>현재 참여 인원: { channelData.numUsers } / { channelData.capacity }</p>
+      <h3>{ channel.name }</h3>
+      <p># of users: { channel.numUsers } / { channel.capacity }</p>
     </div>
   )
-}
+};
 
-export default Channel
+export default Channel;

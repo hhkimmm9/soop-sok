@@ -1,12 +1,10 @@
-'use client';
-
 import {
   TextField, Button,
 } from '@mui/material';
 
 import { useState } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -35,19 +33,19 @@ const AddBanner = () => {
   };
 
   const deleteFromList = (tagOption: string) => {
-    if (tagOptions.length > 0) {
+    if (auth && tagOptions.length > 0) {
       setTagOptions((prev) => prev.filter(option => option !== tagOption));
     }
   };
 
   const redirectToFeaturesPage = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (auth.currentUser && content.length > 0) {
+    if (auth && auth.currentUser && content.length > 0) {
       try {
         const bannerRef = await addDoc(collection(db, 'banners'), {
           cid: state.channelId,

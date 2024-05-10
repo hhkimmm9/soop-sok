@@ -1,19 +1,14 @@
-'use client';
-
 import {
   Avatar,
 } from '@mui/material';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
-
-import { TUser } from '@/types';
+import { collection, query, where, } from 'firebase/firestore';
 
 const UserList = () => {
   const [activeUsers, setActiveUsers] = useState([]);
@@ -23,14 +18,10 @@ const UserList = () => {
   const { state, dispatch } = useAppState();
 
   var cid;
-  if (state.activateChannelChat) {
-    cid = state.channelId
-  }
-  else if (state.activateChatChat) {
-    cid = state.chatId
-  }
+  if (state.activateChannelChat) cid = state.channelId;
+  else if (state.activateRoomChat) cid = state.chatId;
 
-  const [realtime_users, loading, error] = useCollection(
+  const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'status_board'),
       where('cid', '==', cid)
     ), {
@@ -41,8 +32,8 @@ const UserList = () => {
   useEffect(() => {
     const activeUserContainer: any = [];
     
-    if (realtime_users && !realtime_users.empty) {
-      realtime_users.forEach((doc) => {
+    if (collectionSnapshot && !collectionSnapshot.empty) {
+      collectionSnapshot.forEach((doc) => {
         activeUserContainer.push({
           id: doc.id,
           ...doc.data()
@@ -50,15 +41,17 @@ const UserList = () => {
       })
       setActiveUsers(activeUserContainer)
     }
-  }, [realtime_users]);
+  }, [collectionSnapshot]);
   
   const redirectToProfile = (uid: string) => {
-    router.push(`/profile/${uid}`);
-    dispatch({ type: 'SET_TO_PAGES' });
+    if (auth) {
+      router.push(`/profile/${uid}`);
+      dispatch({ type: 'SET_TO_PAGES' });
+    }
   };
 
   const redirectToFeatures = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   return (
@@ -68,6 +61,7 @@ const UserList = () => {
         flex flex-col gap-4
       '>
         <ul className='flex flex-col gap-3'>
+          {/* TODO: Refactor: displayName and profilePicUrl is stored in status_board only because of this. */}
           { activeUsers.map((activeUser: any) => (
             <li key={activeUser.id}
               onClick={() => redirectToProfile(activeUser.uid)} className='
@@ -89,6 +83,6 @@ const UserList = () => {
       '> Cancel </button>
     </div>
   )
-}
+};
 
-export default UserList
+export default UserList;

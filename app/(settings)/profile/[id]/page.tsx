@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query,
@@ -13,26 +13,24 @@ import {
   addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TUser } from '@/types';
 
 const Profile = () => {
   const [profile, setProfile] = useState<TUser>();
   const [isMyProfile, setIsMyProfile] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isMyFriend, setIsMyFriend] = useState(false);
 
-  const { dispatch } = useAppState();
-
+  
   const { id } = useParams();
   const router = useRouter();
 
-  const [signedInUser] = useAuthState(auth);
+  const { dispatch } = useAppState();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (signedInUser) {
+      if (auth) {
         try {
           // fetch profile data with the given id in the URL.
           const profileRef = doc(db, 'users', id.toString());
@@ -41,16 +39,16 @@ const Profile = () => {
           if (profileSnapshot.exists()) {
             const profileData = { ...profileSnapshot.data() } as TUser;
             setProfile(profileData);
-            setIsMyProfile(signedInUser.uid === id);
+            setIsMyProfile(auth.currentUser?.uid === id);
           }
         } catch (err) {
           console.error(err);
         }
       }
-      setLoading(true);
+      setIsLoading(true);
     };
     const checkIsMyFriend = async () => {
-      if (signedInUser) {
+      if (auth) {
         const q = query(collection(db, 'friend_list'), 
           or(
             where("senderId", "==", id),
@@ -69,20 +67,20 @@ const Profile = () => {
     };
     fetchData();
     checkIsMyFriend();
-  }, [signedInUser, id])
+  }, [id])
 
   const addUserToFriendList = async () => {
     await addDoc(collection(db, 'friend_list'), {
       creaetdAt: serverTimestamp(),
       receiverId: id,
-      senderId: signedInUser?.uid,
+      senderId: auth.currentUser?.uid,
     });
 
     setIsMyFriend(true);
   };
 
   const redirectToDMChat = async () => {
-    const myId = signedInUser?.uid;
+    const myId = auth.currentUser?.uid;
     const opponentId = id;
 
     // check if their dm chat exists
@@ -143,7 +141,7 @@ const Profile = () => {
     )
   };
 
-  if (profile !== undefined && loading) return (
+  if (profile !== undefined && isLoading) return (
     <div className='pt-10 flex flex-col gap-4'>
       {/* pic and name */}
       <div className='w-full grid grid-cols-4'>

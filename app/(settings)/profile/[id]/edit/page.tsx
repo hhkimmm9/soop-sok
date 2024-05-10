@@ -7,57 +7,55 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField
+  TextField,
 } from '@mui/material';
 
 import { useState, useEffect, ChangeEvent, SetStateAction } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { auth, db } from '@/utils/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+
 import { TUser } from '@/types';
 
+const MBTIOptions = [
+  ['istj', 'ISTJ'],
+  ['isfj', 'ISFJ'],
+  ['infj', 'INFJ'],
+  ['intj', 'INTJ'],
+  ['istp', 'ISTP'],
+  ['isfp', 'ISFP'],
+  ['infp', 'INFP'],
+  ['intp', 'INTP'],
+  ['estp', 'ESTP'],
+  ['esfp', 'ESFP'],
+  ['enfp', 'ENFP'],
+  ['entp', 'ENTP'],
+  ['estj', 'ESTJ'],
+  ['esfj', 'ESFJ'],
+  ['enfj', 'ENFJ'],
+  ['entj', 'ENTJ']
+];
+
 const ProfileEdit = () => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<TUser>();
   const [displayName, setDisplayName] = useState('');
   const [introduction, setIntroduction] = useState('');
   const [mbti, setMbti] = useState('');
 
-  const [signedInUser] = useAuthState(auth);
   
   const { id } = useParams();
   const router = useRouter();
 
-  const MBTIOptions = [
-    ['istj', 'ISTJ'],
-    ['isfj', 'ISFJ'],
-    ['infj', 'INFJ'],
-    ['intj', 'INTJ'],
-    ['istp', 'ISTP'],
-    ['isfp', 'ISFP'],
-    ['infp', 'INFP'],
-    ['intp', 'INTP'],
-    ['estp', 'ESTP'],
-    ['esfp', 'ESFP'],
-    ['enfp', 'ENFP'],
-    ['entp', 'ENTP'],
-    ['estj', 'ESTJ'],
-    ['esfj', 'ESFJ'],
-    ['enfj', 'ENFJ'],
-    ['entj', 'ENTJ']
-  ];
-
   useEffect(() => {
-    setLoading(true);
+    setIsLoading(true);
 
     const fecthUser = async () => {
-      if (signedInUser) {
+      if (auth && auth.currentUser) {
         try {
-          const userRef = doc(db, 'users', signedInUser.uid);
+          const userRef = doc(db, 'users', auth.currentUser.uid);
           const querySnapshot = await getDoc(userRef);
 
           if (querySnapshot.exists()) {
@@ -71,10 +69,10 @@ const ProfileEdit = () => {
           console.error(err);
         }
       }
-      setLoading(false);
+      setIsLoading(false);
     };
     fecthUser();
-  }, [signedInUser])
+  }, [])
 
   const updateProfilePic = async (e: ChangeEvent<HTMLInputElement>) => {
     console.log('updateProfilePic');
@@ -87,9 +85,9 @@ const ProfileEdit = () => {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (signedInUser) {
+    if (auth && auth.currentUser) {
       try {
-        const userRef = doc(db, 'users', signedInUser.uid);
+        const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, {
           displayName,
           profile: {
@@ -104,7 +102,7 @@ const ProfileEdit = () => {
     }
   };
 
-  if (profile !== undefined && !loading) return (
+  if (profile !== undefined && !isLoading) return (
     <div className='pt-10 flex flex-col gap-6'>
       {/* profile picture */}
       <div className='flex justify-center'>
@@ -152,7 +150,7 @@ const ProfileEdit = () => {
       {/* update button */}
       <div className='mt-4 grid grid-cols-2 gap-3'>
         
-        <Link href={`/profile/${signedInUser?.uid}`}>
+        <Link href={`/profile/${auth.currentUser?.uid}`}>
           <Button variant="outlined" className='w-full'>Cancel</Button>
         </Link>
         <Button onClick={handleUpdate} variant="contained">Update</Button>

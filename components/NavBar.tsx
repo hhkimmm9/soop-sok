@@ -1,8 +1,4 @@
-'use client';
-
-import {
-  Badge
-} from '@mui/material';
+import { Badge, } from '@mui/material';
 
 import { useRouter, usePathname } from 'next/navigation';
 

@@ -2,16 +2,15 @@ import ChatMessage from '@/components/chat-window/ChatMessage';
 import MessageInput from '@/components/chat-window/MessageInput';
 
 import { useState, useEffect, useRef } from 'react'
-import { useAppState } from '@/utils/AppStateProvider';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, onSnapshot, doc, query,
   where, orderBy, startAt, startAfter, limit,
   getDoc, getDocs, updateDoc, deleteDoc
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { TMessage, FirestoreTimestamp } from '@/types';
 
@@ -149,11 +148,11 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
   };
 
   const redirectToFeaturesPage = () => {
-    dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
   };
 
   const leavePrivateChat = () => {
-    dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
+    if (auth) dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
   };
 
   return (
@@ -192,6 +191,6 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
       </div>
     </>  
   )
-}
+};
 
-export default MessageContainer
+export default MessageContainer;

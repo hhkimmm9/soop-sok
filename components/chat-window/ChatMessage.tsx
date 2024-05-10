@@ -5,13 +5,11 @@ import {
 } from '@mui/material';
 
 import { useState, useEffect } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { TUser, TMessage } from '@/types';
 
@@ -25,8 +23,6 @@ const Message = ({ message } : MessageProps) => {
   const { dispatch } = useAppState();
 
   const router = useRouter();
-
-  // const [signedInUser, loading, error] = useAuthState(auth);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,8 +42,10 @@ const Message = ({ message } : MessageProps) => {
   }, [message.sentBy]);
 
   const redirectToProfile = () => {
-    router.push(`/profile/${user?.uid}`);
-    dispatch({ type: 'SET_TO_PAGES' });
+    if (auth) {
+      router.push(`/profile/${user?.uid}`);
+      dispatch({ type: 'SET_TO_PAGES' });
+    }
   };
 
   if (user) return (

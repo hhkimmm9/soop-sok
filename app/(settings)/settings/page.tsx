@@ -1,23 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { auth, db } from '@/utils/firebase';
+import { useSignOut } from 'react-firebase-hooks/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 
 const Settings = () => {
   const router = useRouter();
   
-  const [signedInUser] = useAuthState(auth);
   const [signOut] = useSignOut(auth);
 
   const handleSignout = async () => {
-    if (signedInUser) {
+    if (auth && auth.currentUser) {
       try {
-        const userRef = doc(db, 'users', signedInUser.uid);
+        const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, { isOnline: false });
       } catch (err) {
         console.error(err);
@@ -30,7 +28,7 @@ const Settings = () => {
 
   return (
     <div className='flex flex-col gap-4 items-center'>
-      <Link href={`/profile/${signedInUser?.uid}`} className='
+      <Link href={`/profile/${auth.currentUser?.uid}`} className='
         w-full py-4 rounded-lg shadow-md bg-green-800
         font-medium text-center text-base text-white
         transition duration-300 ease-in-out hover:bg-green-600

@@ -1,13 +1,9 @@
 import { useState } from 'react';
-import { useAppState } from '@/utils/AppStateProvider';
-import { useParams } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import {
-  ChevronDoubleLeftIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
@@ -18,18 +14,12 @@ type MessageinputProps = {
 const MessageInput = ({ cid }: MessageinputProps) => {
   const [messageInput, setMessageInput] = useState('');
 
-  const { state, dispatch } = useAppState();
-  
-  const params = useParams();
-
-  const [signedInUser] = useAuthState(auth)
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // check if the user is signed in and the length of the input is greater than 0.
-    if (auth.currentUser && messageInput.length > 0) {
-      const uid = signedInUser?.uid;
+    if (auth && auth.currentUser && messageInput.length > 0) {
+      const uid = auth.currentUser.uid;
 
       // TODO: channel id or chat id
       // const cid = state.chatId ? state.chatId : state.channelId; 

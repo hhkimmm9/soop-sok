@@ -22,7 +22,7 @@ export type TAvailableChannelComponents = (
 interface AppState {
   currentPage: ('channel' | 'private_chat' | 'pages');
   activateChannelChat: boolean;
-  activateChatChat: boolean;
+  activateRoomChat: boolean;
   activatePrivateChat: boolean;
   channelId: string;
   chatId: string;
@@ -51,7 +51,7 @@ type Action = (
 const initialState: AppState = {
   currentPage: 'pages',
   activateChannelChat: false,
-  activateChatChat: false,
+  activateRoomChat: false,
   activatePrivateChat: false,
   channelId: '',
   chatId: '',
@@ -84,7 +84,7 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         activateChannelChat: false,
-        activateChatChat: true,
+        activateRoomChat: true,
         channelComponent: 'chat',
         chatId: action.chatId
       };
@@ -104,7 +104,7 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         activateChannelChat: true,
-        activateChatChat: false,
+        activateRoomChat: false,
         channelComponent: 'lobby',
         chatId: ''
       };
