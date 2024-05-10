@@ -109,7 +109,7 @@ const ProfileEdit = () => {
       {/* profile picture */}
       <div className='flex justify-center'>
         <label htmlFor="profilePic">
-          <Avatar alt="Profile Picture" src={profile.photoURL} sx={{ width: 192, height: 192 }} />
+          <Avatar src={profile.photoURL} alt="Profile Picture" sx={{ width: 192, height: 192 }} />
         </label>
 
         <input type="file" id="profilePic"
