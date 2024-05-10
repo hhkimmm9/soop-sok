@@ -1,11 +1,9 @@
 import { useState } from 'react';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 import {
-  ChevronDoubleLeftIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
@@ -15,8 +13,6 @@ type MessageinputProps = {
 
 const MessageInput = ({ cid }: MessageinputProps) => {
   const [messageInput, setMessageInput] = useState('');
-
-  const { state, dispatch } = useAppState();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
