@@ -136,13 +136,10 @@ const ProfileEdit = () => {
         {/* mbti */}
         <div className='flex flex-col gap-2'>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">MBTI</InputLabel>
+            <InputLabel id="mbti-select-label">MBTI</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={mbti}
-              label="Age"
-              onChange={(e) => handleMBTIChange(e.target.value)}
+              labelId="mbti-select-label" id="mbti-select" label="MBTI"
+              value={mbti} onChange={(e) => handleMBTIChange(e.target.value)}
             >
               { MBTIOptions.map((option) => (
                 <MenuItem key={option[0]} value={option[0]}>{ option[1] }</MenuItem>  
