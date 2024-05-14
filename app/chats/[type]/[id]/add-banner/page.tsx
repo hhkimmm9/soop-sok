@@ -1,10 +1,12 @@
+"use client";
+
 import {
   TextField, Button,
 } from '@mui/material';
 
 import { useState } from 'react';
+import { useRouter } from "next/navigation";
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -12,12 +14,19 @@ import {
   BackspaceIcon
 } from '@heroicons/react/24/outline';
 
-const AddBanner = () => {
+type pageProps = {
+  params: {
+    type: string,
+    id: string,
+  }
+};
+
+const Page = ({ params }: pageProps) => {
   const [content, setContent] = useState('');
   const [tagOption, setTagOption] = useState('');
   const [tagOptions, setTagOptions] = useState<string[]>([]);
 
-  const { state, dispatch } = useAppState();
+  const router = useRouter();
 
   const addToList = () => {
     if (tagOptions.length < 5) {
@@ -39,7 +48,9 @@ const AddBanner = () => {
   };
 
   const redirectToFeaturesPage = () => {
-    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) {
+      router.push(`/chats/${params.type}/${params.id}/features`);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +59,7 @@ const AddBanner = () => {
     if (auth && auth.currentUser && content.length > 0) {
       try {
         const bannerRef = await addDoc(collection(db, 'banners'), {
-          cid: state.channelId,
+          cid: params.id,
           content,
           createdAt: serverTimestamp(),
           selected: false,
@@ -56,7 +67,7 @@ const AddBanner = () => {
         });
 
         if (bannerRef) {
-          dispatch({ type: 'ENTER_CHANNEL', channelId: state.channelId });
+          router.push(`/chats/public-chat/${params.id}`);
         }
       } catch (err) {
         console.error(err);
@@ -127,4 +138,4 @@ const AddBanner = () => {
   );
 };
 
-export default AddBanner;
+export default Page;

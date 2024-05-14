@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query,
@@ -30,8 +29,6 @@ const Friend = ({ friendId }: FriendProps ) => {
 
   const router = useRouter();
 
-  const { dispatch } = useAppState();
-
   useEffect(() => {
     const fetchFriend = async () => {
       const q = doc(db, "users", friendId);
@@ -52,29 +49,25 @@ const Friend = ({ friendId }: FriendProps ) => {
     // check if their dm chat exists
     const q = query(collection(db, 'private_chats'),
       or(
-        (where('from', '==', myId), where('to', '==', opponentId)),
-        (where('to', '==', myId), where('from', '==', opponentId))
+        (where("from", "==", myId), where("to", "==", opponentId)),
+        (where("from", "==", opponentId), where("to", "==", myId)),
       )
     );
     const querySnapshot = await getDocs(q);
 
     // if it doesn't, create a dm chat room first
     if (querySnapshot.empty) {
-      const docRef = await addDoc(collection(db, 'private_chats'), {
+      const chatRef = await addDoc(collection(db, 'private_chats'), {
         from: myId,
         to: opponentId,
         createdAt: serverTimestamp(),
       });
       // redirect the user to the newly created dm chat room.
-      dispatch({ type: 'SET_TO_PRIVATE_CHAT' })
-      dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: docRef.id });
+      router.push(`/chats/private-chat/${chatRef.id}`);
     } else {
       // redirect the user to the dm chat room.
-      dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
-      dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: querySnapshot.docs[0].id });
+      router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
     }
-
-    router.push('/components');
   };
 
   if (friend) return (

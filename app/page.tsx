@@ -74,7 +74,7 @@ export default function Home() {
         },
       },
       signinFlow: "popup",
-      signInSuccessUrl: "/components",
+      signInSuccessUrl: "/channels",
       signInOptions: [ GoogleAuthProvider.PROVIDER_ID, ]
     };
   }, []);

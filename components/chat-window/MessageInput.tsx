@@ -21,10 +21,8 @@ const MessageInput = ({ cid }: MessageinputProps) => {
     if (auth && auth.currentUser && messageInput.length > 0) {
       const uid = auth.currentUser.uid;
 
-      // TODO: channel id or chat id
-      // const cid = state.chatId ? state.chatId : state.channelId; 
       await addDoc(collection(db, 'messages'), {
-        chatId: cid,
+        cid: cid,
         createdAt: serverTimestamp(),
         sentBy: uid,
         text: messageInput

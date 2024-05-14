@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Avatar,
 } from '@mui/material';
@@ -5,25 +7,25 @@ import {
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, where, } from 'firebase/firestore';
 
-const UserList = () => {
+type pageProps = {
+  params: {
+    type: string,
+    id: string,
+  }
+};
+
+const Page = ({ params }: pageProps) => {
   const [activeUsers, setActiveUsers] = useState([]);
 
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
-
-  var cid;
-  if (state.activateChannelChat) cid = state.channelId;
-  else if (state.activateRoomChat) cid = state.chatId;
-
   const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'status_board'),
-      where('cid', '==', cid)
+      where('cid', '==', params.id)
     ), {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -46,12 +48,13 @@ const UserList = () => {
   const redirectToProfile = (uid: string) => {
     if (auth) {
       router.push(`/profile/${uid}`);
-      dispatch({ type: 'SET_TO_PAGES' });
     }
   };
 
   const redirectToFeatures = () => {
-    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) {
+      router.push(`/chats/${params.type}/${params.id}/features`);
+    }
   };
 
   return (
@@ -85,4 +88,4 @@ const UserList = () => {
   )
 };
 
-export default UserList;
+export default Page;

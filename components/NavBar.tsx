@@ -1,8 +1,11 @@
+"use client";
+
 import { Badge, } from '@mui/material';
 
 import { useRouter, usePathname } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
+import { auth } from '@/utils/firebase';
 
 import {
   QueueListIcon,
@@ -15,33 +18,40 @@ const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { dispatch } = useAppState();
+  const {state, dispatch} = useAppState();
 
-  const renderComponent = (page: string) => {
-    switch (page) {
-      case "channels":
-        dispatch({ type: 'SET_TO_CHANNEL' });
-        router.push('/components');
+  const redirectTo = (tab: string) => {
+    let redirectURL: string = "";
+  
+    // Set the redirectURL based on the current pathname
+    if (pathname.includes("/channels") || pathname.includes("/chats/public-chat")) {
+      dispatch({ type: "SET_PUBLIC_URL", publicChatURL: pathname });
+      redirectURL = "/channels";
+    } else if (pathname.includes("/private-chats") || pathname.includes("/chats/private-chat")) {
+      dispatch({ type: "SET_PRIVATE_URL", privateChatURL: pathname });
+      redirectURL = `/private-chats/${auth.currentUser?.uid}`;
+    }
+  
+    // Determine the final redirectURL based on the requested URL
+    switch (tab) {
+      case "public-chat":
+        redirectURL = state.publicChatURL !== "" ? state.publicChatURL : "/channels";
         break;
-
-      case "private_chats":
-        dispatch({ type: 'SET_TO_PRIVATE_CHAT' });
-        router.push('/components');
+      case "private-chat":
+        redirectURL = state.privateChatURL !== "" ? state.privateChatURL : `/private-chats/${auth.currentUser?.uid}`;
         break;
-
-      case "/friends":
-        dispatch({ type: 'SET_TO_PAGES' });
-        router.push(page);
+      case "friends":
+        redirectURL = "/friends";
         break;
-
-      case "/settings":
-        dispatch({ type: 'SET_TO_PAGES' });
-        router.push(page);
+      case "settings":
+        redirectURL = "/settings";
         break;
-
       default:
         break;
     }
+  
+    // Perform the redirection
+    router.push(redirectURL);
   };
   
   return (
@@ -52,7 +62,7 @@ const NavBar = () => {
           flex justify-between items-center
         ">
           {/* Channels */}
-          <div onClick={() => renderComponent('channels')}
+          <div onClick={() => redirectTo("public-chat")}
             className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
           >
             <QueueListIcon className='h-5 w-5' />
@@ -60,7 +70,7 @@ const NavBar = () => {
 
           {/* Private chats */}
           <Badge badgeContent={256} color="primary">
-            <div onClick={() => renderComponent('private_chats')}
+            <div onClick={() => redirectTo("private-chat")}
               className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
             >
               <ChatBubbleBottomCenterIcon className='h-5 w-5' />
@@ -69,7 +79,7 @@ const NavBar = () => {
 
           {/* Friends List */}
           <Badge badgeContent={1} color="primary">
-            <div onClick={() => renderComponent('/friends')}
+            <div onClick={() => redirectTo("friends")}
               className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
             >
               <UserIcon className='h-5 w-5' />
@@ -77,7 +87,7 @@ const NavBar = () => {
           </Badge>
 
           {/* Settings */}
-          <div onClick={() => renderComponent('/settings')}
+          <div onClick={() => redirectTo("settings")}
             className="p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700"
           >
             <Cog6ToothIcon className='h-5 w-5' />

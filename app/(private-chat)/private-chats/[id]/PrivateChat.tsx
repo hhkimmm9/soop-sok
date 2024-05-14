@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 import Image from 'next/image';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc,
@@ -20,7 +20,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   const [toUser, setToUser] = useState<TUser>();
   const [latestMessage, setLatestMessage] = useState<TMessage>();
 
-  const { dispatch } = useAppState();
+  const router = useRouter();
 
   // fetch user data based on the given user id,
   // or, store user data into the private_chat collection.
@@ -43,7 +43,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
     };
     const fetchLatestMessage = async () => {
       const messageQuery = query(collection(db, 'messages'),
-        where('chatId', '==', privateChat.id),
+        where('cid', '==', privateChat.id),
         orderBy('createdAt', 'desc'),
         limit(1)
       );
@@ -64,7 +64,9 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   // to display when it is sent and the content of it.
 
   const enterPrivateChat = () => {
-    if (auth && auth.currentUser) dispatch({ type: 'ENTER_PRIVATE_CHAT', privateChatId: privateChat.id });
+    if (auth && auth.currentUser) {
+      router.push(`/chats/private-chat/${privateChat.id}`);
+    }
   };
 
   return (
