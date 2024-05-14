@@ -1,15 +1,17 @@
+"use client";
+
 import ChatMessage from '@/components/chat-window/ChatMessage';
 import MessageInput from '@/components/chat-window/MessageInput';
 
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from "next/navigation";
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
-  collection, onSnapshot, doc, query,
-  where, orderBy, startAt, startAfter, limit,
-  getDoc, getDocs, updateDoc, deleteDoc
+  collection, query,
+  where, orderBy, startAfter, limit,
+  getDocs,
 } from 'firebase/firestore';
 
 import { TMessage, FirestoreTimestamp } from '@/types';
@@ -20,12 +22,13 @@ import {
 } from '@heroicons/react/24/outline';
 
 type MessageContainerProps = {
+  type: string,
   cid: string,
 };
 
 const NUM_MESSAGES_PER_FETCH = 10;
 
-const MessageContainer = ({ cid }: MessageContainerProps) => {
+const MessageContainer = ({ type, cid }: MessageContainerProps) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [prevMessages, setPrevMessages] = useState<TMessage[]>([]);
   const [firstVisible, setFirstVisible] = useState<FirestoreTimestamp | null>(null);
@@ -33,18 +36,25 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
 
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
-  const { state, dispatch } = useAppState();
+  const router = useRouter();
 
   // 1. Fetch messages associated with the channel ID in real time.
   const [messagesSnapshot] = useCollection(
     query(collection(db, 'messages'),
-      where('chatId', '==', cid),
+      where('cid', '==', cid),
       orderBy('createdAt', 'desc'),
       limit(NUM_MESSAGES_PER_FETCH)
     ), {
       snapshotListenOptions: { includeMetadataChanges: true }
     }
   );
+
+  useEffect(() => {
+    if (!auth) {
+      router.push('/');
+      return;
+    }
+  }, [router]);
 
   // 2. Once messages are fetched, store them into the state.
   useEffect(() => {
@@ -108,7 +118,7 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
   const lazyLoadMessages = async () => {
     const prevMessageList: TMessage[] = [];
     const q = query(collection(db, 'messages'),
-      where('chatId', '==', cid),
+      where('cid', '==', cid),
       orderBy('createdAt', 'desc'),
       startAfter(firstVisible),
       limit(NUM_MESSAGES_PER_FETCH)
@@ -148,11 +158,12 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
   };
 
   const redirectToFeaturesPage = () => {
-    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    router.push(`/chats/${type}/${cid}/features`);
   };
 
   const leavePrivateChat = () => {
-    if (auth) dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
+    // if (auth) dispatch({ type: 'LEAVE_PRIVATE_CHAT' });
+    router.push(`/private-chats/${auth.currentUser?.uid}`);
   };
 
   return (
@@ -173,7 +184,7 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
       {/* features and message input box */}
       <div className='flex justify-between gap-3'>
         <div className='p-2 shadow-sm rounded-lg bg-white flex items-center'>
-          { state.currentPage === 'channel' ? (
+          { type === "public-chat" ? (
             // for channel chats & room chats
             <div onClick={redirectToFeaturesPage}>
               <Bars3Icon className='h-5 w-5' />

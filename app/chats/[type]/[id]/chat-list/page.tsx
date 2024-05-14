@@ -1,9 +1,11 @@
+"use client";
+
 import SearchBar from '@/components/SearchBar';
-import Chat from '@/components/chat-window/features/Chat';
+import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
@@ -13,14 +15,21 @@ import {
 
 import { TChat } from '@/types'
 
-const ChatList = () => {
+type pageProps = {
+  params: {
+    type: string,
+    id: string,
+  }
+};
+
+const Page = ({ params }: pageProps) => {
   const [chats, setChats] = useState<TChat[]>([]);
-  
-  const { state, dispatch } = useAppState();
+
+  const router = useRouter();
 
   const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'chats'),
-      where('channelId', '==', state.channelId),
+      where('cid', '==', params.id),
       orderBy('createdAt', 'asc')
     ), {
       snapshotListenOptions: { includeMetadataChanges: true },
@@ -41,7 +50,9 @@ const ChatList = () => {
   }, [collectionSnapshot])
 
   const redirectToFeaturesPage = () => {
-    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) {
+      router.push(`/chats/${params.type}/${params.id}/features`);
+    }
   };
 
   return (
@@ -66,6 +77,6 @@ const ChatList = () => {
       '> Cancel </button>
     </div>
   )
-}
+};
 
-export default ChatList
+export default Page;

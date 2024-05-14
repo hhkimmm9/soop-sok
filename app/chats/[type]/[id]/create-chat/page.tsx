@@ -1,3 +1,5 @@
+"use client";
+
 import {
   TextField,
   FormControl, InputLabel, Select, MenuItem,
@@ -5,8 +7,8 @@ import {
 } from '@mui/material';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection,
@@ -16,7 +18,14 @@ import {
 
 import { TBanner } from '@/types';
 
-const CreateChat = () => {
+type pageProps = {
+  params: {
+    type: string,
+    id: string,
+  }
+};
+
+const Page = ({ params }: pageProps) => {
   const [capacity, setCapacity] = useState(2);
   const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
@@ -24,7 +33,7 @@ const CreateChat = () => {
   const [tagOptions, setTagOptions] = useState<string[]>();
   const [tag, setTag] = useState('');
 
-  const { state, dispatch } = useAppState();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -52,7 +61,9 @@ const CreateChat = () => {
   };
 
   const redirectToFeaturesPage = () => {
-    if (auth) dispatch({ type: 'CURRENT_CHANNEL_COMPONENT', channelComponent: 'features' });
+    if (auth) {
+      router.push(`/chats/${params.type}/${params.id}/features`);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,17 +74,15 @@ const CreateChat = () => {
       try {
         const chatRef = await addDoc(collection(db, 'chats'), {
           capacity,
-          channelId: state.channelId,
+          cid: params.id,
           createdAt: serverTimestamp(),
           isPrivate,
           name,
-          numUsers: 1,
           password,
           tag
         });
   
-        if (chatRef) dispatch({ type: 'ENTER_CHAT', chatId: chatRef.id });
-
+        router.push(`/chats/private-chat/${chatRef.id}`);
       } catch (err) {
         console.error(err);
       }
@@ -184,4 +193,4 @@ const CreateChat = () => {
   )
 };
 
-export default CreateChat;
+export default Page;

@@ -1,3 +1,5 @@
+import { useRouter } from "next/navigation";
+
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -6,11 +8,13 @@ import { formatTimeAgo } from '@/utils/utils';
 import { TChat } from '@/types'
 
 type ChatProps = {
-  chat: TChat
+  chat: TChat,
 };
 
 const Chat = ({ chat }: ChatProps) => {
   const { dispatch } = useAppState();
+
+  const router = useRouter();
 
   const enterChat = async () => {
     if (auth) {
@@ -22,7 +26,7 @@ const Chat = ({ chat }: ChatProps) => {
         uid: auth.currentUser?.uid
       });
   
-      dispatch({ type: 'ENTER_CHAT', chatId: chat.id });
+      router.push(`/chats/private-chat/${chat.id}`);
     }
   };
 

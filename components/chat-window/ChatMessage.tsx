@@ -1,13 +1,10 @@
 'use client';
 
-import {
-  Avatar,
-} from '@mui/material';
+import Image from 'next/image';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -19,8 +16,6 @@ type MessageProps = {
 
 const Message = ({ message } : MessageProps) => {
   const [user, setUser] = useState<TUser | null>(null);
-
-  const { dispatch } = useAppState();
 
   const router = useRouter();
 
@@ -39,12 +34,11 @@ const Message = ({ message } : MessageProps) => {
     };
 
     fetchUser();
-  }, [message.sentBy]);
+  }, [message]);
 
   const redirectToProfile = () => {
     if (auth) {
       router.push(`/profile/${user?.uid}`);
-      dispatch({ type: 'SET_TO_PAGES' });
     }
   };
 
@@ -52,7 +46,10 @@ const Message = ({ message } : MessageProps) => {
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
         <div onClick={redirectToProfile}>
-          <Avatar src={user.photoURL} alt="Profile Picture" sx={{ width: 48, height: 48 }} />
+          <Image src={user.photoURL} alt="Profile Picture"
+            width={48} height={48}
+            className="object-cover rounded-full"
+          />
         </div>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
