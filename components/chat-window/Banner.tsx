@@ -24,7 +24,7 @@ const Banner = () => {
         if (!bannerSnapshop.empty) {
           const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
 
-          dispatch({ type: "SET_CURRENT_BANNER", currentBanner: selectedBanner });
+          dispatch({ type: 'SET_CURRENT_BANNER', currentBanner: selectedBanner });
         }
       } catch (err) {
         console.error(err);
@@ -34,9 +34,9 @@ const Banner = () => {
   }, [dispatch]);
 
   return (
-    <div className="h-min mt-1 py-2 rounded-lg overflow-hidden shadow-sm bg-white">
-      <div className="marquee w-screen">
-        <span className="inline-block px-4">{ state.currentBanner?.content }</span>
+    <div className='h-min mt-1 py-2 rounded-lg overflow-hidden shadow-sm bg-white'>
+      <div className='marquee w-screen'>
+        <span className='inline-block px-4'>{ state.currentBanner?.content }</span>
       </div>
     </div>
   )

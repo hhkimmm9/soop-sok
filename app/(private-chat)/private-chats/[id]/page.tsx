@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
 import SearchBar from '@/components/SearchBar';
 import PrivateChat from '@/app/(private-chat)/private-chats/[id]/PrivateChat';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';

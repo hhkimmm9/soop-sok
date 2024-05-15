@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -20,7 +20,7 @@ const Channel = ({ channel } : ChannelProps) => {
 
   const [collectionSnapshot, loading, error] = useCollection(
     query(collection(db, 'status_board'),
-    where("cid", "==", channel.id)
+    where('cid', '==', channel.id)
     ), {
       snapshotListenOptions: { includeMetadataChanges: true },
     }

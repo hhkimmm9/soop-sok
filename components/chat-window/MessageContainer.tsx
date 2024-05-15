@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 import ChatMessage from '@/components/chat-window/ChatMessage';
 import MessageInput from '@/components/chat-window/MessageInput';
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -184,7 +184,7 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
       {/* features and message input box */}
       <div className='flex justify-between gap-3'>
         <div className='p-2 shadow-sm rounded-lg bg-white flex items-center'>
-          { type === "public-chat" ? (
+          { type === 'public-chat' ? (
             // for channel chats & room chats
             <div onClick={redirectToFeaturesPage}>
               <Bars3Icon className='h-5 w-5' />

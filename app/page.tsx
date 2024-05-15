@@ -34,15 +34,15 @@ export default function Home() {
         signInSuccessWithAuthResult: (authResult: any) => {
           // Store the auth token into the cookie -> https://www.npmjs.com/package/cookies          
           try {
-            cookies.set("auth-token", authResult.credential.accessToken);
-            const userRef = doc(db, "users", authResult.user.uid);
+            cookies.set('auth-token', authResult.credential.accessToken);
+            const userRef = doc(db, 'users', authResult.user.uid);
             async () => {
               const querySnapshot = await getDoc(userRef);
               
               // If this is the first time sign in, create a new user data and store it.)
               if (!querySnapshot.exists()) {
                 // TODO: Update attributes.
-                await setDoc(doc(db, "users", authResult.user.uid), {
+                await setDoc(doc(db, 'users', authResult.user.uid), {
                   createdAt: serverTimestamp(),
                   displayName: authResult.user.displayName,
                   email: authResult.user.email,
@@ -52,7 +52,7 @@ export default function Home() {
                   lastLoginTime: serverTimestamp(),
                   photoURL: authResult.user.photoURL,
                   profile: {
-                    introduction: "",
+                    introduction: '',
                     interests: []
                   },
                   uid: authResult.user.uid
@@ -68,13 +68,13 @@ export default function Home() {
               };
             }
           } catch(err) {
-            console.error("Error getting document:", err);
+            console.error('Error getting document:', err);
           }
           return true;
         },
       },
-      signinFlow: "popup",
-      signInSuccessUrl: "/channels",
+      signinFlow: 'popup',
+      signInSuccessUrl: '/channels',
       signInOptions: [ GoogleAuthProvider.PROVIDER_ID, ]
     };
   }, []);
@@ -82,10 +82,10 @@ export default function Home() {
   useEffect(() => {
     const loadFirebaseUI = async () => {
       try {
-        const firebaseui = await import("firebaseui");
+        const firebaseui = await import('firebaseui');
         setFirebaseUI(firebaseui);
       } catch (error) {
-        console.error("Error loading FirebaseUI:", error);
+        console.error('Error loading FirebaseUI:', error);
       }
     };
     loadFirebaseUI();
@@ -94,29 +94,29 @@ export default function Home() {
   useEffect(() => {
     if (firebaseui) {
       const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
-      ui.start("#firebaseui-auth-container", uiConfig);
+      ui.start('#firebaseui-auth-container', uiConfig);
     }
   }, [firebaseui, uiConfig]);
 
   if (firebaseui) return (
-    <div className="relative">
-      <div className="
+    <div className='relative'>
+      <div className='
         absolute left-0 right-0 z-10
         h-screen py-40
         flex flex-col gap-96 text-center
-      ">
+      '>
         {/* App name */}
-        <h1 className="font-bold text-5xl text-green-950">Soop Sok</h1>
+        <h1 className='font-bold text-5xl text-green-950'>Soop Sok</h1>
 
         {/* Firebase UI */}
-        <div id="firebaseui-auth-container" />
+        <div id='firebaseui-auth-container' />
       </div>
 
       <Image
         src={BACKGROUND_IMAGE_URL}
-        alt="background image"
+        alt='background image'
         width={1668} height={2388}
-        className="h-screen object-cover"
+        className='h-screen object-cover'
       />
     </div>
   );

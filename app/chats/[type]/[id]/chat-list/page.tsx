@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
 import SearchBar from '@/components/SearchBar';
 import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -79,7 +79,7 @@ const Page = ({ params }: pageProps) => {
         )) }
       </div>
 
-      <button type="button" onClick={redirectToFeaturesPage} className='
+      <button type='button' onClick={redirectToFeaturesPage} className='
         w-full py-4 rounded-lg shadow-sm bg-white
         transition duration-300 ease-in-out hover:bg-stone-200
       '> Cancel </button>

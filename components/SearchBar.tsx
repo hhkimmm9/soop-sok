@@ -22,7 +22,7 @@ const SearchBar = ({ onSubmit } : SearchBarProps) => {
       {/* search input field */}
       <div className='grow p-0.5 rounded-lg bg-white'>
         <div className='h-10 flex items-center justify-between'>
-          <input type="text"
+          <input type='text'
             value={searchQuery} onChange={(e) => handleChange(e.target.value)}
             className='grow px-2 py-1 outline-none'
           />

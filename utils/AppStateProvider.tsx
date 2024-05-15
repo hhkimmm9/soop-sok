@@ -15,14 +15,14 @@ interface AppState {
 };
 
 type Action = (
-  | { type: "SET_PUBLIC_URL", publicChatURL: string }
-  | { type: "SET_PRIVATE_URL", privateChatURL: string }
-  | { type: "SET_CURRENT_BANNER", currentBanner: TBanner }
+  | { type: 'SET_PUBLIC_URL', publicChatURL: string }
+  | { type: 'SET_PRIVATE_URL', privateChatURL: string }
+  | { type: 'SET_CURRENT_BANNER', currentBanner: TBanner }
 );
 
 const initialState: AppState = {
-  publicChatURL: "",
-  privateChatURL: "",
+  publicChatURL: '',
+  privateChatURL: '',
   currentBanner: null,
 }
 
@@ -33,17 +33,17 @@ const AppStateContext = createContext<{
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
-    case "SET_PUBLIC_URL":  
+    case 'SET_PUBLIC_URL':  
       return {
         ...state,
         publicChatURL: action.publicChatURL,
       };
-    case "SET_PRIVATE_URL":  
+    case 'SET_PRIVATE_URL':  
       return {
         ...state,
         privateChatURL: action.privateChatURL,
       };
-    case "SET_CURRENT_BANNER":
+    case 'SET_CURRENT_BANNER':
       return {
         ...state,
         currentBanner: action.currentBanner

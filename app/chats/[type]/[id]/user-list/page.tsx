@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
 import {
@@ -80,8 +80,8 @@ const Page = ({ params }: pageProps) => {
               flex items-center justify-between
             '>
               <div className='flex items-center gap-3'>
-                {/* <Avatar src={activeUser.profilePicUrl} alt="Profile Picture" sx={{ width: 52, height: 52 }} /> */}
-                <Image src={activeUser.profilePicUrl} alt="Profile Picture"
+                {/* <Avatar src={activeUser.profilePicUrl} alt='Profile Picture' sx={{ width: 52, height: 52 }} /> */}
+                <Image src={activeUser.profilePicUrl} alt='Profile Picture'
                   width={52} height={52} className='object-cover'
                 />
                 <p>{ activeUser.displayName }</p>
@@ -91,7 +91,7 @@ const Page = ({ params }: pageProps) => {
         </ul>
       </div>
 
-      <button type="button" onClick={redirectToFeatures} className='
+      <button type='button' onClick={redirectToFeatures} className='
         w-full py-4 rounded-lg shadow-sm bg-white
         transition duration-300 ease-in-out hover:bg-stone-200
       '> Cancel </button>

@@ -47,8 +47,8 @@ const Page = () => {
       if (auth) {
         const q = query(collection(db, 'friend_list'), 
           or(
-            where("senderId", "==", id),
-            where("receiverId", "==", id),
+            where('senderId', '==', id),
+            where('receiverId', '==', id),
           )
         )
         try {
@@ -86,8 +86,8 @@ const Page = () => {
     // check if their dm chat exists
     const q = query(collection(db, 'private_chats'),
       or(
-        (where("from", "==", myId), where("to", "==", opponentId)),
-        (where("from", "==", opponentId), where("to", "==", myId)),
+        (where('from', '==', myId), where('to', '==', opponentId)),
+        (where('from', '==', opponentId), where('to', '==', myId)),
       )
     );
     const querySnapshot = await getDocs(q);

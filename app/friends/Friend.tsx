@@ -22,7 +22,7 @@ type FriendProps = {
   friendId: string
 };
 
-const NO_PIC_PLACEHOLDER = "https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676";
+const NO_PIC_PLACEHOLDER = 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676';
 
 const Friend = ({ friendId }: FriendProps ) => {
   const [friend, setFriend] = useState<TUser>();
@@ -31,7 +31,7 @@ const Friend = ({ friendId }: FriendProps ) => {
 
   useEffect(() => {
     const fetchFriend = async () => {
-      const q = doc(db, "users", friendId);
+      const q = doc(db, 'users', friendId);
       const snapshot = await getDoc(q);
 
       if (snapshot.exists()) {
@@ -49,8 +49,8 @@ const Friend = ({ friendId }: FriendProps ) => {
     // check if their dm chat exists
     const q = query(collection(db, 'private_chats'),
       or(
-        (where("from", "==", myId), where("to", "==", opponentId)),
-        (where("from", "==", opponentId), where("to", "==", myId)),
+        (where('from', '==', myId), where('to', '==', opponentId)),
+        (where('from', '==', opponentId), where('to', '==', myId)),
       )
     );
     const querySnapshot = await getDocs(q);
@@ -104,7 +104,7 @@ const Friend = ({ friendId }: FriendProps ) => {
 
         <div className='col-span-2 flex items-center justify-end'>
           <div onClick={redirectToDMChat} className='p-3 rounded-full border'>
-            <ChatBubbleBottomCenterIcon className="w-5 h-5" />
+            <ChatBubbleBottomCenterIcon className='w-5 h-5' />
           </div>
         </div>
       </div>

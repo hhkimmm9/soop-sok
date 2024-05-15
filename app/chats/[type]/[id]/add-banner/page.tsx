@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
 import {
@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 
 import { useState } from 'react';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -89,18 +89,18 @@ const Page = ({ params }: pageProps) => {
         flex flex-col gap-2
       '>
         {/* name */}
-        <TextField id="outlined-basic" label="Banner" variant="outlined"
+        <TextField id='outlined-basic' label='Banner' variant='outlined'
           value={content} onChange={(e) => setContent(e.target.value)}
         />
 
         {/* tag options */}
         <div className='flex flex-col gap-4'>
           <div className='mt-2 flex gap-2'>
-            <TextField id="outlined-basic" label="Tag Option" variant="outlined"
+            <TextField id='outlined-basic' label='Tag Option' variant='outlined'
               value={tagOption} onChange={(e) => setTagOption(e.target.value)}
               className='grow'
             />
-            <Button variant="outlined" onClick={() => { addToList(); setTagOption(''); }}>
+            <Button variant='outlined' onClick={() => { addToList(); setTagOption(''); }}>
               Add
             </Button>
           </div>
@@ -131,7 +131,7 @@ const Page = ({ params }: pageProps) => {
       </div>
 
       <div className='grid grid-cols-2 gap-2.5'>
-        <button type="button" onClick={redirectToFeaturesPage} className='
+        <button type='button' onClick={redirectToFeaturesPage} className='
           w-full py-4 rounded-lg shadow-sm bg-white
           transition duration-300 ease-in-out hover:bg-stone-200
         '> Cancel </button>

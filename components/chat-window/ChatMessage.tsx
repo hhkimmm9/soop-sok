@@ -46,9 +46,9 @@ const Message = ({ message } : MessageProps) => {
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
         <div onClick={redirectToProfile}>
-          <Image src={user.photoURL} alt="Profile Picture"
+          <Image src={user.photoURL} alt='Profile Picture'
             width={48} height={48}
-            className="object-cover rounded-full"
+            className='object-cover rounded-full'
           />
         </div>
       </div>

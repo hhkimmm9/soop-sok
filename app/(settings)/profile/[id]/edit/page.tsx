@@ -112,11 +112,11 @@ const ProfileEdit = () => {
     <div className='pt-10 flex flex-col gap-6'>
       {/* profile picture */}
       <div className='flex justify-center'>
-        <label htmlFor="profilePic">
-          <Avatar src={profile.photoURL} alt="Profile Picture" sx={{ width: 192, height: 192 }} />
+        <label htmlFor='profilePic'>
+          <Avatar src={profile.photoURL} alt='Profile Picture' sx={{ width: 192, height: 192 }} />
         </label>
 
-        <input type="file" id="profilePic"
+        <input type='file' id='profilePic'
           onChange={(e)=> updateProfilePic(e)}
           className='hidden'
         />
@@ -125,14 +125,14 @@ const ProfileEdit = () => {
       <div className='flex flex-col gap-8'>
         {/* username */}
         <div className='flex flex-col gap-2'>
-          <TextField id="outlined-basic" label="Username" variant="outlined"
+          <TextField id='outlined-basic' label='Username' variant='outlined'
             value={displayName} onChange={(e) => setDisplayName(e.target.value)}
           />
         </div>
 
         {/* introduction */}
         <div className='flex flex-col gap-2'>
-          <TextField id="outlined-basic" label="Username" variant="outlined" multiline maxRows={8}
+          <TextField id='outlined-basic' label='Username' variant='outlined' multiline maxRows={8}
             value={introduction} onChange={(e) => setIntroduction(e.target.value)}
           />
         </div>
@@ -140,9 +140,9 @@ const ProfileEdit = () => {
         {/* mbti */}
         <div className='flex flex-col gap-2'>
           <FormControl fullWidth>
-            <InputLabel id="mbti-select-label">MBTI</InputLabel>
+            <InputLabel id='mbti-select-label'>MBTI</InputLabel>
             <Select
-              labelId="mbti-select-label" id="mbti-select" label="MBTI"
+              labelId='mbti-select-label' id='mbti-select' label='MBTI'
               value={mbti} onChange={(e) => handleMBTIChange(e.target.value)}
             >
               { MBTIOptions.map((option) => (
@@ -157,9 +157,9 @@ const ProfileEdit = () => {
       <div className='mt-4 grid grid-cols-2 gap-3'>
         
         <Link href={`/profile/${auth.currentUser?.uid}`}>
-          <Button variant="outlined" className='w-full'>Cancel</Button>
+          <Button variant='outlined' className='w-full'>Cancel</Button>
         </Link>
-        <Button onClick={handleUpdate} variant="contained">Update</Button>
+        <Button onClick={handleUpdate} variant='contained'>Update</Button>
       </div>
     </div>
   )

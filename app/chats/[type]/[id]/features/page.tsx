@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import ProgressIndicator from "@/components/ProgressIndicator";
+import ProgressIndicator from '@/components/ProgressIndicator';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { auth, db } from "@/utils/firebase";
+import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query, where,
   getDocs, deleteDoc
-} from "firebase/firestore";
+} from 'firebase/firestore';
 
 import {
   PlusIcon,
@@ -17,7 +17,7 @@ import {
   ChatBubbleOvalLeftEllipsisIcon,
   UsersIcon,
   ArrowLeftStartOnRectangleIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 
 type pageProps = {
   params: {
@@ -27,11 +27,11 @@ type pageProps = {
 }
 
 type TFeatures = (
-  | "create-chat"
-  | "add-banner"
-  | "chat-list"
-  | "user-list"
-  | "cancel"
+  | 'create-chat'
+  | 'add-banner'
+  | 'chat-list'
+  | 'user-list'
+  | 'cancel'
 );
 
 const Page = ({ params }: pageProps) => {
@@ -41,7 +41,7 @@ const Page = ({ params }: pageProps) => {
 
   const redirectTo = (feature: TFeatures) => {
     if (auth) {
-      feature == "cancel" ?
+      feature == 'cancel' ?
         router.push(`/chats/${params.type}/${params.id}`) :
         router.push(`/chats/${params.type}/${params.id}/${feature}`);
     }
@@ -63,12 +63,12 @@ const Page = ({ params }: pageProps) => {
           await deleteDoc(deleteRef);
   
           // If you were in a chat, leave the chat.
-          if (params.type == "room-chat") {
+          if (params.type == 'room-chat') {
             router.push(`chats/channel-chat/${params.id}`);
           }
           // If you were in a channel, leave the channel.
           else {
-            router.push("/channels");
+            router.push('/channels');
           }
         }
       } catch(error) {
@@ -84,57 +84,57 @@ const Page = ({ params }: pageProps) => {
   )
   else return (
     <div className='h-full flex flex-col gap-4'>
-      <div className="grow p-4 rounded-lg overflow-y-auto bg-white">
+      <div className='grow p-4 rounded-lg overflow-y-auto bg-white'>
         <div className='flex flex-col gap-4'>
-          { params.type === "public-chat" && (
+          { params.type === 'public-chat' && (
             <>
               <div onClick={() => redirectTo('create-chat')}
-                className="
+                className='
                   py-6 rounded-lg bg-stone-100
                   transition duration-300 ease-in-out hover:bg-stone-200
-                  flex justify-center"
+                  flex justify-center'
               > <PlusIcon className='h-8' /> </div>
     
               <div onClick={() => redirectTo('add-banner')}
-                className="
+                className='
                   py-6 rounded-lg bg-stone-100
                   transition duration-300 ease-in-out hover:bg-stone-200
-                  flex justify-center"
+                  flex justify-center'
               > <MegaphoneIcon className='h-8' /> </div>
     
               <div onClick={() => redirectTo('chat-list')}
-                className="
+                className='
                   py-6 rounded-lg bg-stone-100
                   transition duration-300 ease-in-out hover:bg-stone-200
-                  flex justify-center"
+                  flex justify-center'
               > <ChatBubbleOvalLeftEllipsisIcon className='h-8' /> </div>
             </>
           )}
 
           <div onClick={() => redirectTo('user-list')}
-            className="
+            className='
               py-6 rounded-lg bg-stone-100
               transition duration-300 ease-in-out hover:bg-stone-200
-              flex justify-center"
+              flex justify-center'
           > <UsersIcon className='h-8' /> </div>
 
-          { params.type === "public-chat" && (  
+          { params.type === 'public-chat' && (  
             <div onClick={leaveChat}
-              className="
+              className='
                 py-6 rounded-lg bg-stone-100
                 transition duration-300 ease-in-out hover:bg-stone-200
-                flex justify-center"
+                flex justify-center'
             > <ArrowLeftStartOnRectangleIcon className='h-8' /> </div>
           )}
         </div>
 
       </div>
 
-      <button type="button" onClick={() => redirectTo("cancel")}
-        className="
+      <button type='button' onClick={() => redirectTo('cancel')}
+        className='
           w-full py-4 rounded-lg shadow-sm bg-white
           hover:bg-stone-200 transition duration-300 ease-in-out
-        "
+        '
       > Cancel </button>
     </div>
   );
