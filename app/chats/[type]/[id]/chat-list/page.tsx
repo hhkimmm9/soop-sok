@@ -1,5 +1,6 @@
 "use client";
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import SearchBar from '@/components/SearchBar';
 import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 
@@ -23,11 +24,12 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<TChat[]>([]);
 
   const router = useRouter();
 
-  const [collectionSnapshot, loading, error] = useCollection(
+  const [collectionSnapshot] = useCollection(
     query(collection(db, 'chats'),
       where('cid', '==', params.id),
       orderBy('createdAt', 'asc')
@@ -47,6 +49,7 @@ const Page = ({ params }: pageProps) => {
       });
       setChats(chatList);
     }
+    setIsLoading(false);
   }, [collectionSnapshot])
 
   const redirectToFeaturesPage = () => {
@@ -55,7 +58,12 @@ const Page = ({ params }: pageProps) => {
     }
   };
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else return (
     <div className='h-full flex flex-col gap-4'>
       <SearchBar
         onSubmit={(searchQuery: string) => console.log(searchQuery) }

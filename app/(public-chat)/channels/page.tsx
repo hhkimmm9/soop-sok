@@ -1,5 +1,6 @@
 'use client';
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import Channel from '@/app/(public-chat)/channels/Channel';
 
 import { useState, useEffect } from 'react';
@@ -12,13 +13,14 @@ import { collection, query, orderBy } from 'firebase/firestore';
 import { TChannel } from '@/types';
 
 const Page = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [channels, setChannels] = useState<TChannel[]>([]);
   
   const router = useRouter();
 
   /* 2. The effect of useCollection is triggered whenever the collection changes
     or when the component mounts. */
-  const [collectionSnapshot, loading, error] = useCollection(
+  const [collectionSnapshot] = useCollection(
     query(collection(db, 'channels'),
       orderBy('order', 'asc')
     ), {
@@ -48,9 +50,15 @@ const Page = () => {
       });
       setChannels(container);
     }
+    setIsLoading(false);
   }, [collectionSnapshot]);
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else return (
     <>
       <div className='h-full bg-stone-100'>
         <div className='flex flex-col gap-3'>

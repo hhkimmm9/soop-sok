@@ -1,5 +1,8 @@
 "use client";
 
+import ProgressIndicator from "@/components/ProgressIndicator";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { auth, db } from "@/utils/firebase";
@@ -32,6 +35,8 @@ type TFeatures = (
 );
 
 const Page = ({ params }: pageProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
   const router = useRouter();
 
   const redirectTo = (feature: TFeatures) => {
@@ -72,7 +77,12 @@ const Page = ({ params }: pageProps) => {
     }
   };
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else return (
     <div className='h-full flex flex-col gap-4'>
       <div className="grow p-4 rounded-lg overflow-y-auto bg-white">
         <div className='flex flex-col gap-4'>

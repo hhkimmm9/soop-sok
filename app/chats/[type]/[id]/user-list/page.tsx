@@ -1,11 +1,13 @@
 "use client";
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import {
   Avatar,
 } from '@mui/material';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -19,11 +21,12 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [activeUsers, setActiveUsers] = useState([]);
 
   const router = useRouter();
 
-  const [collectionSnapshot, loading, error] = useCollection(
+  const [collectionSnapshot] = useCollection(
     query(collection(db, 'status_board'),
       where('cid', '==', params.id)
     ), {
@@ -33,7 +36,6 @@ const Page = ({ params }: pageProps) => {
 
   useEffect(() => {
     const activeUserContainer: any = [];
-    
     if (collectionSnapshot && !collectionSnapshot.empty) {
       collectionSnapshot.forEach((doc) => {
         activeUserContainer.push({
@@ -43,6 +45,7 @@ const Page = ({ params }: pageProps) => {
       })
       setActiveUsers(activeUserContainer)
     }
+    setIsLoading(false);
   }, [collectionSnapshot]);
   
   const redirectToProfile = (uid: string) => {
@@ -57,7 +60,12 @@ const Page = ({ params }: pageProps) => {
     }
   };
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else return (
     <div className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto rounded-lg shadow-sm bg-white
@@ -72,7 +80,10 @@ const Page = ({ params }: pageProps) => {
               flex items-center justify-between
             '>
               <div className='flex items-center gap-3'>
-                <Avatar src={activeUser.profilePicUrl} alt="Profile Picture" sx={{ width: 52, height: 52 }} />
+                {/* <Avatar src={activeUser.profilePicUrl} alt="Profile Picture" sx={{ width: 52, height: 52 }} /> */}
+                <Image src={activeUser.profilePicUrl} alt="Profile Picture"
+                  width={52} height={52} className='object-cover'
+                />
                 <p>{ activeUser.displayName }</p>
               </div>
             </li>
