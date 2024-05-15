@@ -1,5 +1,6 @@
 "use client";
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import SearchBar from '@/components/SearchBar';
 import PrivateChat from '@/app/(private-chat)/private-chats/[id]/PrivateChat';
 
@@ -19,11 +20,12 @@ type PrivateChatProps = {
 };
 
 const Page = ({ params }: PrivateChatProps) => {
-  const [privateChats, setPrivateChats] = useState<TPrivateChat[]>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [privateChats, setPrivateChats] = useState<TPrivateChat[]>([]);
 
   const router = useRouter();
 
-  const [collectionSnapshot, loading, error] = useCollection(
+  const [collectionSnapshot] = useCollection(
     query(collection(db, 'private_chats'),
       or(
         where('from', '==', params.id),
@@ -52,9 +54,15 @@ const Page = ({ params }: PrivateChatProps) => {
       });
       setPrivateChats(container);
     }
+    setIsLoading(false);
   }, [collectionSnapshot]);
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else if (!isLoading && privateChats) return (
     <div className='h-full bg-stone-100'>
       <div className='flex flex-col gap-6'>
         {/* interaction area */}
@@ -64,9 +72,11 @@ const Page = ({ params }: PrivateChatProps) => {
 
         {/* private chats */}
         <div className='flex flex-col gap-2'>
-          { privateChats?.map((privateChat: TPrivateChat) => (
+          { privateChats.length > 0 ? privateChats?.map((privateChat: TPrivateChat) => (
             <PrivateChat key={privateChat.id} privateChat={privateChat} />
-          ))}
+          )) : (
+            <p>You have no messages received. 📭</p>
+          )}
         </div>
       </div>
     </div>

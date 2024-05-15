@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import {
   TextField,
   FormControl, InputLabel, Select, MenuItem,
@@ -7,7 +8,7 @@ import {
 } from '@mui/material';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 import { auth, db } from '@/utils/firebase';
 import {
@@ -26,6 +27,7 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [capacity, setCapacity] = useState(2);
   const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
@@ -50,6 +52,8 @@ const Page = ({ params }: pageProps) => {
           }
         } catch (err) {
           console.error(err);
+        } finally {
+          setIsLoading(false);
         }
       }
     };
@@ -89,7 +93,12 @@ const Page = ({ params }: pageProps) => {
     };
   };
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else return (
     <form onSubmit={(e) => handleSubmit(e)} className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto rounded-lg shadow-sm bg-white

@@ -1,5 +1,6 @@
 'use client';
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import {
   Avatar,
   Button,
@@ -39,8 +40,8 @@ const MBTIOptions = [
 ];
 
 const ProfileEdit = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [profile, setProfile] = useState<TUser>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<TUser | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [introduction, setIntroduction] = useState('');
   const [mbti, setMbti] = useState('');
@@ -50,29 +51,29 @@ const ProfileEdit = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setIsLoading(true);
-
-    const fecthUser = async () => {
+    const fetchUser = async () => {
       if (auth && auth.currentUser) {
         try {
           const userRef = doc(db, 'users', auth.currentUser.uid);
           const querySnapshot = await getDoc(userRef);
-
+  
           if (querySnapshot.exists()) {
             const data = querySnapshot.data() as TUser;
             setProfile(data);
             setDisplayName(data.displayName);
-            setIntroduction(data.profile.introduction);
-            setMbti(data.profile.mbti);
+            setIntroduction(data.profile?.introduction); // Use optional chaining
+            setMbti(data.profile?.mbti); // Use optional chaining
           }
         } catch (err) {
           console.error(err);
+        } finally {
+          setIsLoading(false);
         }
-      }
-      setIsLoading(false);
+      };
     };
-    fecthUser();
-  }, [])
+
+    fetchUser();
+  }, []); // Add auth as a dependency if needed
 
   const updateProfilePic = async (e: ChangeEvent<HTMLInputElement>) => {
     console.log('updateProfilePic');
@@ -102,7 +103,12 @@ const ProfileEdit = () => {
     }
   };
 
-  if (profile !== undefined && !isLoading) return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else if (!isLoading && profile) return (
     <div className='pt-10 flex flex-col gap-6'>
       {/* profile picture */}
       <div className='flex justify-center'>

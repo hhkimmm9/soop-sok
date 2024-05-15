@@ -1,5 +1,6 @@
 "use client";
 
+import ProgressIndicator from '@/components/ProgressIndicator';
 import {
   TextField, Button,
 } from '@mui/material';
@@ -22,6 +23,7 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState('');
   const [tagOption, setTagOption] = useState('');
   const [tagOptions, setTagOptions] = useState<string[]>([]);
@@ -75,7 +77,12 @@ const Page = ({ params }: pageProps) => {
     }
   };
 
-  return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else return (
     <form onSubmit={(e) => handleSubmit(e)} className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto rounded-lg bg-white

@@ -1,5 +1,7 @@
 'use client';
 
+import ProgressIndicator from '@/components/ProgressIndicator';
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -7,21 +9,18 @@ import Link from 'next/link';
 
 import { auth, db } from '@/utils/firebase';
 import {
-  collection, doc, query,
-  or, where, limit,
-  addDoc, getDoc, getDocs,
-  serverTimestamp
+  collection, doc, query, or, where,
+  addDoc, getDoc, getDocs, serverTimestamp
 } from 'firebase/firestore';
 
 import { TUser } from '@/types';
 
-const Profile = () => {
-  const [profile, setProfile] = useState<TUser>();
+const Page = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<TUser | null>(null);
   const [isMyProfile, setIsMyProfile] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isMyFriend, setIsMyFriend] = useState(false);
 
-  
   const { id } = useParams();
   const router = useRouter();
 
@@ -42,8 +41,8 @@ const Profile = () => {
           console.error(err);
         }
       }
-      setIsLoading(true);
     };
+  
     const checkIsMyFriend = async () => {
       if (auth) {
         const q = query(collection(db, 'friend_list'), 
@@ -62,8 +61,13 @@ const Profile = () => {
         }
       }
     };
-    fetchData();
-    checkIsMyFriend();
+  
+    const fetchDataAndCheckFriend = async () => {
+      await Promise.all([fetchData(), checkIsMyFriend()]);
+      setIsLoading(false);
+    };
+  
+    fetchDataAndCheckFriend();
   }, [id])
 
   const addUserToFriendList = async () => {
@@ -72,7 +76,6 @@ const Profile = () => {
       receiverId: id,
       senderId: auth.currentUser?.uid,
     });
-
     setIsMyFriend(true);
   };
 
@@ -134,7 +137,12 @@ const Profile = () => {
     )
   };
 
-  if (profile !== undefined && isLoading) return (
+  if (isLoading) return (
+    <div className='h-full flex justify-center items-center'>
+      <ProgressIndicator />
+    </div>
+  )
+  else if (!isLoading && profile) return (
     <div className='pt-10 flex flex-col gap-4'>
       {/* pic and name */}
       <div className='w-full grid grid-cols-4'>
@@ -170,9 +178,8 @@ const Profile = () => {
           <p>{ profile.profile.introduction }</p>
         </div>
       </div>
-
     </div>
   )
 };
 
-export default Profile;
+export default Page;
