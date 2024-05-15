@@ -1,6 +1,7 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
+import MUIMessageDialog from '@/components/MUIMessageDialog';
 import {
   Avatar,
   Button,
@@ -19,6 +20,10 @@ import { auth, db } from '@/utils/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 import { TUser } from '@/types';
+import {
+  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT,
+  DATA_UPDATE_TITLE, DATA_UPDATE_CONTENT
+} from '@/utils/messageTexts';
 
 const MBTIOptions = [
   ['istj', 'ISTJ'],
@@ -41,6 +46,10 @@ const MBTIOptions = [
 
 const ProfileEdit = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showMessage, setShowMessage] = useState(false);
+  const [errorMessageTitle, setErrorMessageTitle] = useState('');
+  const [errorMessageContent, setErrorMessageContent] = useState('');
+
   const [profile, setProfile] = useState<TUser | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [introduction, setIntroduction] = useState('');
@@ -64,10 +73,12 @@ const ProfileEdit = () => {
             setIntroduction(data.profile?.introduction); // Use optional chaining
             setMbti(data.profile?.mbti); // Use optional chaining
           }
+          setIsLoading(false);
         } catch (err) {
           console.error(err);
-        } finally {
-          setIsLoading(false);
+          setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
+          setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
+          setShowMessage(true);
         }
       };
     };
@@ -99,6 +110,9 @@ const ProfileEdit = () => {
         router.push(`/profile/${id}`);
       } catch (err) {
         console.error(err);
+        setErrorMessageTitle(DATA_UPDATE_TITLE);
+        setErrorMessageContent(DATA_UPDATE_CONTENT);
+        setShowMessage(true);
       }
     }
   };
@@ -108,7 +122,7 @@ const ProfileEdit = () => {
       <ProgressIndicator />
     </div>
   )
-  else if (!isLoading && profile) return (
+  else if (!isLoading && profile) return (<>
     <div className='pt-10 flex flex-col gap-6'>
       {/* profile picture */}
       <div className='flex justify-center'>
@@ -162,7 +176,14 @@ const ProfileEdit = () => {
         <Button onClick={handleUpdate} variant='contained'>Update</Button>
       </div>
     </div>
-  )
+
+    <MUIMessageDialog
+      show={showMessage}
+      title={errorMessageTitle}
+      message={errorMessageContent}
+      handleClose={() => { setShowMessage(false) }}
+    />
+  </>)
 };
 
 export default ProfileEdit;

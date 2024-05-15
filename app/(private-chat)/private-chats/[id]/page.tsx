@@ -1,6 +1,7 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
+import MUIMessageDialog from '@/components/MUIMessageDialog';
 import SearchBar from '@/components/SearchBar';
 import PrivateChat from '@/app/(private-chat)/private-chats/[id]/PrivateChat';
 
@@ -12,6 +13,9 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, or, where, } from 'firebase/firestore';
 
 import { TPrivateChat } from '@/types';
+import {
+  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT
+} from '@/utils/messageTexts';
 
 type PrivateChatProps = {
   params: {
@@ -21,11 +25,15 @@ type PrivateChatProps = {
 
 const Page = ({ params }: PrivateChatProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showMessage, setShowMessage] = useState(false);
+  const [errorMessageTitle, setErrorMessageTitle] = useState('');
+  const [errorMessageContent, setErrorMessageContent] = useState('');
+  
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>([]);
 
   const router = useRouter();
 
-  const [collectionSnapshot] = useCollection(
+  const [firestoreSnapshot, firestoreLoading, firestoreError] = useCollection(
     query(collection(db, 'private_chats'),
       or(
         where('from', '==', params.id),
@@ -44,9 +52,17 @@ const Page = ({ params }: PrivateChatProps) => {
   }, [router]);
 
   useEffect(() => {
+    if (firestoreError !== undefined) {
+      setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
+      setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
+      setShowMessage(true);
+    }
+  }, [firestoreError]);
+
+  useEffect(() => {
     const container: TPrivateChat[] = []
-    if (collectionSnapshot && !collectionSnapshot.empty) {
-      collectionSnapshot.forEach((doc) => {
+    if (firestoreSnapshot && !firestoreSnapshot.empty) {
+      firestoreSnapshot.forEach((doc) => {
         container.push({
           id: doc.id,
           ...doc.data()
@@ -55,14 +71,14 @@ const Page = ({ params }: PrivateChatProps) => {
       setPrivateChats(container);
     }
     setIsLoading(false);
-  }, [collectionSnapshot]);
+  }, [firestoreSnapshot]);
 
   if (isLoading) return (
     <div className='h-full flex justify-center items-center'>
       <ProgressIndicator />
     </div>
   )
-  else if (!isLoading && privateChats) return (
+  else if (!isLoading && privateChats) return (<>
     <div className='h-full bg-stone-100'>
       <div className='flex flex-col gap-6'>
         {/* interaction area */}
@@ -80,7 +96,14 @@ const Page = ({ params }: PrivateChatProps) => {
         </div>
       </div>
     </div>
-  );
+
+    <MUIMessageDialog
+      show={showMessage}
+      title={errorMessageTitle}
+      message={errorMessageContent}
+      handleClose={() => { setShowMessage(false) }}
+    />
+  </>);
 };
 
 export default Page;
