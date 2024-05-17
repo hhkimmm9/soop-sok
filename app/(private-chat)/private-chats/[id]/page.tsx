@@ -22,7 +22,6 @@ type PrivateChatProps = {
 
 const Page = ({ params }: PrivateChatProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>([]);
 
   const router = useRouter();
@@ -73,7 +72,8 @@ const Page = ({ params }: PrivateChatProps) => {
       <ProgressIndicator />
     </div>
   )
-  else if (!isLoading && privateChats) return (<>
+
+  if (privateChats) return (<>
     <div className='h-full bg-stone-100'>
       <div className='flex flex-col gap-6'>
         {/* interaction area */}

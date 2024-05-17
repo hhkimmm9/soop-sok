@@ -31,8 +31,6 @@ export type TUser = {
   createdAt: FirestoreTimestamp,
   displayName: string,
   email: string,
-  honourPoints: number,
-  isEmailVerified: boolean,
   isOnline: boolean,
   lastLoginTime: FirestoreTimestamp,
   photoURL: string,

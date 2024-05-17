@@ -15,7 +15,6 @@ import { TChannel } from '@/types';
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
-
   const [channels, setChannels] = useState<TChannel[]>([]);
   
   const router = useRouter();

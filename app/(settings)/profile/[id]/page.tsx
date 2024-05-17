@@ -1,16 +1,16 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
-  collection, doc, query, or, where,
+  collection, doc, query, where,
   addDoc, getDoc, getDocs, serverTimestamp
 } from 'firebase/firestore';
 
@@ -28,56 +28,49 @@ const Page = () => {
 
   const { state, dispatch } = useAppState();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (auth) {
-        try {
-          // fetch profile data with the given id in the URL.
-          const profileRef = doc(db, 'users', id.toString());
-          const profileSnapshot = await getDoc(profileRef);
-  
-          if (profileSnapshot.exists()) {
-            const profileData = { ...profileSnapshot.data() } as TUser;
-            setProfile(profileData);
-            setIsMyProfile(auth.currentUser?.uid === id);
-          }
-        } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
-        }
-      }
-    };
-  
-    const checkIsMyFriend = async () => {
-      if (auth) {
-        const q = query(collection(db, 'friend_list'), 
-          or(
-            where('senderId', '==', id),
-            where('receiverId', '==', id),
-          )
-        );
+  const fetchProfileData = useCallback(async () => {
+    try {
+      const profileRef = doc(db, 'users', id.toString());
+      const profileSnapshot = await getDoc(profileRef);
 
-        try {
-          const snapshot = await getDocs(q);
-          if (!snapshot.empty) {
-            setIsMyFriend(true);
-          }
-        } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
-        }
+      if (profileSnapshot.exists()) {
+        const profileData = profileSnapshot.data() as TUser;
+        setProfile(profileData);
+        setIsMyProfile(auth.currentUser?.uid === id);
       }
-    };
-  
+    } catch (err) {
+      console.error(err);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    }
+  }, [id, dispatch]);
+
+  const checkIsMyFriend = useCallback(async () => {
+    try {
+      const q = query(collection(db, 'friend_list'),
+        where('senderId', '==', id),
+        where('receiverId', '==', id)
+      );
+
+      const snapshot = await getDocs(q);
+      if (!snapshot.empty) {
+        setIsMyFriend(true);
+      }
+    } catch (err) {
+      console.error(err);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    }
+  }, [id, dispatch]);
+
+  useEffect(() => {
     const fetchDataAndCheckFriend = async () => {
-      await Promise.all([fetchData(), checkIsMyFriend()]);
+      await Promise.all([fetchProfileData(), checkIsMyFriend()]);
       setIsLoading(false);
     };
-  
+
     fetchDataAndCheckFriend();
-  }, [id])
+  }, [fetchProfileData, checkIsMyFriend]);
 
   const addUserToFriendList = async () => {
     try {
@@ -98,19 +91,17 @@ const Page = () => {
     const myId = auth.currentUser?.uid;
     const opponentId = id;
 
+    // check if their dm chat exists
+    const privateChatRef = collection(db, 'private_chats');
+    const q = query(privateChatRef,
+      where('from', 'in', [myId, opponentId]),
+      where('to', 'in', [myId, opponentId])
+    );
+
     try {
-      // check if their dm chat exists
-      const q = query(collection(db, 'private_chats'),
-        or(
-          (where('from', '==', myId), where('to', '==', opponentId)),
-          (where('from', '==', opponentId), where('to', '==', myId)),
-        )
-      );
       const querySnapshot = await getDocs(q);
-  
-      // if it doesn't, create a dm chat room first
       if (querySnapshot.empty) {
-        const chatRef = await addDoc(collection(db, 'private_chats'), {
+        const chatRef = await addDoc(privateChatRef, {
           from: myId,
           to: opponentId,
           createdAt: serverTimestamp(),
@@ -200,7 +191,7 @@ const Page = () => {
         </div>
       </div>
     </div>
-  </>)
+  </>);
 };
 
 export default Page;

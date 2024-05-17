@@ -14,6 +14,7 @@ type ChannelProps = {
 
 export const Channel = ({ channel } : ChannelProps) => {
   const [isFull, setIsFull] = useState(true);
+  
   const router = useRouter();
 
   const { state, dispatch } = useAppState();
