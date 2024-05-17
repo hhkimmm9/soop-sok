@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc,
@@ -22,15 +24,17 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
 
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   // fetch user data based on the given user id,
   // or, store user data into the private_chat collection.
   useEffect(() => {
     const fetchToUser = async () => {
       if (auth && auth.currentUser) {
-        try {
-          const uid = privateChat.to === auth.currentUser.uid ?
-            privateChat.from : privateChat.to;
-  
+        const uid = privateChat.to === auth.currentUser.uid ?
+          privateChat.from : privateChat.to;
+
+        try {  
           const userSnapshot = await getDoc(doc(db, 'users', uid));
           if (userSnapshot.exists()) {
             const data = { ...userSnapshot.data() } as TUser;
@@ -38,27 +42,43 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
           }
         } catch (err) {
           console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
         }
       }
     };
     const fetchLatestMessage = async () => {
-      const messageQuery = query(collection(db, 'messages'),
-        where('cid', '==', privateChat.id),
-        orderBy('createdAt', 'desc'),
-        limit(1)
-      );
-      const messageSnapshot = await getDocs(messageQuery);
-      if (!messageSnapshot.empty) {
-        const data = {
-          id: messageSnapshot.docs[0].id,
-          ...messageSnapshot.docs[0].data()
-        } as TMessage
-        setLatestMessage(data);
+      if (auth) {
+        const messageQuery = query(collection(db, 'messages'),
+          where('cid', '==', privateChat.id),
+          orderBy('createdAt', 'desc'),
+          limit(1)
+        );
+
+        try {
+          const messageSnapshot = await getDocs(messageQuery);
+          if (!messageSnapshot.empty) {
+            const data = {
+              id: messageSnapshot.docs[0].id,
+              ...messageSnapshot.docs[0].data()
+            } as TMessage
+            setLatestMessage(data);
+          }
+        } catch (err) {
+          console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+        }
       }
     };
-    fetchToUser();
-    fetchLatestMessage();
-  }, [privateChat]);
+
+    const fetchToUserAndLatestMessage = async () => {
+      await Promise.all([fetchToUser(), fetchLatestMessage()]);
+      // setIsLoading(false);
+    };
+
+    fetchToUserAndLatestMessage();
+  }, [dispatch, privateChat]);
 
   // fetch the latest message associated with this private chat
   // to display when it is sent and the content of it.

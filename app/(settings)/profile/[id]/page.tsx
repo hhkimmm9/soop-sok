@@ -1,13 +1,13 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query, or, where,
@@ -15,17 +15,9 @@ import {
 } from 'firebase/firestore';
 
 import { TUser } from '@/types';
-import {
-  GENERAL_TITLE, GENERAL_CONTENT,
-  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT,
-  DATA_UPDATE_TITLE, DATA_UPDATE_CONTENT
-} from '@/utils/messageTexts';
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showMessage, setShowMessage] = useState(false);
-  const [errorMessageTitle, setErrorMessageTitle] = useState('');
-  const [errorMessageContent, setErrorMessageContent] = useState('');
 
   const [profile, setProfile] = useState<TUser | null>(null);
   const [isMyProfile, setIsMyProfile] = useState(false);
@@ -33,6 +25,8 @@ const Page = () => {
 
   const { id } = useParams();
   const router = useRouter();
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,9 +43,8 @@ const Page = () => {
           }
         } catch (err) {
           console.error(err);
-          setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
-          setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
-          setShowMessage(true);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
         }
       }
     };
@@ -63,7 +56,8 @@ const Page = () => {
             where('senderId', '==', id),
             where('receiverId', '==', id),
           )
-        )
+        );
+
         try {
           const snapshot = await getDocs(q);
           if (!snapshot.empty) {
@@ -71,9 +65,8 @@ const Page = () => {
           }
         } catch (err) {
           console.error(err);
-          setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
-          setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
-          setShowMessage(true);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
         }
       }
     };
@@ -96,9 +89,8 @@ const Page = () => {
       setIsMyFriend(true);
     } catch (err) {
       console.error(err);
-      setErrorMessageTitle(DATA_UPDATE_TITLE);
-      setErrorMessageContent(DATA_UPDATE_CONTENT);
-      setShowMessage(true);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
     }
   };
 
@@ -131,9 +123,8 @@ const Page = () => {
       }
     } catch (err) {
       console.error(err);
-      setErrorMessageTitle(GENERAL_TITLE);
-      setErrorMessageContent(GENERAL_CONTENT);
-      setShowMessage(true);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
     }
   };
 
@@ -209,13 +200,6 @@ const Page = () => {
         </div>
       </div>
     </div>
-
-    <MUIMessageDialog
-      show={showMessage}
-      title={errorMessageTitle}
-      message={errorMessageContent}
-      handleClose={() => { setShowMessage(false) }}
-    />
   </>)
 };
 

@@ -1,30 +1,26 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
 import Channel from '@/app/(public-chat)/channels/Channel';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, orderBy } from 'firebase/firestore';
 
 import { TChannel } from '@/types';
-import {
-  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT
-} from '@/utils/messageTexts';
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showMessage, setShowMessage] = useState(false);
-  const [errorMessageTitle, setErrorMessageTitle] = useState('');
-  const [errorMessageContent, setErrorMessageContent] = useState('');
 
   const [channels, setChannels] = useState<TChannel[]>([]);
   
   const router = useRouter();
+
+  const { state, dispatch } = useAppState();
 
   /* 2. The effect of useCollection is triggered whenever the collection changes
     or when the component mounts. */
@@ -47,11 +43,10 @@ const Page = () => {
 
   useEffect(() => {
     if (firestoreError !== undefined) {
-      setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
-      setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
-      setShowMessage(true);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
     }
-  }, [firestoreError]);
+  }, [dispatch, firestoreError]);
 
   /* 3. Once the firestoreSnapshot is updated with the data from Firestore,
     the second useEffect hook updates the state with the retrieved channels. */
@@ -82,13 +77,6 @@ const Page = () => {
         )) }
       </div>
     </div>
-
-    <MUIMessageDialog
-      show={showMessage}
-      title={errorMessageTitle}
-      message={errorMessageContent}
-      handleClose={() => { setShowMessage(false) }}
-    />
   </>);
 };
 

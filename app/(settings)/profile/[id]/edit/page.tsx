@@ -1,7 +1,7 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
+import Link from 'next/link';
 import {
   Avatar,
   Button,
@@ -14,16 +14,12 @@ import {
 
 import { useState, useEffect, ChangeEvent, SetStateAction } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 import { TUser } from '@/types';
-import {
-  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT,
-  DATA_UPDATE_TITLE, DATA_UPDATE_CONTENT
-} from '@/utils/messageTexts';
 
 const MBTIOptions = [
   ['istj', 'ISTJ'],
@@ -46,28 +42,28 @@ const MBTIOptions = [
 
 const ProfileEdit = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showMessage, setShowMessage] = useState(false);
-  const [errorMessageTitle, setErrorMessageTitle] = useState('');
-  const [errorMessageContent, setErrorMessageContent] = useState('');
 
+  // TODO: combine states.
   const [profile, setProfile] = useState<TUser | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [introduction, setIntroduction] = useState('');
   const [mbti, setMbti] = useState('');
-
   
   const { id } = useParams();
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   useEffect(() => {
     const fetchUser = async () => {
       if (auth && auth.currentUser) {
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+
         try {
-          const userRef = doc(db, 'users', auth.currentUser.uid);
           const querySnapshot = await getDoc(userRef);
-  
           if (querySnapshot.exists()) {
             const data = querySnapshot.data() as TUser;
+            // TODO: combine states.
             setProfile(data);
             setDisplayName(data.displayName);
             setIntroduction(data.profile?.introduction); // Use optional chaining
@@ -76,15 +72,13 @@ const ProfileEdit = () => {
           setIsLoading(false);
         } catch (err) {
           console.error(err);
-          setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
-          setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
-          setShowMessage(true);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
         }
       };
     };
-
     fetchUser();
-  }, []); // Add auth as a dependency if needed
+  }, [dispatch]); // Add auth as a dependency if needed
 
   const updateProfilePic = async (e: ChangeEvent<HTMLInputElement>) => {
     console.log('updateProfilePic');
@@ -97,9 +91,11 @@ const ProfileEdit = () => {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // TODO: ask confirmation.
     if (auth && auth.currentUser) {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+
       try {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, {
           displayName,
           profile: {
@@ -110,9 +106,8 @@ const ProfileEdit = () => {
         router.push(`/profile/${id}`);
       } catch (err) {
         console.error(err);
-        setErrorMessageTitle(DATA_UPDATE_TITLE);
-        setErrorMessageContent(DATA_UPDATE_CONTENT);
-        setShowMessage(true);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
       }
     }
   };
@@ -176,13 +171,6 @@ const ProfileEdit = () => {
         <Button onClick={handleUpdate} variant='contained'>Update</Button>
       </div>
     </div>
-
-    <MUIMessageDialog
-      show={showMessage}
-      title={errorMessageTitle}
-      message={errorMessageContent}
-      handleClose={() => { setShowMessage(false) }}
-    />
   </>)
 };
 

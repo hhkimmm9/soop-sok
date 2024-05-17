@@ -1,17 +1,13 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
 import Friend from '@/app/friends/Friend';
 
 import { useState, useEffect, } from 'react';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { query, collection, getDocs, or, where, } from 'firebase/firestore';
-
-import {
-  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT,
-} from '@/utils/messageTexts';
 
 type TFriend = {
   id: string;
@@ -21,11 +17,9 @@ type TFriend = {
 
 const Friends = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showMessage, setShowMessage] = useState(false);
-  const [errorMessageTitle, setErrorMessageTitle] = useState('');
-  const [errorMessageContent, setErrorMessageContent] = useState('');
-
   const [friends, setFriends] = useState<TFriend[]>([]);
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const fetchFriendList = async () => {
@@ -52,14 +46,13 @@ const Friends = () => {
           setIsLoading(false);
         } catch (err) {
           console.error(err);
-          setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
-          setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
-          setShowMessage(true);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
         }
       }
     };
     fetchFriendList();
-  }, []);
+  }, [dispatch]);
 
   if (isLoading) return (
     <div className='h-full flex justify-center items-center'>
@@ -74,13 +67,6 @@ const Friends = () => {
         <p>You have no friends. 😭 (just yet)</p>
       ) }
     </div>
-
-    <MUIMessageDialog
-      show={showMessage}
-      title={errorMessageTitle}
-      message={errorMessageContent}
-      handleClose={() => { setShowMessage(false) }}
-    />
   </>)
 };
 

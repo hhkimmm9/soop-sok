@@ -8,6 +8,7 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -29,6 +30,8 @@ const Page = ({ params }: pageProps) => {
   const [tagOptions, setTagOptions] = useState<string[]>([]);
 
   const router = useRouter();
+
+  const { state, dispatch } = useAppState();
 
   const addToList = () => {
     if (tagOptions.length < 5) {
@@ -73,6 +76,8 @@ const Page = ({ params }: pageProps) => {
         }
       } catch (err) {
         console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
       }
     }
   };

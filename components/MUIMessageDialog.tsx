@@ -1,11 +1,21 @@
-import React, { useState } from 'react'
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+
+const GENERAL_TITLE = 'Error: Oops, Something Went Wrong!';
+const GENERAL_MESSAGE = 'Oops! It seems there was an error. Please try again later';
+const DATA_RETRIEVAL_TITLE = 'Data Retrieval Error';
+const DATA_RETRIEVAL_MESSAGE = 'Oops! It seems there was an issue retrieving the data. Please check your internet connection and try again.';
+const DATA_UPDATE_TITLE = 'Data Update Error';
+const DATA_UPDATE_MESSAGE = 'Oops! It seems there was an issue updating the data. Please try again later.';
+const SIGN_IN_TITLE = 'Sign In Error';
+const SIGN_IN_MESSAGE = 'Oops! It seems there was an issue with signing in. Please double-check your credentials and try again.';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -18,17 +28,47 @@ const Transition = React.forwardRef(function Transition(
 
 type DialogComponentProps = {
   show: boolean,
-  title: string,
-  message: string,
+  type: string | null,
   handleClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void,
 };
 
 const MUIMessageDialog = ({
   show,
-  title,
-  message,
+  type,
   handleClose
 }: DialogComponentProps ) => {
+  const [content, setContent] = useState({
+    title: '',
+    message: ''
+  });
+
+  useEffect(() => {
+    if (type === 'data_retrieval') {
+      setContent({
+        title: DATA_RETRIEVAL_TITLE,
+        message: DATA_RETRIEVAL_MESSAGE,
+      });
+    }
+    else if (type === 'data_update') {
+      setContent({
+        title: DATA_UPDATE_TITLE,
+        message: DATA_UPDATE_MESSAGE,
+      });
+    }
+    else if (type === 'signin') {
+      setContent({
+        title: SIGN_IN_TITLE,
+        message: SIGN_IN_MESSAGE,
+      });
+    }
+    else {
+      setContent({
+        title: GENERAL_TITLE,
+        message: GENERAL_MESSAGE,
+      });
+    }
+  }, [type]);
+
   return (
     <Dialog
       open={show}
@@ -37,10 +77,10 @@ const MUIMessageDialog = ({
       onClose={handleClose}
       aria-describedby="alert-dialog-slide-description"
     >
-      <DialogTitle>{ title }</DialogTitle>
+      <DialogTitle>{ content.title }</DialogTitle>
       <DialogContent>
         <Typography gutterBottom>
-          { message }
+          { content.message }
         </Typography>
         <Typography gutterBottom>
           <span>If the problem persists, feel free to contact support for assistance.</span>

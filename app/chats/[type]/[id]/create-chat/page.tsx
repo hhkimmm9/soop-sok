@@ -10,10 +10,10 @@ import {
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
-  collection,
-  addDoc, getDocs,
+  collection, addDoc, getDocs,
   serverTimestamp, query, where
 } from 'firebase/firestore';
 
@@ -28,6 +28,8 @@ type pageProps = {
 
 const Page = ({ params }: pageProps) => {
   const [isLoading, setIsLoading] = useState(true);
+
+  // TODO: combine states.
   const [capacity, setCapacity] = useState(2);
   const [isPrivate, setIsPrivate] = useState(false);
   const [name, setName] = useState('');
@@ -37,23 +39,26 @@ const Page = ({ params }: pageProps) => {
 
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   useEffect(() => {
     const fetchBanner = async () => {
       if (auth) {
+        const q = query(collection(db, 'banners'),
+          where('selected', '==', true)
+        );
+
         try {
-          const q = query(collection(db, 'banners'),
-            where('selected', '==', true)
-          );
-    
           const bannerSnapshop = await getDocs(q);
           if (!bannerSnapshop.empty) {
             const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
             setTagOptions(selectedBanner.tagOptions)
           }
+          setIsLoading(false);
         } catch (err) {
           console.error(err);
-        } finally {
-          setIsLoading(false);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
         }
       }
     };
@@ -89,6 +94,8 @@ const Page = ({ params }: pageProps) => {
         router.push(`/chats/private-chat/${chatRef.id}`);
       } catch (err) {
         console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
       }
     };
   };

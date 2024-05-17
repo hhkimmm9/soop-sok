@@ -1,9 +1,9 @@
 'use client';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
 
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
@@ -15,9 +15,6 @@ import {
 } from 'firebase/firestore';
 
 import Cookies from 'universal-cookie';
-import {
-  SIGN_IN_TITLE, SIGN_IN_CONTENT
-} from '@/utils/messageTexts';
 
 type TFirebaseUI = {
   default: typeof firebaseui;
@@ -27,9 +24,6 @@ type TFirebaseUI = {
 const BACKGROUND_IMAGE_URL: string = 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/Forest%20silhouette%20vector.jpg?alt=media&token=ab09391c-8c23-4a21-ac48-c2a256c2005b';
 
 export default function Home() {
-  const [showMessage, setShowMessage] = useState(false);
-  const [errorMessageTitle, setErrorMessageTitle] = useState('');
-  const [errorMessageContent, setErrorMessageContent] = useState('');
   const [firebaseui, setFirebaseUI] = useState<TFirebaseUI | null>(null);
   
   const uiConfig = useMemo(() => {
@@ -76,9 +70,8 @@ export default function Home() {
             }
           } catch(err) {
             console.error('Error getting document:', err);
-            setErrorMessageTitle(SIGN_IN_TITLE);
-            setErrorMessageContent(SIGN_IN_CONTENT);
-            setShowMessage(true);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
           }
           return true;
         },
@@ -88,6 +81,8 @@ export default function Home() {
       signInOptions: [ GoogleAuthProvider.PROVIDER_ID, ]
     };
   }, []);
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const loadFirebaseUI = async () => {
@@ -129,12 +124,5 @@ export default function Home() {
         className='h-screen object-cover'
       />
     </div>
-
-    <MUIMessageDialog
-      show={showMessage}
-      title={errorMessageTitle}
-      message={errorMessageContent}
-      handleClose={() => { setShowMessage(false) }}
-    />
   </>);
 }

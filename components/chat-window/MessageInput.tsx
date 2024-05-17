@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -14,27 +15,34 @@ type MessageinputProps = {
 const MessageInput = ({ cid }: MessageinputProps) => {
   const [messageInput, setMessageInput] = useState('');
 
+  const { state, dispatch } = useAppState();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // check if the user is signed in and the length of the input is greater than 0.
     if (auth && auth.currentUser && messageInput.length > 0) {
       const uid = auth.currentUser.uid;
-
-      await addDoc(collection(db, 'messages'), {
-        cid: cid,
-        createdAt: serverTimestamp(),
-        sentBy: uid,
-        text: messageInput
-      })
-
-      setMessageInput('');
+      
+      try {
+        await addDoc(collection(db, 'messages'), {
+          cid: cid,
+          createdAt: serverTimestamp(),
+          sentBy: uid,
+          text: messageInput
+        })
+  
+        setMessageInput('');
+      } catch (err) {
+        console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+      }
     }
   };
 
   return (
     <div className='flex gap-3 items-center'>
-
       {/* search input field */}
       <div className='grow p-0.5 rounded-lg shadow-sm bg-white'>
         <form onSubmit={(e) => handleSubmit(e)}

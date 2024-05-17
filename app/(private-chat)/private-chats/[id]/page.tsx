@@ -1,21 +1,18 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
 import SearchBar from '@/components/SearchBar';
 import PrivateChat from '@/app/(private-chat)/private-chats/[id]/PrivateChat';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, or, where, } from 'firebase/firestore';
 
 import { TPrivateChat } from '@/types';
-import {
-  DATA_RETRIEVAL_TITLE, DATA_RETRIEVAL_CONTENT
-} from '@/utils/messageTexts';
 
 type PrivateChatProps = {
   params: {
@@ -25,13 +22,12 @@ type PrivateChatProps = {
 
 const Page = ({ params }: PrivateChatProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showMessage, setShowMessage] = useState(false);
-  const [errorMessageTitle, setErrorMessageTitle] = useState('');
-  const [errorMessageContent, setErrorMessageContent] = useState('');
   
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>([]);
 
   const router = useRouter();
+
+  const { state, dispatch } = useAppState();
 
   const [firestoreSnapshot, firestoreLoading, firestoreError] = useCollection(
     query(collection(db, 'private_chats'),
@@ -53,11 +49,10 @@ const Page = ({ params }: PrivateChatProps) => {
 
   useEffect(() => {
     if (firestoreError !== undefined) {
-      setErrorMessageTitle(DATA_RETRIEVAL_TITLE);
-      setErrorMessageContent(DATA_RETRIEVAL_CONTENT);
-      setShowMessage(true);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
     }
-  }, [firestoreError]);
+  }, [dispatch, firestoreError]);
 
   useEffect(() => {
     const container: TPrivateChat[] = []
@@ -96,13 +91,6 @@ const Page = ({ params }: PrivateChatProps) => {
         </div>
       </div>
     </div>
-
-    <MUIMessageDialog
-      show={showMessage}
-      title={errorMessageTitle}
-      message={errorMessageContent}
-      handleClose={() => { setShowMessage(false) }}
-    />
   </>);
 };
 

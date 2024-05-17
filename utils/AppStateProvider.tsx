@@ -9,22 +9,34 @@ import React, {
 
 import { TBanner } from '@/types';
 interface AppState {
-  publicChatURL: string;
-  privateChatURL: string;
-  currentBanner: TBanner | null;
+  publicChatURL: string | null,
+  privateChatURL: string | null,
+  currentBanner: TBanner | null,
+  showMessageDialog: boolean,
+  messageDialogType: string | null,
+  showActionsDialog: boolean,
+  actionsDialogType: string | null,
 };
 
 type Action = (
-  | { type: 'SET_PUBLIC_URL', publicChatURL: string }
-  | { type: 'SET_PRIVATE_URL', privateChatURL: string }
-  | { type: 'SET_CURRENT_BANNER', currentBanner: TBanner }
+  | { type: 'SET_PUBLIC_URL', payload: string }
+  | { type: 'SET_PRIVATE_URL', payload: string }
+  | { type: 'SET_CURRENT_BANNER', payload: TBanner }
+  | { type: 'SHOW_MESSAGE_DIALOG', payload: boolean }
+  | { type: 'SET_MESSAGE_DIALOG_TYPE', payload: string }
+  | { type: 'SHOW_ACTIONS_DIALOG', payload: boolean }
+  | { type: 'SET_ACTIONS_DIALOG_TYPE', payload: string }
 );
 
 const initialState: AppState = {
-  publicChatURL: '',
-  privateChatURL: '',
+  publicChatURL: null,
+  privateChatURL: null,
   currentBanner: null,
-}
+  showMessageDialog: false,
+  messageDialogType: null,
+  showActionsDialog: false,
+  actionsDialogType: null,
+};
 
 const AppStateContext = createContext<{
   state: AppState
@@ -36,17 +48,37 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
     case 'SET_PUBLIC_URL':  
       return {
         ...state,
-        publicChatURL: action.publicChatURL,
+        publicChatURL: action.payload,
       };
     case 'SET_PRIVATE_URL':  
       return {
         ...state,
-        privateChatURL: action.privateChatURL,
+        privateChatURL: action.payload,
       };
     case 'SET_CURRENT_BANNER':
       return {
         ...state,
-        currentBanner: action.currentBanner
+        currentBanner: action.payload,
+      };
+    case 'SHOW_MESSAGE_DIALOG':
+      return {
+        ...state,
+        showMessageDialog: action.payload,
+      };
+    case 'SET_MESSAGE_DIALOG_TYPE':
+      return {
+        ...state,
+        messageDialogType: action.payload,
+      };
+    case 'SHOW_ACTIONS_DIALOG':
+      return {
+        ...state,
+        showActionsDialog: action.payload,
+      };
+    case 'SET_ACTIONS_DIALOG_TYPE':
+      return {
+        ...state,
+        actionsDialogType: action.payload,
       };
     default:
       return state;
