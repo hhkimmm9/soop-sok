@@ -5,6 +5,7 @@ import Friend from '@/app/friends/Friend';
 
 import { useState, useEffect, } from 'react';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { query, collection, getDocs, or, where, } from 'firebase/firestore';
 
@@ -17,6 +18,8 @@ type TFriend = {
 const Friends = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [friends, setFriends] = useState<TFriend[]>([]);
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const fetchFriendList = async () => {
@@ -40,22 +43,23 @@ const Friends = () => {
             });
             setFriends(friendList);
           }
+          setIsLoading(false);
         } catch (err) {
           console.error(err);
-        } finally {
-          setIsLoading(false);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
     fetchFriendList();
-  }, []);
+  }, [dispatch]);
 
   if (isLoading) return (
     <div className='h-full flex justify-center items-center'>
       <ProgressIndicator />
     </div>
   )
-  else return (
+  else return (<>
     <div className='flex flex-col gap-2'>
       { friends.length > 0 ? friends.map((friend: TFriend) => (
         <Friend key={friend.id} friendId={auth.currentUser?.uid == friend.receiverId ? friend.senderId : friend.receiverId} />
@@ -63,7 +67,7 @@ const Friends = () => {
         <p>You have no friends. 😭 (just yet)</p>
       ) }
     </div>
-  )
+  </>)
 };
 
 export default Friends;

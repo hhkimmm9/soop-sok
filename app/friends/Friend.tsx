@@ -1,14 +1,16 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query,
-  or, where, limit,
+  or, where,
   addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
@@ -24,49 +26,73 @@ type FriendProps = {
 
 const NO_PIC_PLACEHOLDER = 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676';
 
-const Friend = ({ friendId }: FriendProps ) => {
+export const Friend = ({ friendId }: FriendProps ) => {
   const [friend, setFriend] = useState<TUser>();
 
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   useEffect(() => {
     const fetchFriend = async () => {
-      const q = doc(db, 'users', friendId);
-      const snapshot = await getDoc(q);
-
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        setFriend(data as TUser);
+      if (auth) {
+        const q = doc(db, 'users', friendId);
+        
+        try {
+          const snapshot = await getDoc(q);
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            setFriend(data as TUser);
+          }
+        } catch (err) {
+          console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        }
       }
     };
     fetchFriend();
-  }, [friendId]);
+  }, [dispatch, friendId]);
   
   const redirectToDMChat = async () => {
     const myId = auth.currentUser?.uid;
     const opponentId = friendId;
 
     // check if their dm chat exists
-    const q = query(collection(db, 'private_chats'),
-      or(
-        (where('from', '==', myId), where('to', '==', opponentId)),
-        (where('from', '==', opponentId), where('to', '==', myId)),
-      )
-    );
-    const querySnapshot = await getDocs(q);
-
-    // if it doesn't, create a dm chat room first
-    if (querySnapshot.empty) {
-      const chatRef = await addDoc(collection(db, 'private_chats'), {
-        from: myId,
-        to: opponentId,
-        createdAt: serverTimestamp(),
-      });
-      // redirect the user to the newly created dm chat room.
-      router.push(`/chats/private-chat/${chatRef.id}`);
-    } else {
-      // redirect the user to the dm chat room.
-      router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
+    if (auth) {
+      try {
+        const q = query(collection(db, 'private_chats'),
+          or(
+            (where('from', '==', myId), where('to', '==', opponentId)),
+            (where('from', '==', opponentId), where('to', '==', myId)),
+          )
+        );
+        const querySnapshot = await getDocs(q);
+    
+        // if it doesn't, create a dm chat room first
+        if (querySnapshot.empty) {
+          try {
+            const chatRef = await addDoc(collection(db, 'private_chats'), {
+              from: myId,
+              to: opponentId,
+              createdAt: serverTimestamp(),
+            });
+            // redirect the user to the newly created dm chat room.
+            router.push(`/chats/private-chat/${chatRef.id}`);
+          } catch (err) {
+            console.error(err);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          }
+        } else {
+          // redirect the user to the dm chat room.
+          router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
+        }
+      } catch (err) {
+        console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      }
     }
   };
 

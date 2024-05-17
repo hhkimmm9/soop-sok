@@ -12,21 +12,28 @@ type ChatProps = {
 };
 
 const Chat = ({ chat }: ChatProps) => {
-  const { dispatch } = useAppState();
 
   const router = useRouter();
+
+  const { state, dispatch } = useAppState();
 
   const enterChat = async () => {
     if (auth) {
       const statusRef = collection(db, 'status_board');
-      await addDoc(statusRef, {
-        cid: chat.id,
-        displayName: auth.currentUser?.displayName,
-        profilePicUrl: auth.currentUser?.photoURL,
-        uid: auth.currentUser?.uid
-      });
-  
-      router.push(`/chats/private-chat/${chat.id}`);
+      try {
+        await addDoc(statusRef, {
+          cid: chat.id,
+          displayName: auth.currentUser?.displayName,
+          profilePicUrl: auth.currentUser?.photoURL,
+          uid: auth.currentUser?.uid
+        });
+    
+        router.push(`/chats/private-chat/${chat.id}`);
+      } catch (err) {
+        console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      }
     }
   };
 

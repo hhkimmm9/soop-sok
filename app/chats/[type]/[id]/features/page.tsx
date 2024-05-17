@@ -5,6 +5,7 @@ import ProgressIndicator from '@/components/ProgressIndicator';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query, where,
@@ -39,6 +40,8 @@ const Page = ({ params }: pageProps) => {
   
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   const redirectTo = (feature: TFeatures) => {
     if (auth) {
       feature == 'cancel' ?
@@ -49,30 +52,38 @@ const Page = ({ params }: pageProps) => {
 
   const leaveChat = async () => {
     if (auth) {
+      const statusRef = query(collection(db, 'status_board'),
+        where('cid', '==', params.id),
+        where('uid', '==', auth.currentUser?.uid)
+      );
+
       try {
         // Find the document id
-        const statusRef = query(collection(db, 'status_board'),
-          where('cid', '==', params.id),
-          where('uid', '==', auth.currentUser?.uid)
-        );
         const statusSnapshot = await getDocs(statusRef);
-  
         // If found, delete that document.
         if (!statusSnapshot.empty) {
-          const deleteRef = doc(db, 'status_board', statusSnapshot.docs[0].id);
-          await deleteDoc(deleteRef);
-  
-          // If you were in a chat, leave the chat.
-          if (params.type == 'room-chat') {
-            router.push(`chats/channel-chat/${params.id}`);
-          }
-          // If you were in a channel, leave the channel.
-          else {
-            router.push('/channels');
+          try {
+            const deleteRef = doc(db, 'status_board', statusSnapshot.docs[0].id);
+            await deleteDoc(deleteRef);
+    
+            // If you were in a chat, leave the chat.
+            if (params.type == 'room-chat') {
+              router.push(`chats/channel-chat/${params.id}`);
+            }
+            // If you were in a channel, leave the channel.
+            else {
+              router.push('/channels');
+            }
+          } catch (err) {
+            console.error(err);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
           }
         }
-      } catch(error) {
-        console.error('An error occurred:', error);
+      } catch(err) {
+        console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
       }
     }
   };

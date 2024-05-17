@@ -1,6 +1,8 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   Avatar,
   Button,
@@ -11,10 +13,13 @@ import {
   TextField,
 } from '@mui/material';
 
-import { useState, useEffect, ChangeEvent, SetStateAction } from 'react';
+import {
+  useState, useEffect,
+  ChangeEvent, SetStateAction,
+} from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -41,66 +46,100 @@ const MBTIOptions = [
 
 const ProfileEdit = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  // TODO: combine states.
   const [profile, setProfile] = useState<TUser | null>(null);
-  const [displayName, setDisplayName] = useState('');
   const [introduction, setIntroduction] = useState('');
   const [mbti, setMbti] = useState('');
-
   
   const { id } = useParams();
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   useEffect(() => {
     const fetchUser = async () => {
       if (auth && auth.currentUser) {
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+
         try {
-          const userRef = doc(db, 'users', auth.currentUser.uid);
           const querySnapshot = await getDoc(userRef);
-  
           if (querySnapshot.exists()) {
             const data = querySnapshot.data() as TUser;
+            // TODO: combine states.
             setProfile(data);
-            setDisplayName(data.displayName);
             setIntroduction(data.profile?.introduction); // Use optional chaining
             setMbti(data.profile?.mbti); // Use optional chaining
           }
+          setIsLoading(false);
         } catch (err) {
           console.error(err);
-        } finally {
-          setIsLoading(false);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       };
     };
-
     fetchUser();
-  }, []); // Add auth as a dependency if needed
+  }, [dispatch]); // Add auth as a dependency if needed
+
+  useEffect(() => {
+    const handleUpdate = async () => {
+      if (auth && auth.currentUser) {
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+  
+        try {
+          await updateDoc(userRef, {
+            displayName: profile?.displayName,
+            profile: {
+              introduction: profile?.profile.introduction,
+              mbti: profile?.profile.mbti,
+            }
+          })
+          router.push(`/profile/${id}`);
+        } catch (err) {
+          console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        }
+      }
+    };
+
+    // confirm
+    if (state.actionsDialogResponse) {
+      handleUpdate();
+      dispatch({ type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: false });
+    }
+    // cancel
+    else {
+      dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false });
+    }
+  }, [
+    state.actionsDialogResponse,
+    dispatch,
+    id, profile?.displayName, profile?.profile.introduction, profile?.profile.mbti,
+    router
+  ]);
 
   const updateProfilePic = async (e: ChangeEvent<HTMLInputElement>) => {
     console.log('updateProfilePic');
+  };
+
+  const updateDisplayName = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setProfile((prev) => {
+      return {
+        ...prev,
+        displayName: e.target.value,
+      } as TUser;
+    });
   };
 
   const handleMBTIChange = (option: SetStateAction<string>) => {
     setMbti(option)
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (auth && auth.currentUser) {
-      try {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userRef, {
-          displayName,
-          profile: {
-            introduction,
-            mbti,
-          }
-        })
-        router.push(`/profile/${id}`);
-      } catch (err) {
-        console.error(err);
-      }
-    }
+  const getConfirm = () => {
+    dispatch({ type: 'SET_ACTIONS_DIALOG_TYPE', payload: 'confirm' });
+    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: true });
   };
 
   if (isLoading) return (
@@ -108,12 +147,15 @@ const ProfileEdit = () => {
       <ProgressIndicator />
     </div>
   )
-  else if (!isLoading && profile) return (
+  else if (!isLoading && profile) return (<>
     <div className='pt-10 flex flex-col gap-6'>
       {/* profile picture */}
       <div className='flex justify-center'>
         <label htmlFor='profilePic'>
-          <Avatar src={profile.photoURL} alt='Profile Picture' sx={{ width: 192, height: 192 }} />
+          {/* <Avatar src={profile.photoURL} alt='Profile Picture' sx={{ width: 192, height: 192 }} /> */}
+          <Image src={profile.photoURL} alt='Profile Picture'
+            width={192} height={192} className='object-cover rounded-full'
+          />
         </label>
 
         <input type='file' id='profilePic'
@@ -126,7 +168,7 @@ const ProfileEdit = () => {
         {/* username */}
         <div className='flex flex-col gap-2'>
           <TextField id='outlined-basic' label='Username' variant='outlined'
-            value={displayName} onChange={(e) => setDisplayName(e.target.value)}
+            value={profile.displayName} onChange={updateDisplayName}
           />
         </div>
 
@@ -157,12 +199,12 @@ const ProfileEdit = () => {
       <div className='mt-4 grid grid-cols-2 gap-3'>
         
         <Link href={`/profile/${auth.currentUser?.uid}`}>
-          <Button variant='outlined' className='w-full'>Cancel</Button>
+          <Button variant='outlined' className='w-full'> Cancel </Button>
         </Link>
-        <Button onClick={handleUpdate} variant='contained'>Update</Button>
+        <Button onClick={getConfirm} variant='contained'> Update </Button>
       </div>
     </div>
-  )
+  </>)
 };
 
 export default ProfileEdit;

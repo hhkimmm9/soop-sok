@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
@@ -69,6 +70,8 @@ export default function Home() {
             }
           } catch(err) {
             console.error('Error getting document:', err);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
           }
           return true;
         },
@@ -78,6 +81,8 @@ export default function Home() {
       signInOptions: [ GoogleAuthProvider.PROVIDER_ID, ]
     };
   }, []);
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const loadFirebaseUI = async () => {
@@ -98,7 +103,7 @@ export default function Home() {
     }
   }, [firebaseui, uiConfig]);
 
-  if (firebaseui) return (
+  if (firebaseui) return (<>
     <div className='relative'>
       <div className='
         absolute left-0 right-0 z-10
@@ -119,5 +124,5 @@ export default function Home() {
         className='h-screen object-cover'
       />
     </div>
-  );
+  </>);
 }

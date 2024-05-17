@@ -18,17 +18,17 @@ const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const {state, dispatch} = useAppState();
+  const { state, dispatch } = useAppState();
 
   const redirectTo = (tab: string) => {
-    let redirectURL: string = '';
+    let redirectURL: string | null = null;
   
     // Set the redirectURL based on the current pathname
     if (pathname.includes('/channels') || pathname.includes('/chats/public-chat')) {
-      dispatch({ type: 'SET_PUBLIC_URL', publicChatURL: pathname });
+      dispatch({ type: 'SET_PUBLIC_URL', payload: pathname });
       redirectURL = '/channels';
     } else if (pathname.includes('/private-chats') || pathname.includes('/chats/private-chat')) {
-      dispatch({ type: 'SET_PRIVATE_URL', privateChatURL: pathname });
+      dispatch({ type: 'SET_PRIVATE_URL', payload: pathname });
       redirectURL = `/private-chats/${auth.currentUser?.uid}`;
     }
   
@@ -51,7 +51,7 @@ const NavBar = () => {
     }
   
     // Perform the redirection
-    router.push(redirectURL);
+    if (redirectURL) router.push(redirectURL);
   };
   
   return (

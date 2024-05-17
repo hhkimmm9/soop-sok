@@ -1,9 +1,7 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import {
-  Avatar,
-} from '@mui/material';
+import { Avatar, } from '@mui/material';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';

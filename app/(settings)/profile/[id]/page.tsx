@@ -7,6 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import {
   collection, doc, query, or, where,
@@ -17,12 +18,15 @@ import { TUser } from '@/types';
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
+
   const [profile, setProfile] = useState<TUser | null>(null);
   const [isMyProfile, setIsMyProfile] = useState(false);
   const [isMyFriend, setIsMyFriend] = useState(false);
 
   const { id } = useParams();
   const router = useRouter();
+
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +43,8 @@ const Page = () => {
           }
         } catch (err) {
           console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
@@ -50,7 +56,8 @@ const Page = () => {
             where('senderId', '==', id),
             where('receiverId', '==', id),
           )
-        )
+        );
+
         try {
           const snapshot = await getDocs(q);
           if (!snapshot.empty) {
@@ -58,6 +65,8 @@ const Page = () => {
           }
         } catch (err) {
           console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
@@ -71,39 +80,51 @@ const Page = () => {
   }, [id])
 
   const addUserToFriendList = async () => {
-    await addDoc(collection(db, 'friend_list'), {
-      creaetdAt: serverTimestamp(),
-      receiverId: id,
-      senderId: auth.currentUser?.uid,
-    });
-    setIsMyFriend(true);
+    try {
+      await addDoc(collection(db, 'friend_list'), {
+        creaetdAt: serverTimestamp(),
+        receiverId: id,
+        senderId: auth.currentUser?.uid,
+      });
+      setIsMyFriend(true);
+    } catch (err) {
+      console.error(err);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    }
   };
 
   const redirectToDMChat = async () => {
     const myId = auth.currentUser?.uid;
     const opponentId = id;
 
-    // check if their dm chat exists
-    const q = query(collection(db, 'private_chats'),
-      or(
-        (where('from', '==', myId), where('to', '==', opponentId)),
-        (where('from', '==', opponentId), where('to', '==', myId)),
-      )
-    );
-    const querySnapshot = await getDocs(q);
-
-    // if it doesn't, create a dm chat room first
-    if (querySnapshot.empty) {
-      const chatRef = await addDoc(collection(db, 'private_chats'), {
-        from: myId,
-        to: opponentId,
-        createdAt: serverTimestamp(),
-      });
-      // redirect the user to the newly created dm chat room.
-      router.push(`/chats/private-chat/${chatRef.id}`);
-    } else {
-      // redirect the user to the dm chat room.
-      router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
+    try {
+      // check if their dm chat exists
+      const q = query(collection(db, 'private_chats'),
+        or(
+          (where('from', '==', myId), where('to', '==', opponentId)),
+          (where('from', '==', opponentId), where('to', '==', myId)),
+        )
+      );
+      const querySnapshot = await getDocs(q);
+  
+      // if it doesn't, create a dm chat room first
+      if (querySnapshot.empty) {
+        const chatRef = await addDoc(collection(db, 'private_chats'), {
+          from: myId,
+          to: opponentId,
+          createdAt: serverTimestamp(),
+        });
+        // redirect the user to the newly created dm chat room.
+        router.push(`/chats/private-chat/${chatRef.id}`);
+      } else {
+        // redirect the user to the dm chat room.
+        router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
+      }
+    } catch (err) {
+      console.error(err);
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
     }
   };
 
@@ -142,7 +163,7 @@ const Page = () => {
       <ProgressIndicator />
     </div>
   )
-  else if (!isLoading && profile) return (
+  else if (!isLoading && profile) return (<>
     <div className='pt-10 flex flex-col gap-4'>
       {/* pic and name */}
       <div className='w-full grid grid-cols-4'>
@@ -179,7 +200,7 @@ const Page = () => {
         </div>
       </div>
     </div>
-  )
+  </>)
 };
 
 export default Page;

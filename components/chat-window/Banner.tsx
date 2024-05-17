@@ -24,7 +24,7 @@ const Banner = () => {
         if (!bannerSnapshop.empty) {
           const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
 
-          dispatch({ type: 'SET_CURRENT_BANNER', currentBanner: selectedBanner });
+          dispatch({ type: 'SET_CURRENT_BANNER', payload: selectedBanner });
         }
       } catch (err) {
         console.error(err);
