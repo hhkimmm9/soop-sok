@@ -77,7 +77,7 @@ const Page = ({ params }: pageProps) => {
       } catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
       }
     }
   };

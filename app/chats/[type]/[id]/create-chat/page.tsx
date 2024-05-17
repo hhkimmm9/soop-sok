@@ -58,12 +58,12 @@ const Page = ({ params }: pageProps) => {
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
     fetchBanner();
-  }, []);
+  }, [dispatch]);
 
   const handleChange = (event: Event, newValue: number | number[]) => {
     setCapacity(newValue as number);
@@ -95,7 +95,7 @@ const Page = ({ params }: pageProps) => {
       } catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
       }
     };
   };

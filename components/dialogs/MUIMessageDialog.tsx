@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+
+import React, { useState, useEffect } from 'react';
 
 const GENERAL_TITLE = 'Error: Oops, Something Went Wrong!';
 const GENERAL_MESSAGE = 'Oops! It seems there was an error. Please try again later';

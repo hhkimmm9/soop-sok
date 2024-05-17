@@ -44,7 +44,7 @@ const Page = () => {
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
@@ -66,7 +66,7 @@ const Page = () => {
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
@@ -90,7 +90,7 @@ const Page = () => {
     } catch (err) {
       console.error(err);
       dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
     }
   };
 
@@ -124,7 +124,7 @@ const Page = () => {
     } catch (err) {
       console.error(err);
       dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
     }
   };
 

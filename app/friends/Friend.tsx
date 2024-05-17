@@ -47,7 +47,7 @@ export const Friend = ({ friendId }: FriendProps ) => {
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       }
     };
@@ -82,7 +82,7 @@ export const Friend = ({ friendId }: FriendProps ) => {
           } catch (err) {
             console.error(err);
             dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
           }
         } else {
           // redirect the user to the dm chat room.
@@ -91,7 +91,7 @@ export const Friend = ({ friendId }: FriendProps ) => {
       } catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
       }
     }
   };

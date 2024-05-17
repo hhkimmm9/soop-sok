@@ -44,7 +44,7 @@ const Page = () => {
   useEffect(() => {
     if (firestoreError !== undefined) {
       dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
     }
   }, [dispatch, firestoreError]);
 
