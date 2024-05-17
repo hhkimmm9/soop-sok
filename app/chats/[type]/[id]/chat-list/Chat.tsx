@@ -4,7 +4,7 @@ import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
-import { formatTimeAgo } from '@/utils/utils';
+import { formatTimeAgo } from '@/utils/functions';
 import { TChat } from '@/types'
 
 type ChatProps = {

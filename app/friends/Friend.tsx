@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 
 import { TUser } from '@/types';
-import { formatTimeAgo } from '@/utils/utils';
+import { formatTimeAgo } from '@/utils/functions';
 
 import { ChatBubbleBottomCenterIcon } from '@heroicons/react/24/outline';
 

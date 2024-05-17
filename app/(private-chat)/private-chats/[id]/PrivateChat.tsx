@@ -11,7 +11,7 @@ import {
   getDoc, getDocs
 } from 'firebase/firestore';
 
-import { formatTimeAgo } from '@/utils/utils';
+import { formatTimeAgo } from '@/utils/functions';
 import { TMessage, TPrivateChat, TUser } from '@/types';
 
 type PrivateChatProps = {
