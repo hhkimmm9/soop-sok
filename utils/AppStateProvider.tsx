@@ -16,6 +16,7 @@ interface AppState {
   messageDialogType: string | null,
   showActionsDialog: boolean,
   actionsDialogType: string | null,
+  actionsDialogResponse: boolean,
 };
 
 type Action = (
@@ -26,6 +27,7 @@ type Action = (
   | { type: 'SET_MESSAGE_DIALOG_TYPE', payload: string }
   | { type: 'SHOW_ACTIONS_DIALOG', payload: boolean }
   | { type: 'SET_ACTIONS_DIALOG_TYPE', payload: string }
+  | { type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: boolean }
 );
 
 const initialState: AppState = {
@@ -36,6 +38,7 @@ const initialState: AppState = {
   messageDialogType: null,
   showActionsDialog: false,
   actionsDialogType: null,
+  actionsDialogResponse: false,
 };
 
 const AppStateContext = createContext<{
@@ -79,6 +82,11 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         actionsDialogType: action.payload,
+      };
+    case 'SET_ACTIONS_DIALOG_RESPONSE':
+      return {
+        ...state,
+        actionsDialogResponse: action.payload,
       };
     default:
       return state;

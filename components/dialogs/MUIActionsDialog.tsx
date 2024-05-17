@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,9 +9,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 
+import React, { useState, useEffect } from 'react';
+
+import { useAppState } from '@/utils/AppStateProvider';
+
 // TODO:
-const CONFIRM_TITLE = 'confirm title';
-const CONFIRM_MESSAGE = 'confirm message';
+const CONFIRM_TITLE = 'Are you sure you want to proceed?';
+const CONFIRM_MESSAGE = 'This action cannot be undone.';
 const CONFIRM_BUTTON_TEXT = 'Confirm';
 
 const Transition = React.forwardRef(function Transition(
@@ -41,6 +44,8 @@ const MUIActionsDialog = ({
     buttonText: ''
   });
 
+  const { state, dispatch } = useAppState();
+
   useEffect(() => {
     if (type === 'confirm') {
       setContent({
@@ -50,8 +55,13 @@ const MUIActionsDialog = ({
       });
     }
   }, [type]);
+
+  const handleCloseWithButton = () => {
+    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false });
+  };
+
   const handleButtonClick = () => {
-    // 
+    dispatch({ type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: true });
   };
 
   return (
@@ -69,7 +79,7 @@ const MUIActionsDialog = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleButtonClick}>Cancel</Button>
+        <Button onClick={handleCloseWithButton}>Cancel</Button>
         <Button onClick={handleButtonClick}>{ content.buttonText }</Button>
       </DialogActions>
     </Dialog>

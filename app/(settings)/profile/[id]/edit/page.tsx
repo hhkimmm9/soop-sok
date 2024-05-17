@@ -1,6 +1,7 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Avatar,
@@ -81,6 +82,44 @@ const ProfileEdit = () => {
     fetchUser();
   }, [dispatch]); // Add auth as a dependency if needed
 
+  useEffect(() => {
+    const handleUpdate = async () => {
+      if (auth && auth.currentUser) {
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+  
+        try {
+          await updateDoc(userRef, {
+            displayName: profile?.displayName,
+            profile: {
+              introduction: profile?.profile.introduction,
+              mbti: profile?.profile.mbti,
+            }
+          })
+          router.push(`/profile/${id}`);
+        } catch (err) {
+          console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        }
+      }
+    };
+
+    // confirm
+    if (state.actionsDialogResponse) {
+      handleUpdate();
+      dispatch({ type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: false });
+    }
+    // cancel
+    else {
+      dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false });
+    }
+  }, [
+    state.actionsDialogResponse,
+    dispatch,
+    id, profile?.displayName, profile?.profile.introduction, profile?.profile.mbti,
+    router
+  ]);
+
   const updateProfilePic = async (e: ChangeEvent<HTMLInputElement>) => {
     console.log('updateProfilePic');
   };
@@ -98,28 +137,9 @@ const ProfileEdit = () => {
     setMbti(option)
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // TODO: ask confirmation.
-    if (auth && auth.currentUser) {
-      const userRef = doc(db, 'users', auth.currentUser.uid);
-
-      try {
-        await updateDoc(userRef, {
-          displayName: profile?.displayName,
-          profile: {
-            introduction: profile?.profile.introduction,
-            mbti: profile?.profile.mbti,
-          }
-        })
-        router.push(`/profile/${id}`);
-      } catch (err) {
-        console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false });
-      }
-    }
+  const getConfirm = () => {
+    dispatch({ type: 'SET_ACTIONS_DIALOG_TYPE', payload: 'confirm' });
+    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: true });
   };
 
   if (isLoading) return (
@@ -132,7 +152,10 @@ const ProfileEdit = () => {
       {/* profile picture */}
       <div className='flex justify-center'>
         <label htmlFor='profilePic'>
-          <Avatar src={profile.photoURL} alt='Profile Picture' sx={{ width: 192, height: 192 }} />
+          {/* <Avatar src={profile.photoURL} alt='Profile Picture' sx={{ width: 192, height: 192 }} /> */}
+          <Image src={profile.photoURL} alt='Profile Picture'
+            width={192} height={192} className='object-cover rounded-full'
+          />
         </label>
 
         <input type='file' id='profilePic'
@@ -176,9 +199,9 @@ const ProfileEdit = () => {
       <div className='mt-4 grid grid-cols-2 gap-3'>
         
         <Link href={`/profile/${auth.currentUser?.uid}`}>
-          <Button variant='outlined' className='w-full'>Cancel</Button>
+          <Button variant='outlined' className='w-full'> Cancel </Button>
         </Link>
-        <Button onClick={handleUpdate} variant='contained'>Update</Button>
+        <Button onClick={getConfirm} variant='contained'> Update </Button>
       </div>
     </div>
   </>)
