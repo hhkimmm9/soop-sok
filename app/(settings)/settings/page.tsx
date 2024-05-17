@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { useSignOut } from 'react-firebase-hooks/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 

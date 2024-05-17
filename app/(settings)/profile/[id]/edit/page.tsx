@@ -18,7 +18,7 @@ import { useState, useEffect, ChangeEvent, ReactNode, } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 import { TUser } from '@/types';

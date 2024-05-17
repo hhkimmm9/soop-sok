@@ -7,7 +7,7 @@ import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,

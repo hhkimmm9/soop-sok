@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 import {

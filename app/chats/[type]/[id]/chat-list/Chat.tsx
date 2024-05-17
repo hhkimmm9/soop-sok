@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
 import { formatTimeAgo } from '@/utils/functions';

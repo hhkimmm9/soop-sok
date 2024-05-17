@@ -6,7 +6,7 @@ import Friend from '@/app/friends/Friend';
 import { useState, useEffect, } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { query, collection, getDocs, or, where, } from 'firebase/firestore';
 
 type TFriend = {

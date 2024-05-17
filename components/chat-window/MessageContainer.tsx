@@ -6,7 +6,7 @@ import MessageInput from '@/components/chat-window/MessageInput';
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 import { TUser, TMessage } from '@/types';

@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import {
   collection, doc, query, where,
   addDoc, getDoc, getDocs, serverTimestamp

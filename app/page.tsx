@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth } from '@/db/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'

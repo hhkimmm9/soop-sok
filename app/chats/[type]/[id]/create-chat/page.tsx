@@ -12,7 +12,7 @@ import { useState, useEffect, ChangeEvent, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import {
   collection, addDoc, getDocs,
   serverTimestamp, query, where

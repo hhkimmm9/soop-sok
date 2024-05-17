@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { collection, query, getDocs, where, } from 'firebase/firestore';
 
 import { TBanner, FirestoreTimestamp } from '@/types';

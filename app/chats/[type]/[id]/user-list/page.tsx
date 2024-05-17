@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, where, } from 'firebase/firestore';
 
