@@ -12,7 +12,10 @@ import {
   TextField,
 } from '@mui/material';
 
-import { useState, useEffect, ChangeEvent, SetStateAction } from 'react';
+import {
+  useState, useEffect,
+  ChangeEvent, SetStateAction,
+} from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
@@ -45,7 +48,6 @@ const ProfileEdit = () => {
 
   // TODO: combine states.
   const [profile, setProfile] = useState<TUser | null>(null);
-  const [displayName, setDisplayName] = useState('');
   const [introduction, setIntroduction] = useState('');
   const [mbti, setMbti] = useState('');
   
@@ -65,7 +67,6 @@ const ProfileEdit = () => {
             const data = querySnapshot.data() as TUser;
             // TODO: combine states.
             setProfile(data);
-            setDisplayName(data.displayName);
             setIntroduction(data.profile?.introduction); // Use optional chaining
             setMbti(data.profile?.mbti); // Use optional chaining
           }
@@ -84,6 +85,15 @@ const ProfileEdit = () => {
     console.log('updateProfilePic');
   };
 
+  const updateDisplayName = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setProfile((prev) => {
+      return {
+        ...prev,
+        displayName: e.target.value,
+      } as TUser;
+    });
+  };
+
   const handleMBTIChange = (option: SetStateAction<string>) => {
     setMbti(option)
   };
@@ -97,10 +107,10 @@ const ProfileEdit = () => {
 
       try {
         await updateDoc(userRef, {
-          displayName,
+          displayName: profile?.displayName,
           profile: {
-            introduction,
-            mbti,
+            introduction: profile?.profile.introduction,
+            mbti: profile?.profile.mbti,
           }
         })
         router.push(`/profile/${id}`);
@@ -135,7 +145,7 @@ const ProfileEdit = () => {
         {/* username */}
         <div className='flex flex-col gap-2'>
           <TextField id='outlined-basic' label='Username' variant='outlined'
-            value={displayName} onChange={(e) => setDisplayName(e.target.value)}
+            value={profile.displayName} onChange={updateDisplayName}
           />
         </div>
 

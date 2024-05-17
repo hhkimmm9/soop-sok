@@ -1,19 +1,15 @@
-// TODO: this shouldn't be a client component.
-'use client';
-
 import NavBar from '@/components/NavBar';
-import MUIActionsDialog from '@/components/MUIActionsDialog';
-import MUIMessageDialog from '@/components/MUIMessageDialog';
+import DialogWrapper from '@/components/dialogs/DialogWrapper';
 
-import { useAppState } from '@/utils/AppStateProvider';
+// import dynamic from 'next/dynamic';
 
 type WrapperProps = {
   children: React.ReactNode;
 }
 
-const Wrapper = ({ children }: WrapperProps) => {
-  const { state, dispatch } = useAppState();
+// const DialogWrapper = dynamic(() => import('@/components/dialogs/DialogWrapper'), { ssr: false });
 
+const Wrapper = ({ children }: WrapperProps) => {
   return (<>
     {/* TODO: doesn't fit on iphones. */}
     <section className='
@@ -28,17 +24,7 @@ const Wrapper = ({ children }: WrapperProps) => {
       <NavBar />
     </section>
 
-    <MUIMessageDialog
-      show={state.showMessageDialog}
-      handleClose={() => { dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false }) }}
-      type={state.messageDialogType}
-    />
-
-    <MUIActionsDialog
-      show={state.showActionsDialog}
-      handleClose={() => { dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false }) }}
-      type={state.actionsDialogType}
-    />
+    <DialogWrapper />
   </>)
 };
 
