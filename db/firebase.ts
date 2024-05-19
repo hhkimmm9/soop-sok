@@ -1,3 +1,5 @@
+// TODO: rename this file to firebaseClient.ts
+
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps } from 'firebase/app';
 // import { getAnalytics } from 'firebase/analytics';

@@ -1,18 +1,17 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
-
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth } from '@/db/firebase';
+import Image from 'next/image';
 import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-
 import Cookies from 'universal-cookie';
+
+import { auth } from '@/db/firebase';
+import { storeUser, updateLastLogin } from '@/db/utils';
+import { useAppState } from '@/utils/AppStateProvider';
 
 type TFirebaseUI = {
   default: typeof firebaseui;
@@ -39,31 +38,22 @@ export default function Home() {
             try {
               cookies.set('auth-token', authResult.credential.accessToken);
       
-              const userRef = doc(db, 'users', authResult.user.uid);
               const isNewUser = authResult.additionalUserInfo.isNewUser;
+
+              const displayName = authResult.user.displayName;
+              const email = authResult.user.email;
+              const photoURL = authResult.user.photoURL;
+              const uid = authResult.user.uid;
+
               // If this is the first time sign in, create a new user data and store it.
               if (isNewUser) {
-                await setDoc(userRef, {
-                  createdAt: serverTimestamp(),
-                  displayName: authResult.user.displayName,
-                  email: authResult.user.email,
-                  isOnline: true,
-                  lastLoginTime: serverTimestamp(),
-                  photoURL: authResult.user.photoURL,
-                  profile: {
-                    introduction: '',
-                    interests: [],
-                    mbti: ''
-                  },
-                  uid: authResult.user.uid
-                });
+                const response = await storeUser(displayName, email, photoURL, uid);
+                console.log(response);
               }
               // Otherwise, update the isOnline status
               else {
-                await updateDoc(userRef, {
-                  isOnline: true,
-                  lastLoginTime: serverTimestamp()
-                });
+                const response = await updateLastLogin(uid);
+                console.log(response);
               }    
             } catch (err) {
               console.error('Error getting document:', err);
@@ -126,4 +116,4 @@ export default function Home() {
       />
     </div>
   </>) : null;
-}
+};
