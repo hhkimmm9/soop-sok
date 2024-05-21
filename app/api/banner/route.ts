@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { admin, db } from '@/db/firebaseAdmin';
-import { TChannel } from "@/types";
+import { TBanner } from "@/types";
 
 // Utility function to extract token
 function getToken(req: NextRequest): string | null {
@@ -14,21 +14,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
   }
 
-  const channelsRef = db.collection('channels');
+  const bannerRef = db.collection('banners');
+  const bannerQuery = bannerRef.where('selected', '==', true);
   try {
-    const res = await channelsRef.get();
+    const res = await bannerQuery.get();
+    
     if (res.empty) {
-      return NextResponse.json([], { status: 200 });
+      return NextResponse.json({ error: 'No selected banner found' }, { status: 404 });
     }
 
-    const channels: TChannel[] = res.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data()
-    } as TChannel));
-
-    return NextResponse.json(channels, { status: 200 });
+    const banner = res.docs[0].data() as TBanner
+    return NextResponse.json(banner, { status: 200 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(error, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
 };

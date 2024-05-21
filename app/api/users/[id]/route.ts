@@ -1,6 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { admin, db } from '@/db/firebaseAdmin';
 
+// Utility function to extract token
+function getToken(req: NextRequest): string | null {
+  const authHeader = req.headers?.get('Authorization');
+  return authHeader ? authHeader.split('Bearer ')[1] : null;
+};
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string }}
@@ -17,7 +23,7 @@ export async function POST(
   // const searchParams = req.nextUrl.searchParams;
   const { displayName, email, photoURL }  = await req.json();
 
-  const token = req.headers?.get('Authorization')?.split('Bearer ')[1];
+  const token = getToken(req);
   if (!token) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
   }
@@ -41,9 +47,9 @@ export async function POST(
     });
 
     return NextResponse.json(res, { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ err }, { status: 500 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(error, { status: 500 });
   }
 };
 
@@ -56,7 +62,7 @@ export async function PUT(
   // const {} = await req.json();
   
   if (searchParams.get('type') === 'signin') {
-    const token = req.headers?.get('Authorization')?.split('Bearer ')[1];
+    const token = getToken(req);
     if (!token) {
       return NextResponse.json({ error: 'No token provided' }, { status: 401 });
     }
@@ -69,10 +75,10 @@ export async function PUT(
         lastLoginTime: admin.firestore.FieldValue.serverTimestamp()
       })
   
-      return NextResponse.json(res , { status: 200 });
-    } catch (err) {
-      console.error(err);
-      return NextResponse.json({ err }, { status: 500 });
+      return NextResponse.json(res, { status: 200 });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(error, { status: 500 });
     }
   } else if (searchParams.get('type') === 'profile') {
     // 

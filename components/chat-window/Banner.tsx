@@ -1,14 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import { collection, query, getDocs, where, } from 'firebase/firestore';
-
-import { TBanner, FirestoreTimestamp } from '@/types';
 
 import '@/components/Marquee.css';
+import { getBanner } from '@/db/utils';
 
 const Banner = () => {
   const { state, dispatch } = useAppState();
@@ -16,16 +13,8 @@ const Banner = () => {
   useEffect(() => {
     const fetchBanner = async () => {
       try {
-        const q = query(collection(db, 'banners'),
-          where('selected', '==', true)
-        );
-  
-        const bannerSnapshop = await getDocs(q);
-        if (!bannerSnapshop.empty) {
-          const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
-
-          dispatch({ type: 'SET_CURRENT_BANNER', payload: selectedBanner });
-        }
+        const res = await getBanner();
+        dispatch({ type: 'SET_CURRENT_BANNER', payload: res });
       } catch (err) {
         console.error(err);
       }
@@ -40,6 +29,6 @@ const Banner = () => {
       </div>
     </div>
   )
-}
+};
 
-export default Banner
+export default Banner;

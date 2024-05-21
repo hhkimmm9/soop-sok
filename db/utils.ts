@@ -106,3 +106,20 @@ export async function getChannels() {
     return null;
   }
 };
+
+export async function getBanner() {
+  try {
+    const res = await fetch('/api/banner', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const banner = await res.json();
+    console.log('getBanner', banner);
+    return banner;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
