@@ -11,17 +11,17 @@ export async function GET(req: NextRequest) {
   const channelsRef = db.collection('channels');
   try {
     const channelsData: TChannel[] = []
-    const channelsSnapshot = await channelsRef.get();
-    if (!channelsSnapshot.empty) {
-      // console.log(channelsSnapshot);
-      channelsSnapshot.forEach((channel: any) => {
+    const res = await channelsRef.get();
+    if (!res.empty) {
+      // console.log(res);
+      res.forEach((doc: any) => {
         channelsData.push({
-          id: channel.id,
-          ...channel.data()
+          id: doc.id,
+          ...doc.data()
         } as TChannel);
       });
-      return NextResponse.json(channelsData, { status: 200 });
     }
+    return NextResponse.json(channelsData, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json(err, { status: 500 });

@@ -39,7 +39,7 @@ export async function storeUser(
       },
       body: JSON.stringify({
         displayName, email, photoURL
-      }),
+      })
     });
     const users = await res.json();
     console.log(users);
@@ -57,7 +57,7 @@ export async function updateLastLogin(uid: string) {
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
-      },
+      }
     });
     const updatedUser = await res.json();
     console.log(updatedUser);
@@ -96,7 +96,7 @@ export async function getChannels() {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
-      },
+      }
     });
     const channels = await res.json();
     console.log('getChannels', channels);
