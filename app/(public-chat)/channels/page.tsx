@@ -7,9 +7,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { getChannels } from '@/db/utils';
 
 import { TChannel } from '@/types';
 
@@ -23,46 +22,34 @@ const Page = () => {
   const { dispatch } = useAppState();
 
   // Authenticate a user
-    useEffect(() => {
-      if (!auth) {
-        router.push('/');
-      } else {
-        setIsAuthenticated(true);
+  useEffect(() => {
+    if (!auth) {
+      router.push('/');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        const channels = await getChannels();
+        setChannels(channels);
+      } catch (err) {
+        console.error(err);
+        // TODO: merge these two dispatches
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        router.refresh();
       }
-    }, [router]);
-
-  // Fetch data if a user is authenticated
-  const channelsRef = collection(db, 'channels');
-  const channelsQuery = query(channelsRef, orderBy('order', 'asc'));
-  const [FSSnapshot, FSLoading, FSError] = useCollection(
-    isAuthenticated ? channelsQuery : null
-  );
-
-  // Handling retrieved data
-  useEffect(() => {
-    const container: TChannel[] = [];
-    if (FSSnapshot && !FSSnapshot.empty) {
-      FSSnapshot.forEach((doc) => {
-        container.push({
-          id: doc.id,
-          ...doc.data()
-        } as TChannel);
-      });
-      setChannels(container);
+    };
+    if (isAuthenticated) {
+      fetchChannels();
     }
-  }, [FSSnapshot]);
+  }, [router, isAuthenticated, dispatch]);
 
-  // Error handling
-  useEffect(() => {
-    if (FSError !== undefined) {
-      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
-    }
-
-    router.refresh();
-  }, [router, FSError, dispatch]);
-
-  if (!isAuthenticated || FSLoading) return (
+  // if (!isAuthenticated || FSLoading) return (
+  if (!isAuthenticated) return (
     <div className='h-full flex justify-center items-center'>
       <ProgressIndicator />
     </div>

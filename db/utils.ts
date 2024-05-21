@@ -89,3 +89,20 @@ export async function deleteUser() {
     return null;
   }
 };
+
+export async function getChannels() {
+  try {
+    const res = await fetch('/api/channels', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    const channels = await res.json();
+    console.log('getChannels', channels);
+    return channels;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
