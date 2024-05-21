@@ -52,7 +52,7 @@ export async function storeUser(
 
 export async function updateLastLogin(uid: string) {
   try {
-    const res = await fetch(`/api/users/${uid}`, {
+    const res = await fetch(`/api/users/${uid}?type=signin`, {
       method: 'PUT',
       headers: {
         "Content-Type": "application/json",

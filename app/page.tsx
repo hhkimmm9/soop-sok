@@ -47,13 +47,13 @@ export default function Home() {
 
               // If this is the first time sign in, create a new user data and store it.
               if (isNewUser) {
-                const response = await storeUser(displayName, email, photoURL, uid);
-                console.log(response);
+                const res = await storeUser(displayName, email, photoURL, uid);
+                console.log(res);
               }
               // Otherwise, update the isOnline status
               else {
-                const response = await updateLastLogin(uid);
-                console.log(response);
+                const res = await updateLastLogin(uid);
+                console.log(res);
               }    
             } catch (err) {
               console.error('Error getting document:', err);
