@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, where, } from 'firebase/firestore';
@@ -19,23 +20,36 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [activeUsers, setActiveUsers] = useState([]);
 
   const router = useRouter();
 
-  const [collectionSnapshot] = useCollection(
-    query(collection(db, 'status_board'),
-      where('cid', '==', params.id)
-    ), {
-      snapshotListenOptions: { includeMetadataChanges: true },
+  const { dispatch } = useAppState();
+
+  // Authenticate a user
+  useEffect(() => {
+    if (!auth) {
+      router.push('/');
+    } else {
+      setIsAuthenticated(true);
     }
+  }, [router]);
+
+  const boardRef = collection(db, 'status_board');
+  const boardQuery = query(boardRef,
+    where('cid', '==', params.id)
+  );
+  const [FSSnapshot, FSLoading, FSError] = useCollection(
+    isAuthenticated ? boardQuery : null
   );
 
+  // Handling retrieved data
   useEffect(() => {
     const activeUserContainer: any = [];
-    if (collectionSnapshot && !collectionSnapshot.empty) {
-      collectionSnapshot.forEach((doc) => {
+    if (FSSnapshot && !FSSnapshot.empty) {
+      FSSnapshot.forEach((doc) => {
         activeUserContainer.push({
           id: doc.id,
           ...doc.data()
@@ -44,8 +58,19 @@ const Page = ({ params }: pageProps) => {
       setActiveUsers(activeUserContainer)
     }
     setIsLoading(false);
-  }, [collectionSnapshot]);
-  
+  }, [FSSnapshot]);
+
+  // Error handling
+  useEffect(() => {
+    if (FSError !== undefined) {
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+
+      router.push(`/chats/${params.type}/${params.id}/features`);
+    }
+  }, [router, FSError, dispatch, params.type, params.id]);
+
+  // Local functions
   const redirectToProfile = (uid: string) => {
     if (auth) {
       router.push(`/profile/${uid}`);
