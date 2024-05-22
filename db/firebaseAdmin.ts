@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 
 // Fetch the service account key JSON file contents
-const serviceAccount = require("/serviceAccountKey.json");
+const serviceAccount = require("/serviceAccountKeys.json");
 
 // Initialize the app with a service account, granting admin privileges
 if (!admin.apps.length) {
