@@ -1,7 +1,13 @@
 const admin = require('firebase-admin');
 
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+  console.error('Error: FIREBASE_SERVICE_ACCOUNT environment variable is not defined.');
+  process.exit(1); // Exit the process with an error code
+}
+
 // Fetch the service account key JSON file contents
-const serviceAccount = require("/serviceAccountKeys.json");
+const serviceAccount = require(process.env.FIREBASE_SERVICE_ACCOUNT);
+
 
 // Initialize the app with a service account, granting admin privileges
 if (!admin.apps.length) {
