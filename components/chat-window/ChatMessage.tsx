@@ -1,14 +1,7 @@
-'use client';
-
 import Image from 'next/image';
-
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { auth, db } from '@/db/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-
-import { TUser, TMessage } from '@/types';
+import { auth } from '@/db/firebase';
+import { TMessage } from '@/types';
 
 type ChatMessageProps = {
   message: TMessage
@@ -18,9 +11,7 @@ const ChatMessage = ({ message } : ChatMessageProps) => {
   const router = useRouter();
 
   const redirectToProfile = () => {
-    if (auth) {
-      router.push(`/profile/${message?.uid}`);
-    }
+    if (auth) router.push(`/profile/${message?.uid}`);
   };
 
   return (
@@ -34,7 +25,9 @@ const ChatMessage = ({ message } : ChatMessageProps) => {
         </div>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
-        <span className='text-sm text-gray-600'>{ message?.senderName }</span>
+        <span className='text-sm text-gray-600'>
+          { message?.senderName }
+        </span>
         <div className='
           px-3 py-2 rounded-lg
           bg-gradient-to-b from-sky-500 to-sky-400
