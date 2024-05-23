@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   const { uid, cid, senderName, senderPhotoURL, message }  = await req.json();
 
   try {
-    const res = await db.collection('messages').add({
+    await db.collection('messages').add({
       uid,
       cid,
       senderName,
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       message,
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     })
-    return NextResponse.json(res, { status: 200 });
+    return NextResponse.json({ ack: "message sent!" }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(error, { status: 500 });

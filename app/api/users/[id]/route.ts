@@ -31,7 +31,7 @@ export async function POST(
   const userRef = db.collection('users').doc(id);
   
   try {
-    const res = await userRef.set({
+    await userRef.set({
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       displayName,
       email,
@@ -46,7 +46,7 @@ export async function POST(
       uid: id
     });
 
-    return NextResponse.json(res, { status: 200 });
+    return NextResponse.json({ ack: 'user registered!'}, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(error, { status: 500 });
@@ -70,12 +70,12 @@ export async function PUT(
     const userRef = db.collection('users').doc(id);
   
     try {
-      const res = await userRef.update({
+      await userRef.update({
         isOnline: true,
         lastLoginTime: admin.firestore.FieldValue.serverTimestamp()
       })
   
-      return NextResponse.json(res, { status: 200 });
+      return NextResponse.json({ ack: 'lastLoginTime updated!'}, { status: 200 });
     } catch (error) {
       console.error(error);
       return NextResponse.json(error, { status: 500 });
