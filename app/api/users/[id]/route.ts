@@ -46,7 +46,7 @@ export async function POST(
       uid: id
     });
 
-    return NextResponse.json({ ack: 'user registered!'}, { status: 200 });
+    return NextResponse.json({ ack: 'user registered!' }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(error, { status: 500 });
@@ -75,7 +75,7 @@ export async function PUT(
         lastLoginTime: admin.firestore.FieldValue.serverTimestamp()
       })
   
-      return NextResponse.json({ ack: 'lastLoginTime updated!'}, { status: 200 });
+      return NextResponse.json({ ack: 'lastLoginTime updated!' }, { status: 200 });
     } catch (error) {
       console.error(error);
       return NextResponse.json(error, { status: 500 });

@@ -25,7 +25,7 @@ export async function getUser() {
   }
 };
 
-export async function registerUser(
+export async function registerUserWithUID(
   displayName: string, email: string, photoURL: string, uid: string
 ) {
   console.log("storeUsers", uid);

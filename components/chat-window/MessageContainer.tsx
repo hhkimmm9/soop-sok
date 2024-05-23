@@ -11,8 +11,7 @@ import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
-  where, orderBy, startAfter, limit,
-  getDocs,
+  where, orderBy, limit,
 } from 'firebase/firestore';
 
 import { TMessage, FirestoreTimestamp } from '@/types';
