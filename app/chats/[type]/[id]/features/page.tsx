@@ -36,8 +36,6 @@ type TFeatures = (
 );
 
 const Page = ({ params }: pageProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  
   const router = useRouter();
 
   const { state, dispatch } = useAppState();
@@ -88,12 +86,7 @@ const Page = ({ params }: pageProps) => {
     }
   };
 
-  if (isLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (
+  return (
     <div className='h-full flex flex-col gap-4'>
       <div className='grow p-4 rounded-lg overflow-y-auto bg-white'>
         <div className='flex flex-col gap-4'>

@@ -11,8 +11,6 @@ import { useSignOut } from 'react-firebase-hooks/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 
 const Settings = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  
   const router = useRouter();
   
   const [signOut] = useSignOut(auth);
@@ -31,12 +29,7 @@ const Settings = () => {
     }
   };
 
-  if (isLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (
+  return (
     <div className='flex flex-col gap-4 items-center'>
       <Link href={`/profile/${auth.currentUser?.uid}`} className='
         w-full py-4 rounded-lg shadow-md bg-green-800
