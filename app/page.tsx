@@ -10,7 +10,7 @@ import 'firebaseui/dist/firebaseui.css'
 import Cookies from 'universal-cookie';
 
 import { auth } from '@/db/firebase';
-import { storeUser, updateLastLogin } from '@/db/utils';
+import { registerUser, updateLastLogin } from '@/db/utils';
 import { useAppState } from '@/utils/AppStateProvider';
 
 type TFirebaseUI = {
@@ -46,15 +46,9 @@ export default function Home() {
               const uid = authResult.user.uid;
 
               // If this is the first time sign in, create a new user data and store it.
-              if (isNewUser) {
-                const res = await storeUser(displayName, email, photoURL, uid);
-                console.log(res);
-              }
+              if (isNewUser) await registerUser(displayName, email, photoURL, uid);
               // Otherwise, update the isOnline status
-              else {
-                const res = await updateLastLogin(uid);
-                console.log(res);
-              }    
+              else await updateLastLogin(uid);
             } catch (err) {
               console.error('Error getting document:', err);
               dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });

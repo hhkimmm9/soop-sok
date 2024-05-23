@@ -57,7 +57,7 @@ const Page = () => {
   else return (<>
     <div className='h-full bg-stone-100'>
       <div className='flex flex-col gap-3'>
-        { channels.map(channel => (
+        { channels && channels.length > 0 && channels.map(channel => (
           <Channel key={channel.id} channel={channel} />  
         )) }
       </div>

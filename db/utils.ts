@@ -1,4 +1,3 @@
-import { auth, db } from '@/db/firebase';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
@@ -26,7 +25,7 @@ export async function getUser() {
   }
 };
 
-export async function storeUser(
+export async function registerUser(
   displayName: string, email: string, photoURL: string, uid: string
 ) {
   console.log("storeUsers", uid);
@@ -41,9 +40,9 @@ export async function storeUser(
         displayName, email, photoURL
       })
     });
-    const users = await res.json();
-    console.log(users);
-    return users;
+    const newUser = await res.json();
+    console.log(newUser);
+    return newUser;
   } catch (err) {
     console.error(err);
     return null;
