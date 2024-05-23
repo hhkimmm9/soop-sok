@@ -39,7 +39,7 @@ export  async function POST(req: NextRequest) {
   const { cid, content, tagOptions }  = await req.json();
 
   try {
-    const res = await db.collection('banners').add({
+    await db.collection('banners').add({
       cid,
       content,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
