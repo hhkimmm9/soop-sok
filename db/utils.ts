@@ -123,3 +123,30 @@ export async function getBanner() {
     return null;
   }
 };
+
+export async function sendMessage(
+  uid: string,
+  cid: string,
+  senderName: string | null,
+  senderPhotoURL: string | null,
+  message: string
+) {
+  try {
+    const res = await fetch('/api/messages', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        uid, cid, senderName, senderPhotoURL, message
+      })
+    });
+    const sendMessageAck = await res.json();
+    console.log(sendMessageAck);
+    return sendMessageAck;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};

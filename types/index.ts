@@ -21,11 +21,12 @@ export type TPrivateChat = {
   createdAt: FirestoreTimestamp
 }
 export type TMessage = {
-  id: string,
+  uid: string,
   cid: string,
-  createdAt: FirestoreTimestamp,
-  sentBy: string,
-  text: string
+  senderName: string,
+  senderPhotoURL: string,
+  message: string,
+  createdAt: FirestoreTimestamp
 };
 export type TUser = {
   createdAt: FirestoreTimestamp,

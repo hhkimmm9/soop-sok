@@ -24,7 +24,7 @@ import {
 
 type MessageContainerProps = {
   type: string,
-  cid: string,
+  cid: string
 };
 
 const NUM_MESSAGES_PER_FETCH = 10;
@@ -68,10 +68,7 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
 
     if (FSSnapshot && !FSSnapshot.empty) {
       FSSnapshot.forEach((doc) => {
-        messageList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TMessage);
+        messageList.push(doc.data() as TMessage);
       });
 
       const reversedMessageList = messageList.reverse();
@@ -131,45 +128,45 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
   
   // Local functions
   const lazyLoadMessages = async () => {
-    const prevMessageList: TMessage[] = [];
-    const q = query(collection(db, 'messages'),
-      where('cid', '==', cid),
-      orderBy('createdAt', 'desc'),
-      startAfter(firstVisible),
-      limit(NUM_MESSAGES_PER_FETCH)
-    );
-    const prevMessagesSnapshot = await getDocs(q);
+    // const prevMessageList: TMessage[] = [];
+    // const q = query(collection(db, 'messages'),
+    //   where('cid', '==', cid),
+    //   orderBy('createdAt', 'desc'),
+    //   startAfter(firstVisible),
+    //   limit(NUM_MESSAGES_PER_FETCH)
+    // );
+    // const prevMessagesSnapshot = await getDocs(q);
 
-    if (!prevMessagesSnapshot.empty) {
-      prevMessagesSnapshot.forEach((doc) => {
-        prevMessageList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TMessage);
-      });
+    // if (!prevMessagesSnapshot.empty) {
+    //   prevMessagesSnapshot.forEach((doc) => {
+    //     prevMessageList.push({
+    //       id: doc.id,
+    //       ...doc.data()
+    //     } as TMessage);
+    //   });
       
-      const reversedMessageList = prevMessageList.reverse();
+    //   const reversedMessageList = prevMessageList.reverse();
       
-      // update the first visible value for pagination.
-      setFirstVisible(reversedMessageList[0].createdAt);
-      setPrevMessages((prev) => [ ...reversedMessageList, ...prev ]);
-    } else setIsAll(true);
+    //   // update the first visible value for pagination.
+    //   setFirstVisible(reversedMessageList[0].createdAt);
+    //   setPrevMessages((prev) => [ ...reversedMessageList, ...prev ]);
+    // } else setIsAll(true);
   };
 
   // When the scroll hits the top of the window, lazy load previous messages.
   const handleScroll = async () => {
-    const scrollContainer = chatWindowRef.current;
+    // const scrollContainer = chatWindowRef.current;
 
-    if (scrollContainer?.scrollTop === 0 && !isAll) {
-      await lazyLoadMessages();
+    // if (scrollContainer?.scrollTop === 0 && !isAll) {
+    //   await lazyLoadMessages();
 
-      // TODO: scroll down to the bottom.
-      setTimeout(() => {
-        if (chatWindowRef.current) {
-          chatWindowRef.current.scrollTo(0, chatWindowRef.current.clientHeight);
-        }
-      }, 300);
-    }
+    //   // TODO: scroll down to the bottom.
+    //   setTimeout(() => {
+    //     if (chatWindowRef.current) {
+    //       chatWindowRef.current.scrollTo(0, chatWindowRef.current.clientHeight);
+    //     }
+    //   }, 300);
+    // }
   };
 
   const redirectToFeaturesPage = () => {
@@ -188,10 +185,10 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
         flex flex-col gap-5
     '>
       { prevMessages.map((message: TMessage) => (
-        <ChatMessage key={message.id} message={message} />
+        <ChatMessage key={message.createdAt.toString()} message={message} />
       ))}
       { messages.map((message: TMessage) => (
-        <ChatMessage key={message.id} message={message} />
+        <ChatMessage key={message.createdAt.toString()} message={message} />
       ))}
     </div>
 
