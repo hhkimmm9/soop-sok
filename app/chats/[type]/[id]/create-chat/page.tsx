@@ -14,11 +14,12 @@ import { useRouter } from 'next/navigation';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
 import {
-  collection, addDoc, getDocs,
+  collection, addDoc,
   serverTimestamp, query, where
 } from 'firebase/firestore';
 
 import { TBanner } from '@/types';
+import { getBanner } from '@/db/utils';
 
 type pageProps = {
   params: {
@@ -51,12 +52,11 @@ const Page = ({ params }: pageProps) => {
         );
 
         try {
-          const bannerSnapshop = await getDocs(q);
-          if (!bannerSnapshop.empty) {
-            const selectedBanner = bannerSnapshop.docs[0].data() as TBanner;
+          const banner: TBanner | null = await getBanner();
+          if (banner) {
             setFormState((prevState) => ({
               ...prevState,
-              tagOptions: selectedBanner.tagOptions
+              tagOptions: banner.tagOptions
             }));
           }
           setIsLoading(false);
