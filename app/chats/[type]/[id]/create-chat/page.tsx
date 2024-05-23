@@ -44,7 +44,7 @@ const Page = ({ params }: pageProps) => {
   const { state, dispatch } = useAppState();
 
   useEffect(() => {
-    const fetchBanner = async () => {
+    const fetchBannerOptions = async () => {
       if (auth) {
         const q = query(collection(db, 'banners'),
           where('selected', '==', true)
@@ -67,7 +67,7 @@ const Page = ({ params }: pageProps) => {
         }
       }
     };
-    fetchBanner();
+    fetchBannerOptions();
   }, [dispatch]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

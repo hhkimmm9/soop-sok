@@ -29,3 +29,26 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error }, { status: 500 });
   }
 };
+
+export  async function POST(req: NextRequest) {
+  const token = getToken(req);
+  if (!token) {
+    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+  }
+  
+  const { cid, content, tagOptions }  = await req.json();
+
+  try {
+    const res = await db.collection('banners').add({
+      cid,
+      content,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      selected: false,
+      tagOptions,
+    });
+    return NextResponse.json({ message: 'banner added!' }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(error, { status: 500 });
+  }
+};

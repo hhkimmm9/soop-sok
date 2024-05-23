@@ -106,9 +106,34 @@ export async function getChannels() {
   }
 };
 
+export async function addBanner(
+  cid: string,
+  content: string,
+  tagOptions: string[]
+): Promise<boolean | null> {
+  try {
+    const res = await fetch('/api/banners', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        cid, content, tagOptions
+      })
+    });
+    const addBannerAck = await res.json();
+    console.log(addBannerAck);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
 export async function getBanner() {
   try {
-    const res = await fetch('/api/banner', {
+    const res = await fetch('/api/banners', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
