@@ -7,7 +7,6 @@ if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
 // Fetch the service account key JSON file contents
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-
 // Initialize the app with a service account, granting admin privileges
 if (!admin.apps.length) {
   admin.initializeApp({
