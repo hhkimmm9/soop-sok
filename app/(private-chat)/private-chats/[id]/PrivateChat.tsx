@@ -3,12 +3,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import {
-  collection, doc,
-  query, where, orderBy, limit,
-  getDoc, getDocs
-} from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { fetchLatestMessage } from '@/db/utils';
 
 import { formatTimeAgo } from '@/utils/functions';
 import { TMessage, TPrivateChat, TUser } from '@/types';
@@ -18,8 +14,7 @@ type PrivateChatProps = {
 };
 
 const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
-  const [toUser, setToUser] = useState<TUser>();
-  const [latestMessage, setLatestMessage] = useState<TMessage>();
+  const [latestMessage, setLatestMessage] = useState<TMessage | null>(null);
 
   const router = useRouter();
 
@@ -28,40 +23,13 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   // fetch user data based on the given user id,
   // or, store user data into the private_chat collection.
   useEffect(() => {
-    const fetchToUser = async () => {
-      if (auth && auth.currentUser) {
-        const uid = privateChat.to === auth.currentUser.uid ?
-          privateChat.from : privateChat.to;
-
-        try {  
-          const userSnapshot = await getDoc(doc(db, 'users', uid));
-          if (userSnapshot.exists()) {
-            const data = { ...userSnapshot.data() } as TUser;
-            setToUser(data);
-          }
-        } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
-        }
-      }
-    };
-    const fetchLatestMessage = async () => {
+    const getLatestMessage = async () => {
       if (auth) {
-        const messageQuery = query(collection(db, 'messages'),
-          where('cid', '==', privateChat.id),
-          orderBy('createdAt', 'desc'),
-          limit(1)
-        );
-
+        
         try {
-          const messageSnapshot = await getDocs(messageQuery);
-          if (!messageSnapshot.empty) {
-            const data = {
-              id: messageSnapshot.docs[0].id,
-              ...messageSnapshot.docs[0].data()
-            } as TMessage
-            setLatestMessage(data);
+          const latestMessage = await fetchLatestMessage(privateChat.id);
+          if (latestMessage.length > 0) {
+            setLatestMessage(latestMessage);
           }
         } catch (err) {
           console.error(err);
@@ -71,12 +39,7 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
       }
     };
 
-    const fetchToUserAndLatestMessage = async () => {
-      await Promise.all([fetchToUser(), fetchLatestMessage()]);
-      // setIsLoading(false);
-    };
-
-    fetchToUserAndLatestMessage();
+    getLatestMessage();
   }, [dispatch, privateChat]);
 
   // fetch the latest message associated with this private chat
@@ -88,34 +51,32 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
     }
   };
 
-  return (
+  if (latestMessage) return (
     <div onClick={enterPrivateChat}>
       <div className='
         p-4 rounded-lg shadow-sm bg-white
         flex gap-3 items-center
       '>
-        { toUser && (
-          <Image
-            src={toUser?.photoURL} alt=''
-            width={1324} height={1827}
-            className='object-cover w-16 h-16 rounded-full'
-          />
-        )}
+        <Image
+          src={latestMessage.senderPhotoURL} alt=''
+          width={1324} height={1827}
+          className='object-cover w-16 h-16 rounded-full'
+        />
 
         <div className='grow w-min'>
           <div className='flex justify-between'>
             {/* Sender's name. */}
-            <p className='font-medium'>{ toUser?.displayName }</p>
+            <p className='font-medium'>{ latestMessage.senderName }</p>
 
             {/* the time last message was received. */}
             { latestMessage && (
-              <p>{ formatTimeAgo(latestMessage?.createdAt) }</p>
+              <p>{ formatTimeAgo(latestMessage.createdAt) }</p>
             )}
           </div>
 
           {/* the content of the last message. */}
           <p className='mt-1 h-[3rem] overflow-hidden line-clamp-2'>
-            { latestMessage?.text }
+            { latestMessage.message }
           </p>
         </div>
       </div>

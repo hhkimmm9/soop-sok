@@ -143,3 +143,23 @@ export async function sendMessage(
     return null;
   }
 };
+
+export async function fetchLatestMessage(cid: string) {
+  try {
+    const res = await fetch(`/api/messages?cid=${cid}&latest=true`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    
+    const data = await res.json();
+
+    console.log(data.latestMessage);
+    return data.latestMessage;
+  } catch (err) {
+    console.error(err);
+    return null
+  }
+};
+

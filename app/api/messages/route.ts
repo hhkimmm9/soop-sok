@@ -7,6 +7,38 @@ function getToken(req: NextRequest): string | null {
   return authHeader ? authHeader.split('Bearer ')[1] : null;
 };
 
+export async function GET(req: NextRequest) {
+  const token = getToken(req);
+  if (!token) {
+    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+  }
+
+  const searchParams = req.nextUrl.searchParams;
+  const cid = searchParams.get('cid');
+  const isLatest = searchParams.get('latest');
+
+  if (isLatest) {
+    try {
+      const messageRef = db.collection('messages');
+      const res = await messageRef
+        .where('cid', '==', cid)
+        .orderBy('createdAt', 'desc')
+        .limit(1)
+        .get();
+
+      var latestMessage = [];
+
+      if (!res.empty) {
+        latestMessage.push(res.data()[0]);
+      }
+      
+      return NextResponse.json({ latestMessage }, { status: 200 });
+    } catch (error) {
+      return NextResponse.json({ error }, { status: 500 });
+    }
+  }
+};
+
 export async function POST(req: NextRequest) {
 
   const token = getToken(req);
