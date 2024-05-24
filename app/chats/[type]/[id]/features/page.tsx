@@ -1,8 +1,5 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
-
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';

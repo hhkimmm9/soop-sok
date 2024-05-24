@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { getChannels } from '@/db/utils';
+import { fetchChannels } from '@/db/utils';
 
 import { TChannel } from '@/types';
 
@@ -31,9 +31,9 @@ const Page = () => {
   }, [router]);
 
   useEffect(() => {
-    const fetchChannels = async () => {
+    const getChannels = async () => {
       try {
-        const channels = await getChannels();
+        const channels = await fetchChannels();
         setChannels(channels);
       } catch (err) {
         console.error(err);
@@ -44,7 +44,7 @@ const Page = () => {
       }
     };
     if (isAuthenticated) {
-      fetchChannels();
+      getChannels();
     }
   }, [router, isAuthenticated, dispatch]);
 

@@ -3,28 +3,6 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 const token = cookies.get('auth-token');
 
-export async function getUsers() {
-  try {
-    const res = await fetch(``, {
-
-    });
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-
-export async function getUser() {
-  try {
-    const res = await fetch(``, {
-
-    });
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-
 export async function registerUserWithUID(
   displayName: string, email: string, photoURL: string, uid: string
 ) {
@@ -58,38 +36,19 @@ export async function updateLastLogin(uid: string) {
         'Authorization': `Bearer ${token}`
       }
     });
-    const updatedUser = await res.json();
-    console.log(updatedUser);
-    return updatedUser;
+    const ack = await res.json();
+    console.log(ack.message);
+    
+    if (!ack.ok) return false;
+
+    return true;
   } catch (err) {
     console.error(err);
     return null;
   }
 };
 
-export async function updateUser() {
-  try {
-    const res = await fetch(``, {
-      
-    });
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-
-export async function deleteUser() {
-  try {
-    const res = await fetch(``, {
-      
-    });
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-
-export async function getChannels() {
+export async function fetchChannels() {
   try {
     const res = await fetch('/api/channels', {
       method: 'GET',
@@ -98,7 +57,7 @@ export async function getChannels() {
       }
     });
     const channels = await res.json();
-    console.log('getChannels', channels);
+    console.log('fetchChannels', channels);
     return channels;
   } catch (err) {
     console.error(err);
@@ -115,8 +74,8 @@ export async function addBanner(
     const res = await fetch('/api/banners', {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         cid, content, tagOptions

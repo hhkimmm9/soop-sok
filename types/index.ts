@@ -42,7 +42,6 @@ export type TUser = {
   },
   uid: string
 };
-
 export type TBanner = {
   cid: string;
   content: string;
@@ -50,7 +49,6 @@ export type TBanner = {
   selected: boolean;
   tagOptions: string[];
 };
-
 export type FirestoreTimestamp = {
   seconds: number,
   nanoseconds: number
