@@ -4,6 +4,7 @@ import { admin, db } from '@/db/firebaseAdmin';
 // Utility function to extract token
 function getToken(req: NextRequest): string | null {
   const authHeader = req.headers?.get('Authorization');
+  // TODO: check the token and use it for authentication
   return authHeader ? authHeader.split('Bearer ')[1] : null;
 };
 
@@ -15,10 +16,7 @@ export async function GET(
   const searchParams = req.nextUrl.searchParams;
 };
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
   // const searchParams = req.nextUrl.searchParams;
   const { displayName, email, photoURL }  = await req.json();
@@ -46,41 +44,52 @@ export async function POST(
       uid: id
     });
 
-    return NextResponse.json({ ack: 'user registered!' }, { status: 200 });
-  } catch (error) {
+    return NextResponse.json({ message: 'User registered!' }, { status: 200 });
+  }
+  
+  catch (error) {
     console.error(error);
     return NextResponse.json(error, { status: 500 });
   }
 };
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
   const searchParams = req.nextUrl.searchParams;
-  // const {} = await req.json();
   
-  if (searchParams.get('type') === 'signin') {
-    const token = getToken(req);
-    if (!token) {
-      return NextResponse.json({ error: 'No token provided' }, { status: 401 });
-    }
+  const token = getToken(req);
+  if (!token) {
+    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+  }
   
-    const userRef = db.collection('users').doc(id);
+  const userRef = db.collection('users').doc(id);
   
-    try {
+  try {
+    // user sign in
+    if (searchParams.get('type') === 'signin') {
       await userRef.update({
         isOnline: true,
         lastLoginTime: admin.firestore.FieldValue.serverTimestamp()
       })
-  
-      return NextResponse.json({ ack: 'lastLoginTime updated!' }, { status: 200 });
-    } catch (error) {
-      console.error(error);
-      return NextResponse.json(error, { status: 500 });
     }
-  } else if (searchParams.get('type') === 'profile') {
-    // 
+    
+    // user sign out
+    else if (searchParams.get('type') === 'signout') {
+      await userRef.update({
+        isOnline: false,
+      }) 
+    }
+    
+    // user profile update
+    else if (searchParams.get('type') === 'profile') {
+      // 
+    }
+
+    return NextResponse.json({ message: 'User status updated!' }, { status: 200 });
+  }
+  
+  catch (error) {
+    console.error(error);
+    return NextResponse.json(error, { status: 500 });
   }
 };

@@ -10,7 +10,7 @@ import 'firebaseui/dist/firebaseui.css'
 import Cookies from 'universal-cookie';
 
 import { auth } from '@/db/firebase';
-import { registerUserWithUID, updateLastLogin } from '@/db/utils';
+import { registerUserWithUID, updateUser } from '@/db/utils';
 import { useAppState } from '@/utils/AppStateProvider';
 
 type TFirebaseUI = {
@@ -35,25 +35,52 @@ export default function Home() {
       callbacks: {
         signInSuccessWithAuthResult: (authResult: any) => {
           (async () => {
-            try {
-              cookies.set('auth-token', authResult.credential.accessToken);
-      
-              const isNewUser = authResult.additionalUserInfo.isNewUser;
+            cookies.set('auth-token', authResult.credential.accessToken);
+            
+            const isNewUser = authResult.additionalUserInfo.isNewUser;
+            
+            const displayName = authResult.user.displayName;
+            const email = authResult.user.email;
+            const photoURL = authResult.user.photoURL;
+            const uid = authResult.user.uid;
+            
+            // If this is the first time sign in,
+            if (isNewUser) {
+              // Register a new user with Firebase.
+              try {
+                const res1 = await registerUserWithUID(displayName, email, photoURL, uid);
 
-              const displayName = authResult.user.displayName;
-              const email = authResult.user.email;
-              const photoURL = authResult.user.photoURL;
-              const uid = authResult.user.uid;
-
-              // If this is the first time sign in, create a new user data and store it.
-              if (isNewUser) await registerUserWithUID(displayName, email, photoURL, uid);
-              // Otherwise, update the isOnline status
-              else await updateLastLogin(uid);
-            } catch (err) {
-              console.error('Error getting document:', err);
-              dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-              dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+                // Error handling: ?
+                if (!res1) {
+                  // 
+                }
+              }
+              // In case of an error, show an error message.
+              catch (err) {
+                console.error('Error getting document:', err);
+                dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+              }
             }
+            // If a user is returning,
+            else {
+              // Update the isOnline.
+              try {
+                const res2 = await updateUser(uid, 'signin');
+  
+                // Error handling: Wrong credential
+                if (!res2) {
+                  // 
+                }
+              }
+              // In case of an error, show an error message.
+              catch (err) {
+                console.error('Error getting document:', err);
+                dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+              }
+            }
+
             router.push('/channels');
           })();
           // https://firebaseopensource.com/projects/firebase/firebaseui-web/#available-callbacks

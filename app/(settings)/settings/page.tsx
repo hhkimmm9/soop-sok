@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { auth, db } from '@/db/firebase';
+import { auth } from '@/db/firebase';
+import { updateUser } from '@/db/utils';
 import { useSignOut } from 'react-firebase-hooks/auth';
-import { doc, updateDoc } from 'firebase/firestore';
 
 const Settings = () => {
   const router = useRouter();
@@ -14,15 +14,30 @@ const Settings = () => {
 
   const handleSignout = async () => {
     if (auth && auth.currentUser) {
+      // Toggle isLogin to off.
       try {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userRef, { isOnline: false });
-      } catch (err) {
+        const res = await updateUser(auth.currentUser.uid, 'signout');
+
+        // Error handling: session expired.
+        if (!res) {
+          // 
+        }
+      }
+      // 
+      catch (err) {
         console.error(err);
       }
 
-      const res = await signOut();
-      if (res) router.push('/');
+      // Clean up the user session.
+      try {
+        await signOut();
+      }
+      // 
+      catch (err) {
+        console.error(err);
+      }
+
+      router.push('/');
     }
   };
 

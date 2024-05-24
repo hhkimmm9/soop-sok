@@ -4,35 +4,45 @@ const cookies = new Cookies();
 const token = cookies.get('auth-token');
 
 export async function registerUserWithUID(
-  displayName: string, email: string, photoURL: string, uid: string
-) {
+  displayName: string,
+  email: string,
+  photoURL: string,
+  uid: string
+): Promise<boolean | null> {
   console.log("storeUsers", uid);
   try {
     const res = await fetch(`/api/users/${uid}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        displayName, email, photoURL
+        displayName,
+        email,
+        photoURL
       })
     });
-    const newUser = await res.json();
-    console.log(newUser);
-    return newUser;
+    const ack = await res.json();
+    console.log(ack.message);
+
+    if (!ack.ok) return false;
+
+    return true;
   } catch (err) {
     console.error(err);
     return null;
   }
 };
 
-export async function updateLastLogin(uid: string) {
+export async function updateUser(
+  uid: string,
+  status: string
+): Promise<boolean | null> {
   try {
-    const res = await fetch(`/api/users/${uid}?type=signin`, {
+    const res = await fetch(`/api/users/${uid}?type=${status}`, {
       method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
       }
     });
@@ -118,8 +128,8 @@ export async function sendMessage(
     const res = await fetch('/api/messages', {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         uid, cid, senderName, senderPhotoURL, message
