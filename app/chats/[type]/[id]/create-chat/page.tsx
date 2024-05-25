@@ -12,14 +12,10 @@ import { useState, useEffect, ChangeEvent, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import {
-  collection, addDoc,
-  serverTimestamp, query, where
-} from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { getBanner, createChatRoom } from '@/db/utils';
 
 import { TBanner } from '@/types';
-import { getBanner } from '@/db/utils';
 
 type pageProps = {
   params: {
@@ -47,10 +43,6 @@ const Page = ({ params }: pageProps) => {
   useEffect(() => {
     const fetchBannerOptions = async () => {
       if (auth) {
-        const q = query(collection(db, 'banners'),
-          where('selected', '==', true)
-        );
-
         try {
           const banner: TBanner | null = await getBanner();
           if (banner) {
@@ -60,7 +52,8 @@ const Page = ({ params }: pageProps) => {
             }));
           }
           setIsLoading(false);
-        } catch (err) {
+        }
+        catch (err) {
           console.error(err);
           dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
           dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
@@ -111,18 +104,18 @@ const Page = ({ params }: pageProps) => {
     // validate the inputs
     if (auth && auth.currentUser && formState.name.length > 0) {
       try {
-        const chatRef = await addDoc(collection(db, 'chats'), {
-          capacity: formState.capacity,
-          cid: params.id,
-          createdAt: serverTimestamp(),
-          isPrivate: formState.isPrivate,
-          name: formState.name,
-          password: formState.password,
-          tag: formState.tag
-        });
+        const cid = await createChatRoom(
+          formState.capacity,
+          params.id,
+          formState.isPrivate,
+          formState.name,
+          formState.password,
+          formState.tag
+        );
 
-        router.push(`/chats/private-chat/${chatRef.id}`);
-      } catch (err) {
+        router.push(`/chats/private-chat/${cid}`);
+      }
+      catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
         dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });

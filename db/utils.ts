@@ -123,6 +123,35 @@ export async function fetchChannels() {
   }
 };
 
+export async function createChatRoom(
+  capacity: number,
+  cid: string,
+  isPrivate: boolean,
+  name: string,
+  password: string,
+  tag: string
+) {
+  try {
+    const res = await fetch('/api/chats', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        capacity, cid, isPrivate, name, password, tag
+      })
+    });
+    const ack = await res.json();
+    console.log(ack.message);
+
+    return ack.cid;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
 export async function addBanner(
   cid: string,
   content: string,
