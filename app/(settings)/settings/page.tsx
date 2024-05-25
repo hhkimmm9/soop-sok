@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { auth } from '@/db/firebase';
-import { updateUser } from '@/db/utils';
+import { updateUserStatus } from '@/db/utils';
 import { useSignOut } from 'react-firebase-hooks/auth';
 
 const Settings = () => {
@@ -16,7 +16,7 @@ const Settings = () => {
     if (auth && auth.currentUser) {
       // Toggle isLogin to off.
       try {
-        const res = await updateUser(auth.currentUser.uid, 'signout');
+        const res = await updateUserStatus(auth.currentUser.uid, 'signout');
 
         // Error handling: session expired.
         if (!res) {

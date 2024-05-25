@@ -1,3 +1,4 @@
+import { TUser } from '@/types';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
@@ -35,9 +36,9 @@ export async function registerUserWithUID(
   }
 };
 
-export async function updateUser(
+export async function updateUserStatus(
   uid: string,
-  status: string
+  status: string,
 ): Promise<boolean | null> {
   try {
     const res = await fetch(`/api/users/${uid}?type=${status}`, {
@@ -53,6 +54,53 @@ export async function updateUser(
 
     return true;
   } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+export async function updateUserProfile(
+  uid: string,
+  user: TUser,
+): Promise<boolean | null> {
+  try {
+    const res = await fetch(`/api/users/${uid}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user
+      })
+    });
+    const ack = await res.json();
+    console.log('updateUserProfile >> ', ack.message);
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+export async function fetchUser(uid: string): Promise<TUser | null> {
+  try {
+    const res = await fetch(`/api/users/${uid}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    const user = await res.json();
+    console.log('fetchUser >> ', user);
+
+    // TODO: need consistency
+    if (!user) return null;
+    return user;
+  }
+
+  catch (err) {
     console.error(err);
     return null;
   }

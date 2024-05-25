@@ -10,7 +10,7 @@ import 'firebaseui/dist/firebaseui.css'
 import Cookies from 'universal-cookie';
 
 import { auth } from '@/db/firebase';
-import { registerUserWithUID, updateUser } from '@/db/utils';
+import { registerUserWithUID, updateUserStatus } from '@/db/utils';
 import { useAppState } from '@/utils/AppStateProvider';
 
 type TFirebaseUI = {
@@ -66,7 +66,7 @@ export default function Home() {
             else {
               // Update the isOnline.
               try {
-                const res2 = await updateUser(uid, 'signin');
+                const res2 = await updateUserStatus(uid, 'signin');
   
                 // Error handling: Wrong credential
                 if (!res2) {

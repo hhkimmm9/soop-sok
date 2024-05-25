@@ -12,19 +12,41 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string }}
 ) {
-  const id = params.id;
-  const searchParams = req.nextUrl.searchParams;
-};
-
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const id = params.id;
-  // const searchParams = req.nextUrl.searchParams;
-  const { displayName, email, photoURL }  = await req.json();
-
   const token = getToken(req);
   if (!token) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
   }
+
+  const id = params.id;
+
+  const userRef = db.collection('users').doc(id);
+  
+  try {
+    const res = await userRef.get();
+    
+    if (!res.exists) {
+      return NextResponse.json({ error: 'No user found' }, { status: 404 });
+    }
+
+    return NextResponse.json(res.data(), { status: 200 });
+    
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(error, { status: 500 });
+  }
+
+  
+};
+
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+  const token = getToken(req);
+  if (!token) {
+    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+  }
+
+  const id = params.id;
+  // const searchParams = req.nextUrl.searchParams;
+  const { displayName, email, photoURL }  = await req.json();
 
   const userRef = db.collection('users').doc(id);
   
@@ -54,13 +76,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 };
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const id = params.id;
-  const searchParams = req.nextUrl.searchParams;
-  
   const token = getToken(req);
   if (!token) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
   }
+
+  const id = params.id;
+  const searchParams = req.nextUrl.searchParams;
   
   const userRef = db.collection('users').doc(id);
   
@@ -81,8 +103,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
     
     // user profile update
-    else if (searchParams.get('type') === 'profile') {
-      // 
+    else if (searchParams.get('type') === null) {
+      const { user } = await req.json();
+      await userRef.update(user);
     }
 
     return NextResponse.json({ message: 'User status updated!' }, { status: 200 });
