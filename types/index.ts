@@ -49,6 +49,12 @@ export type TBanner = {
   selected: boolean;
   tagOptions: string[];
 };
+export type TFriend = {
+  id: string,
+  senderId: string,
+  friendId: string,
+  createdAt: FirestoreTimestamp
+};
 export type FirestoreTimestamp = {
   seconds: number,
   nanoseconds: number

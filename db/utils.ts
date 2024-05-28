@@ -240,3 +240,28 @@ export async function fetchLatestMessage(cid: string) {
   }
 };
 
+export async function makeFriend(
+  senderId: string,
+  friendId: string
+): Promise<Boolean> {
+  try {
+    const res = await fetch('/api/friends', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        senderId,
+        friendId
+      })
+    });
+
+    const ack = await res.json();
+    console.log(ack.message);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};

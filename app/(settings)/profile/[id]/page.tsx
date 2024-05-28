@@ -9,6 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
+import { makeFriend } from '@/db/utils';
 import {
   collection, doc, query, where,
   addDoc, getDoc, getDocs, serverTimestamp
@@ -73,17 +74,18 @@ const Page = () => {
   }, [fetchProfileData, checkIsMyFriend]);
 
   const addUserToFriendList = async () => {
-    try {
-      await addDoc(collection(db, 'friend_list'), {
-        creaetdAt: serverTimestamp(),
-        receiverId: id,
-        senderId: auth.currentUser?.uid,
-      });
-      setIsMyFriend(true);
-    } catch (err) {
-      console.error(err);
-      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    if (auth && auth.currentUser) {
+      try {
+        await makeFriend(
+          auth.currentUser?.uid,
+          id.toString(),
+        );
+        setIsMyFriend(true);
+      } catch (err) {
+        console.error(err);
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      }
     }
   };
 
