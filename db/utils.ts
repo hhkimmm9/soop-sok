@@ -93,9 +93,8 @@ export async function fetchUser(uid: string): Promise<TUser | null> {
       }
     })
     const user = await res.json();
-    console.log('fetchUser >> ', user);
+    console.log('fetchUser', user);
 
-    // TODO: need consistency
     if (!user) return null;
     return user;
   }
@@ -240,10 +239,7 @@ export async function fetchLatestMessage(cid: string) {
   }
 };
 
-export async function makeFriend(
-  senderId: string,
-  friendId: string
-): Promise<Boolean> {
+export async function makeFriend(friendId: string, senderId: string): Promise<Boolean> {
   try {
     const res = await fetch('/api/friends', {
       method: 'POST',
@@ -251,10 +247,7 @@ export async function makeFriend(
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        senderId,
-        friendId
-      })
+      body: JSON.stringify({ friendId, senderId })
     });
 
     const ack = await res.json();
@@ -263,5 +256,47 @@ export async function makeFriend(
   } catch (err) {
     console.error(err);
     return false;
+  }
+};
+
+export async function fetchFriends(senderId: string) {
+  try {
+    const res = await fetch(`/api/friends?senderId=${senderId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const friends = await res.json();
+    console.log('fetchFriends', friends);
+
+    if (!res.ok) {
+      return [];
+    }
+
+    return friends;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+export async function checkIsMyFriend(uid: string, friendId: string) {
+  try {
+    const res = await fetch(`/api/friends?senderId=${uid}&friendId=${friendId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const isMyFriend = await res.json();
+    console.log('checkIsMyFriend', isMyFriend.isMyFriend);
+
+    return isMyFriend.isMyFriend;
+  } catch (err) {
+    console.error(err);
+    return null;
   }
 };

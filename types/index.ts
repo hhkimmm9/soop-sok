@@ -19,7 +19,7 @@ export type TPrivateChat = {
   from: string,
   to: string,
   createdAt: FirestoreTimestamp
-}
+};
 export type TMessage = {
   uid: string,
   cid: string,
@@ -43,19 +43,19 @@ export type TUser = {
   uid: string
 };
 export type TBanner = {
-  cid: string;
-  content: string;
-  createdAt: FirestoreTimestamp;
-  selected: boolean;
-  tagOptions: string[];
+  cid: string,
+  content: string,
+  createdAt: FirestoreTimestamp,
+  selected: boolean,
+  tagOptions: string[]
 };
 export type TFriend = {
-  id: string,
-  senderId: string,
+  createdAt: FirestoreTimestamp,
   friendId: string,
-  createdAt: FirestoreTimestamp
+  id: string,
+  senderId: string
 };
 export type FirestoreTimestamp = {
-  seconds: number,
-  nanoseconds: number
+  _seconds: number,
+  _nanoseconds: number
 };
