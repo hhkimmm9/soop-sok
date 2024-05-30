@@ -7,7 +7,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
+import { fetchUser } from '@/db/utils';
 import {
   collection, doc, query,
   or, where,
@@ -16,34 +17,34 @@ import {
 } from 'firebase/firestore';
 
 import { TUser } from '@/types';
-import { formatTimeAgo } from '@/utils/utils';
-
+import { formatTimeAgo } from '@/utils/functions';
 import { ChatBubbleBottomCenterIcon } from '@heroicons/react/24/outline';
-
-type FriendProps = {
-  friendId: string
-};
 
 const NO_PIC_PLACEHOLDER = 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676';
 
-export const Friend = ({ friendId }: FriendProps ) => {
-  const [friend, setFriend] = useState<TUser>();
+type FriendProp = {
+  friendId: string
+};
+
+export const Friend = ({ friendId }: FriendProp ) => {
+  const [friend, setFriend] = useState<TUser | null>(null);
 
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
+  const { dispatch } = useAppState();
 
   useEffect(() => {
-    const fetchFriend = async () => {
+    const getUser = async () => {
       if (auth) {
-        const q = doc(db, 'users', friendId);
         
         try {
-          const snapshot = await getDoc(q);
-          if (snapshot.exists()) {
-            const data = snapshot.data();
-            setFriend(data as TUser);
+          const user = await fetchUser(friendId);
+          
+          if (!user) {
+            
           }
+
+          setFriend(user as TUser);
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
@@ -51,7 +52,7 @@ export const Friend = ({ friendId }: FriendProps ) => {
         }
       }
     };
-    fetchFriend();
+    getUser();
   }, [dispatch, friendId]);
   
   const redirectToDMChat = async () => {
@@ -67,11 +68,13 @@ export const Friend = ({ friendId }: FriendProps ) => {
             (where('from', '==', opponentId), where('to', '==', myId)),
           )
         );
+        // TODO: add havePrivateChat to friend_list
         const querySnapshot = await getDocs(q);
     
         // if it doesn't, create a dm chat room first
         if (querySnapshot.empty) {
           try {
+            // TODO: createPrivateChat
             const chatRef = await addDoc(collection(db, 'private_chats'), {
               from: myId,
               to: opponentId,

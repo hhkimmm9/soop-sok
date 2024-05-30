@@ -7,7 +7,8 @@ import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
@@ -24,24 +25,38 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<TChat[]>([]);
 
   const router = useRouter();
 
-  const [collectionSnapshot] = useCollection(
-    query(collection(db, 'chats'),
-      where('cid', '==', params.id),
-      orderBy('createdAt', 'asc')
-    ), {
-      snapshotListenOptions: { includeMetadataChanges: true },
+  const { dispatch } = useAppState();
+
+  // Authenticate a user
+  useEffect(() => {
+    if (!auth) {
+      router.push('/');
+    } else {
+      setIsAuthenticated(true);
     }
+  }, [router]);
+
+  // Fetch data if a user is authenticated
+  const chatsRef = collection(db, 'chats');
+  const chatsQuery = query(chatsRef,
+    where('cid', '==', params.id),
+    orderBy('createdAt', 'asc')
+  );
+  const [FSSnapshot, FSLoading, FSError] = useCollection(
+    isAuthenticated ? chatsQuery : null
   );
 
+  // Handling retrieved data
   useEffect(() => {
     const chatList: TChat[] = [];
-    if (collectionSnapshot && !collectionSnapshot.empty) {
-      collectionSnapshot.forEach((doc) => {
+    if (FSSnapshot && !FSSnapshot.empty) {
+      FSSnapshot.forEach((doc) => {
         chatList.push({
           id: doc.id,
           ...doc.data()
@@ -49,16 +64,26 @@ const Page = ({ params }: pageProps) => {
       });
       setChats(chatList);
     }
-    setIsLoading(false);
-  }, [collectionSnapshot])
+  }, [FSSnapshot])
 
+  // Error handling
+  useEffect(() => {
+    if (FSError !== undefined) {
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+
+      router.push(`/chats/${params.type}/${params.id}/features`);
+    }
+  }, [router, FSError, dispatch, params.type, params.id]);
+
+  // Local functions
   const redirectToFeaturesPage = () => {
     if (auth) {
       router.push(`/chats/${params.type}/${params.id}/features`);
     }
   };
 
-  if (isLoading) return (
+  if (!isAuthenticated || FSLoading) return (
     <div className='h-full flex justify-center items-center'>
       <ProgressIndicator />
     </div>

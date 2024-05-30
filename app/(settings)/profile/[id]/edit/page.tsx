@@ -18,8 +18,8 @@ import { useState, useEffect, ChangeEvent, ReactNode, } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { fetchUser, updateUserProfile } from '@/db/utils';
 
 import { TUser } from '@/types';
 
@@ -44,9 +44,7 @@ const MBTIOptions = [
 
 const ProfileEdit = () => {
   const [isLoading, setIsLoading] = useState(true);
-
-  // TODO: combine states.
-  const [profile, setProfile] = useState<TUser | null>(null);
+  const [user, setUser] = useState<TUser | null>(null);
   
   const { id } = useParams();
   const router = useRouter();
@@ -54,17 +52,18 @@ const ProfileEdit = () => {
   const { state, dispatch } = useAppState();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    (async () => {
       if (auth && auth.currentUser) {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-
         try {
-          const querySnapshot = await getDoc(userRef);
-          if (querySnapshot.exists()) {
-            const data = querySnapshot.data() as TUser;
-            // TODO: combine states.
-            setProfile(data);
+          const user = await fetchUser(auth.currentUser.uid);
+
+          // Error handling: 404 not found
+          if (!user) {
+            // 
           }
+
+          setUser(user);
+
           setIsLoading(false);
         } catch (err) {
           console.error(err);
@@ -72,23 +71,16 @@ const ProfileEdit = () => {
           dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
         }
       };
-    };
-    fetchUser();
+    })();
   }, [dispatch]);
 
+  // It needs to be in useEffect to work with a confirm dialog.
   useEffect(() => {
     const handleUpdate = async () => {
-      if (auth && auth.currentUser && profile) {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-  
+      if (auth && auth.currentUser && user) {
         try {
-          await updateDoc(userRef, {
-            displayName: profile.displayName,
-            profile: {
-              introduction: profile.profile?.introduction,
-              mbti: profile.profile?.mbti,
-            }
-          })
+          await updateUserProfile(auth.currentUser.uid, user);
+
           router.push(`/profile/${id}`);
         } catch (err) {
           console.error(err);
@@ -107,10 +99,28 @@ const ProfileEdit = () => {
     else {
       dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false });
     }
-  }, [state.actionsDialogResponse, dispatch, id, profile, router]);
+  }, [state.actionsDialogResponse, dispatch, id, user, router]);
 
+  const updateField = (field: string, value: any) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [field]: value,
+      } as TUser;
+    });
+  };
+
+  const handlePhotoURLChange = (e: ChangeEvent<HTMLInputElement>) => {
+    updateField('photoURL', e.target.value);
+  };
+  
+  const handleDisplayNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    updateField('displayName', e.target.value);
+  };
+  
   const updateProfileField = (field: string, value: any) => {
-    setProfile((prev) => {
+    setUser((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
@@ -121,19 +131,11 @@ const ProfileEdit = () => {
       } as TUser;
     });
   };
-
-  const handlePhotoURLChange = (e: ChangeEvent<HTMLInputElement>) => {
-    updateProfileField('photoURL', e.target.value);
-  };
-
-  const handleDisplayNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    updateProfileField('displayName', e.target.value);
-  };
-
+  
   const handleMBTIChange = (e: SelectChangeEvent<string>, child: ReactNode) => {
     updateProfileField('mbti', e.target.value as string);
   };
-
+  
   const handleIntroductionChange = (e: ChangeEvent<HTMLInputElement>) => {
     updateProfileField('introduction', e.target.value);
   };
@@ -149,14 +151,14 @@ const ProfileEdit = () => {
     </div>
   )
 
-  else if (!isLoading && profile) return (<>
+  else if (!isLoading && user && user.profile) return (<>
     <div className='pt-10 flex flex-col gap-6'>
       {/* profile picture */}
       <div className='flex justify-center'>
         <label htmlFor='profilePic'>
           {/* <Avatar src={profile.photoURL} alt='Profile Picture' sx={{ width: 192, height: 192 }} /> */}
           <Image
-            src={profile.photoURL}
+            src={user.photoURL}
             alt='Profile Picture'
             width={192}
             height={192}
@@ -177,7 +179,7 @@ const ProfileEdit = () => {
             id='outlined-basic'
             label='Username'
             variant='outlined'
-            value={profile.displayName}
+            value={user.displayName}
             onChange={handleDisplayNameChange}
           />
         </div>
@@ -188,7 +190,7 @@ const ProfileEdit = () => {
             label='Username'
             variant='outlined'
             multiline maxRows={8}
-            value={profile.profile?.introduction || ''}
+            value={user.profile.introduction || ''}
             onChange={handleIntroductionChange}
           />
         </div>
@@ -200,7 +202,7 @@ const ProfileEdit = () => {
               labelId='mbti-select-label'
               id='mbti-select'
               label='MBTI'
-              value={profile.profile?.mbti || ''}
+              value={user.profile.mbti || ''}
               onChange={handleMBTIChange}
             >
               { MBTIOptions.map((option) => (

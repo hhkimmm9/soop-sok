@@ -1,42 +1,47 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
-
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { auth, db } from '@/utils/firebase';
+import { auth } from '@/db/firebase';
+import { updateUserStatus } from '@/db/utils';
 import { useSignOut } from 'react-firebase-hooks/auth';
-import { doc, updateDoc } from 'firebase/firestore';
 
 const Settings = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  
   const router = useRouter();
   
   const [signOut] = useSignOut(auth);
 
   const handleSignout = async () => {
     if (auth && auth.currentUser) {
+      // Toggle isLogin to off.
       try {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userRef, { isOnline: false });
-      } catch (err) {
+        const res = await updateUserStatus(auth.currentUser.uid, 'signout');
+
+        // Error handling: session expired.
+        if (!res) {
+          // 
+        }
+      }
+      // 
+      catch (err) {
         console.error(err);
       }
 
-      const res = await signOut();
-      if (res) router.push('/');
+      // Clean up the user session.
+      try {
+        await signOut();
+      }
+      // 
+      catch (err) {
+        console.error(err);
+      }
+
+      router.push('/');
     }
   };
 
-  if (isLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (
+  return (
     <div className='flex flex-col gap-4 items-center'>
       <Link href={`/profile/${auth.currentUser?.uid}`} className='
         w-full py-4 rounded-lg shadow-md bg-green-800

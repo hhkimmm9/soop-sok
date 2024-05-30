@@ -6,12 +6,12 @@ import MessageInput from '@/components/chat-window/MessageInput';
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase';
+import { useAppState } from '@/utils/AppStateProvider';
+import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection, query,
-  where, orderBy, startAfter, limit,
-  getDocs,
+  where, orderBy, limit,
 } from 'firebase/firestore';
 
 import { TMessage, FirestoreTimestamp } from '@/types';
@@ -23,12 +23,13 @@ import {
 
 type MessageContainerProps = {
   type: string,
-  cid: string,
+  cid: string
 };
 
 const NUM_MESSAGES_PER_FETCH = 10;
 
 const MessageContainer = ({ type, cid }: MessageContainerProps) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [prevMessages, setPrevMessages] = useState<TMessage[]>([]);
   const [firstVisible, setFirstVisible] = useState<FirestoreTimestamp | null>(null);
@@ -38,34 +39,35 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
 
   const router = useRouter();
 
-  // 1. Fetch messages associated with the channel ID in real time.
-  const [messagesSnapshot] = useCollection(
-    query(collection(db, 'messages'),
-      where('cid', '==', cid),
-      orderBy('createdAt', 'desc'),
-      limit(NUM_MESSAGES_PER_FETCH)
-    ), {
-      snapshotListenOptions: { includeMetadataChanges: true }
-    }
-  );
+  const { dispatch } = useAppState();
 
+  // Authenticate a user
   useEffect(() => {
     if (!auth) {
       router.push('/');
-      return;
+    } else {
+      setIsAuthenticated(true);
     }
   }, [router]);
+
+  // 1. Fetch messages associated with the channel ID in real time.
+  const messagesRef = collection(db, 'messages');
+  const messagesQuery = query(messagesRef,
+    where('cid', '==', cid),
+    orderBy('createdAt', 'desc'),
+    limit(NUM_MESSAGES_PER_FETCH)
+  );
+  const [FSSnapshot, FSLoading, FSError] = useCollection(
+    isAuthenticated ? messagesQuery : null
+  );
 
   // 2. Once messages are fetched, store them into the state.
   useEffect(() => {
     const messageList: TMessage[] = []; 
 
-    if (messagesSnapshot && !messagesSnapshot.empty) {
-      messagesSnapshot.forEach((doc) => {
-        messageList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TMessage);
+    if (FSSnapshot && !FSSnapshot.empty) {
+      FSSnapshot.forEach((doc) => {
+        messageList.push(doc.data() as TMessage);
       });
 
       const reversedMessageList = messageList.reverse();
@@ -80,7 +82,15 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
         }
       }, 300);
     }
-  }, [messagesSnapshot]);
+  }, [FSSnapshot]);
+
+  // Error handling
+  useEffect(() => {
+    if (FSError !== undefined) {
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    }
+  }, [router, FSError, dispatch]);
 
   // useEffect(() => {
   //   const messageList: TMessage[] = []; 
@@ -115,46 +125,47 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
 
   // ----------------------------------------------------------------
   
+  // Local functions
   const lazyLoadMessages = async () => {
-    const prevMessageList: TMessage[] = [];
-    const q = query(collection(db, 'messages'),
-      where('cid', '==', cid),
-      orderBy('createdAt', 'desc'),
-      startAfter(firstVisible),
-      limit(NUM_MESSAGES_PER_FETCH)
-    );
-    const prevMessagesSnapshot = await getDocs(q);
+    // const prevMessageList: TMessage[] = [];
+    // const q = query(collection(db, 'messages'),
+    //   where('cid', '==', cid),
+    //   orderBy('createdAt', 'desc'),
+    //   startAfter(firstVisible),
+    //   limit(NUM_MESSAGES_PER_FETCH)
+    // );
+    // const prevMessagesSnapshot = await getDocs(q);
 
-    if (!prevMessagesSnapshot.empty) {
-      prevMessagesSnapshot.forEach((doc) => {
-        prevMessageList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TMessage);
-      });
+    // if (!prevMessagesSnapshot.empty) {
+    //   prevMessagesSnapshot.forEach((doc) => {
+    //     prevMessageList.push({
+    //       id: doc.id,
+    //       ...doc.data()
+    //     } as TMessage);
+    //   });
       
-      const reversedMessageList = prevMessageList.reverse();
+    //   const reversedMessageList = prevMessageList.reverse();
       
-      // update the first visible value for pagination.
-      setFirstVisible(reversedMessageList[0].createdAt);
-      setPrevMessages((prev) => [ ...reversedMessageList, ...prev ]);
-    } else setIsAll(true);
+    //   // update the first visible value for pagination.
+    //   setFirstVisible(reversedMessageList[0].createdAt);
+    //   setPrevMessages((prev) => [ ...reversedMessageList, ...prev ]);
+    // } else setIsAll(true);
   };
 
   // When the scroll hits the top of the window, lazy load previous messages.
   const handleScroll = async () => {
-    const scrollContainer = chatWindowRef.current;
+    // const scrollContainer = chatWindowRef.current;
 
-    if (scrollContainer?.scrollTop === 0 && !isAll) {
-      await lazyLoadMessages();
+    // if (scrollContainer?.scrollTop === 0 && !isAll) {
+    //   await lazyLoadMessages();
 
-      // TODO: scroll down to the bottom.
-      setTimeout(() => {
-        if (chatWindowRef.current) {
-          chatWindowRef.current.scrollTo(0, chatWindowRef.current.clientHeight);
-        }
-      }, 300);
-    }
+    //   // TODO: scroll down to the bottom.
+    //   setTimeout(() => {
+    //     if (chatWindowRef.current) {
+    //       chatWindowRef.current.scrollTo(0, chatWindowRef.current.clientHeight);
+    //     }
+    //   }, 300);
+    // }
   };
 
   const redirectToFeaturesPage = () => {
@@ -166,42 +177,40 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
     router.push(`/private-chats/${auth.currentUser?.uid}`);
   };
 
-  return (
-    <>
-      <div ref={chatWindowRef} onScroll={handleScroll}
-        className='
-          grow p-4 rounded-lg overflow-y-auto shadow-sm bg-white
-          flex flex-col gap-5
-      '>
-        { prevMessages.map((message: TMessage) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
-        { messages.map((message: TMessage) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
-      </div>
+  return (<>
+    <div ref={chatWindowRef} onScroll={handleScroll}
+      className='
+        grow p-4 rounded-lg overflow-y-auto shadow-sm bg-white
+        flex flex-col gap-5
+    '>
+      { prevMessages.map((message: TMessage) => (
+        <ChatMessage key={message.createdAt.toString()} message={message} />
+      ))}
+      { messages.map((message: TMessage) => (
+        <ChatMessage key={message.createdAt.toString()} message={message} />
+      ))}
+    </div>
 
-      {/* features and message input box */}
-      <div className='flex justify-between gap-3'>
-        <div className='p-2 shadow-sm rounded-lg bg-white flex items-center'>
-          { type === 'public-chat' ? (
-            // for channel chats & room chats
-            <div onClick={redirectToFeaturesPage}>
-              <Bars3Icon className='h-5 w-5' />
-            </div>
-          ) : (
-            // for private chats
-            <div onClick={leavePrivateChat}>
-              <ArrowLeftIcon className='h-5 w-5' />
-            </div>
-          )}
-        </div>
-        <div className='grow'>
-          <MessageInput cid={cid} />
-        </div>
+    {/* features and message input box */}
+    <div className='flex justify-between gap-3'>
+      <div className='p-2 shadow-sm rounded-lg bg-white flex items-center'>
+        { type === 'public-chat' ? (
+          // for channel chats & room chats
+          <div onClick={redirectToFeaturesPage}>
+            <Bars3Icon className='h-5 w-5' />
+          </div>
+        ) : (
+          // for private chats
+          <div onClick={leavePrivateChat}>
+            <ArrowLeftIcon className='h-5 w-5' />
+          </div>
+        )}
       </div>
-    </>  
-  )
+      <div className='grow'>
+        <MessageInput cid={cid} />
+      </div>
+    </div>
+  </>);
 };
 
 export default MessageContainer;

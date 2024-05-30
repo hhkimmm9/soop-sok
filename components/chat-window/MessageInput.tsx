@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { sendMessage } from '@/db/utils';
 
 import {
   PaperAirplaneIcon,
@@ -13,7 +13,7 @@ type MessageinputProps = {
 };
 
 const MessageInput = ({ cid }: MessageinputProps) => {
-  const [messageInput, setMessageInput] = useState('');
+  const [message, setMessage] = useState('');
 
   const { state, dispatch } = useAppState();
 
@@ -21,18 +21,15 @@ const MessageInput = ({ cid }: MessageinputProps) => {
     e.preventDefault();
     
     // check if the user is signed in and the length of the input is greater than 0.
-    if (auth && auth.currentUser && messageInput.length > 0) {
+    if (auth && auth.currentUser && message.length > 0) {
       const uid = auth.currentUser.uid;
+      const senderName = auth.currentUser.displayName;
+      const senderPhotoURL = auth.currentUser.photoURL;
       
       try {
-        await addDoc(collection(db, 'messages'), {
-          cid: cid,
-          createdAt: serverTimestamp(),
-          sentBy: uid,
-          text: messageInput
-        })
+        await sendMessage(uid, cid, senderName, senderPhotoURL, message);
   
-        setMessageInput('');
+        setMessage('');
       } catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
@@ -48,7 +45,7 @@ const MessageInput = ({ cid }: MessageinputProps) => {
         <form onSubmit={(e) => handleSubmit(e)}
           className='h-8 flex items-center justify-between'>
           <input type='text'
-            value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
+            value={message} onChange={(e) => setMessage(e.target.value)}
             className='grow px-2 py-1 outline-none'
           />
           <button type='submit' className='mr-2'>

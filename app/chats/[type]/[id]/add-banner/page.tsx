@@ -1,6 +1,5 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
 import {
   TextField, Button,
 } from '@mui/material';
@@ -9,8 +8,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { addBanner } from '@/db/utils';
 
 import {
   BackspaceIcon
@@ -24,9 +23,8 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [content, setContent] = useState('');
-  const [tagOption, setTagOption] = useState('');
+  const [bannerContent, setBannerContent] = useState('');
+  const [tagInput, setTagInput] = useState('');
   const [tagOptions, setTagOptions] = useState<string[]>([]);
 
   const router = useRouter();
@@ -36,13 +34,13 @@ const Page = ({ params }: pageProps) => {
   const addToList = () => {
     if (tagOptions.length < 5) {
       setTagOptions((prev) => {
-        if (!prev.includes(tagOption)) {
-          return [ ...prev, tagOption ];
+        if (!prev.includes(tagInput)) {
+          return [ ...prev, tagInput ];
         } else return [ ...prev ];
       });
     }
     else {
-      // too many tag options
+      // TODO: dialog - too many tag options.
     }
   };
 
@@ -61,17 +59,14 @@ const Page = ({ params }: pageProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (auth && auth.currentUser && content.length > 0) {
+    if (auth && auth.currentUser && bannerContent.length > 0) {
       try {
-        const bannerRef = await addDoc(collection(db, 'banners'), {
-          cid: params.id,
-          content,
-          createdAt: serverTimestamp(),
-          selected: false,
-          tagOptions,
-        });
 
-        if (bannerRef) {
+        const res = await addBanner(params.id, bannerContent, tagOptions);
+
+        // 
+
+        if (res) {
           router.push(`/chats/public-chat/${params.id}`);
         }
       } catch (err) {
@@ -82,12 +77,7 @@ const Page = ({ params }: pageProps) => {
     }
   };
 
-  if (isLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (
+  return (
     <form onSubmit={(e) => handleSubmit(e)} className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto rounded-lg bg-white
@@ -95,17 +85,17 @@ const Page = ({ params }: pageProps) => {
       '>
         {/* name */}
         <TextField id='outlined-basic' label='Banner' variant='outlined'
-          value={content} onChange={(e) => setContent(e.target.value)}
+          value={bannerContent} onChange={(e) => setBannerContent(e.target.value)}
         />
 
         {/* tag options */}
         <div className='flex flex-col gap-4'>
           <div className='mt-2 flex gap-2'>
-            <TextField id='outlined-basic' label='Tag Option' variant='outlined'
-              value={tagOption} onChange={(e) => setTagOption(e.target.value)}
+            <TextField id='outlined-basic' label='Tag Input' variant='outlined'
+              value={tagInput} onChange={(e) => setTagInput(e.target.value)}
               className='grow'
             />
-            <Button variant='outlined' onClick={() => { addToList(); setTagOption(''); }}>
+            <Button variant='outlined' onClick={() => { addToList(); setTagInput(''); }}>
               Add
             </Button>
           </div>
@@ -115,7 +105,7 @@ const Page = ({ params }: pageProps) => {
             <div className='min-h-14 p-3 border border-gray-300 rounded-sm'>
               <div className='flex flex-col items-start gap-3'>
                 { tagOptions.map((tagOption, index) => (
-                  <div key={tagOption} className='w-full flex items-center justify-between'>
+                  <div key={`${index}-${tagOption}`} className='w-full flex items-center justify-between'>
                     <p className='whitespace-nowrap'>
                       { `${index+1}. ${tagOption}` }
                     </p>

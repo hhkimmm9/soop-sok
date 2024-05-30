@@ -13,7 +13,6 @@ import React, { useState, useEffect } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
 
-// TODO:
 const CONFIRM_TITLE = 'Are you sure you want to proceed?';
 const CONFIRM_MESSAGE = 'This action cannot be undone.';
 const CONFIRM_BUTTON_TEXT = 'Confirm';

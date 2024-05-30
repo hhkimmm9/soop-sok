@@ -1,18 +1,17 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
-
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import Image from 'next/image';
 import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-
 import Cookies from 'universal-cookie';
+
+import { auth } from '@/db/firebase';
+import { registerUserWithUID, updateUserStatus } from '@/db/utils';
+import { useAppState } from '@/utils/AppStateProvider';
 
 type TFirebaseUI = {
   default: typeof firebaseui;
@@ -36,40 +35,52 @@ export default function Home() {
       callbacks: {
         signInSuccessWithAuthResult: (authResult: any) => {
           (async () => {
-            try {
-              cookies.set('auth-token', authResult.credential.accessToken);
-      
-              const userRef = doc(db, 'users', authResult.user.uid);
-              const isNewUser = authResult.additionalUserInfo.isNewUser;
-              // If this is the first time sign in, create a new user data and store it.
-              if (isNewUser) {
-                await setDoc(userRef, {
-                  createdAt: serverTimestamp(),
-                  displayName: authResult.user.displayName,
-                  email: authResult.user.email,
-                  isOnline: true,
-                  lastLoginTime: serverTimestamp(),
-                  photoURL: authResult.user.photoURL,
-                  profile: {
-                    introduction: '',
-                    interests: [],
-                    mbti: ''
-                  },
-                  uid: authResult.user.uid
-                });
+            cookies.set('auth-token', authResult.credential.accessToken);
+            
+            const isNewUser = authResult.additionalUserInfo.isNewUser;
+            
+            const displayName = authResult.user.displayName;
+            const email = authResult.user.email;
+            const photoURL = authResult.user.photoURL;
+            const uid = authResult.user.uid;
+            
+            // If this is the first time sign in,
+            if (isNewUser) {
+              // Register a new user with Firebase.
+              try {
+                const res1 = await registerUserWithUID(displayName, email, photoURL, uid);
+
+                // Error handling: ?
+                if (!res1) {
+                  // 
+                }
               }
-              // Otherwise, update the isOnline status
-              else {
-                await updateDoc(userRef, {
-                  isOnline: true,
-                  lastLoginTime: serverTimestamp()
-                });
-              }    
-            } catch (err) {
-              console.error('Error getting document:', err);
-              dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-              dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+              // In case of an error, show an error message.
+              catch (err) {
+                console.error('Error getting document:', err);
+                dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+              }
             }
+            // If a user is returning,
+            else {
+              // Update the isOnline.
+              try {
+                const res2 = await updateUserStatus(uid, 'signin');
+  
+                // Error handling: Wrong credential
+                if (!res2) {
+                  // 
+                }
+              }
+              // In case of an error, show an error message.
+              catch (err) {
+                console.error('Error getting document:', err);
+                dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+              }
+            }
+
             router.push('/channels');
           })();
           // https://firebaseopensource.com/projects/firebase/firebaseui-web/#available-callbacks
@@ -126,4 +137,4 @@ export default function Home() {
       />
     </div>
   </>) : null;
-}
+};

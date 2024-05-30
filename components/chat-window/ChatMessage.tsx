@@ -1,65 +1,39 @@
-'use client';
-
 import Image from 'next/image';
-
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/db/firebase';
+import { TMessage } from '@/types';
 
-import { auth, db } from '@/utils/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-
-import { TUser, TMessage } from '@/types';
-
-type MessageProps = {
+type ChatMessageProps = {
   message: TMessage
 };
 
-const Message = ({ message } : MessageProps) => {
-  const [user, setUser] = useState<TUser | null>(null);
-
+const ChatMessage = ({ message } : ChatMessageProps) => {
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userRef = doc(db, 'users', message.sentBy);
-        const userSnapshot = await getDoc(userRef);
-        if (userSnapshot.exists()) {
-          const userData = { ...userSnapshot.data() } as TUser;
-          setUser(userData);
-        }
-      } catch (err) {
-        console.error(err);
-      };
-    };
-
-    fetchUser();
-  }, [message]);
-
   const redirectToProfile = () => {
-    if (auth) {
-      router.push(`/profile/${user?.uid}`);
-    }
+    if (auth) router.push(`/profile/${message?.uid}`);
   };
 
-  if (user) return (
+  return (
     <div className='grid grid-cols-6'>
       <div className='col-span-1 mt-2'>
         <div onClick={redirectToProfile}>
-          <Image src={user.photoURL} alt='Profile Picture'
+          <Image src={message?.senderPhotoURL} alt='Profile Picture'
             width={48} height={48}
             className='object-cover rounded-full'
           />
         </div>
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
-        <span className='text-sm text-gray-600'>{ user.displayName }</span>
+        <span className='text-sm text-gray-600'>
+          { message?.senderName }
+        </span>
         <div className='
           px-3 py-2 rounded-lg
           bg-gradient-to-b from-sky-500 to-sky-400
         '>
           <span className='text-neutral-100'>
-            { message.text }
+            { message.message }
           </span>
         </div>
       </div>
@@ -67,4 +41,4 @@ const Message = ({ message } : MessageProps) => {
   )
 };
 
-export default Message;
+export default ChatMessage;

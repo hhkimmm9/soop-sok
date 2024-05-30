@@ -9,8 +9,8 @@ import React, {
 
 import { TBanner } from '@/types';
 interface AppState {
-  publicChatURL: string | null,
-  privateChatURL: string | null,
+  publicChatURL: string,
+  privateChatURL: string,
   currentBanner: TBanner | null,
   showMessageDialog: boolean,
   messageDialogType: string | null,
@@ -31,8 +31,8 @@ type Action = (
 );
 
 const initialState: AppState = {
-  publicChatURL: null,
-  privateChatURL: null,
+  publicChatURL: '',
+  privateChatURL: '',
   currentBanner: null,
   showMessageDialog: false,
   messageDialogType: null,

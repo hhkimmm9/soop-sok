@@ -1,7 +1,7 @@
 import { FirestoreTimestamp } from '@/types'
 
 export const formatTimeAgo = (unixSeconds: FirestoreTimestamp) => {
-  const timestamp = unixSeconds.seconds;
+  const timestamp = unixSeconds._seconds;
 
   // Create a new Date object using the Unix timestamp
   const date = new Date(timestamp * 1000);

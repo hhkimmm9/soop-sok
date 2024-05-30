@@ -5,7 +5,7 @@ import { Badge, } from '@mui/material';
 import { useRouter, usePathname } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth } from '@/utils/firebase';
+import { auth } from '@/db/firebase';
 
 import {
   QueueListIcon,

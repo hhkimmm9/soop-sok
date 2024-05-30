@@ -7,63 +7,49 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { fetchChannels } from '@/db/utils';
 
 import { TChannel } from '@/types';
 
 const Page = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isLoading, setIsLoading] = useState(true);
   const [channels, setChannels] = useState<TChannel[]>([]);
   
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
+  const { dispatch } = useAppState();
 
-  /* 2. The effect of useCollection is triggered whenever the collection changes
-    or when the component mounts. */
-  const [firestoreSnapshot, firestoreLoading, firestoreError] = useCollection(
-    query(collection(db, 'channels'),
-      orderBy('order', 'asc')
-    ), {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
-
-  /* 1. When the component mounts for the first time, the first useEffect hook
-    runs due to the empty dependency array. */
+  // Authenticate a user
   useEffect(() => {
     if (!auth) {
       router.push('/');
-      return;
+    } else {
+      setIsAuthenticated(true);
     }
   }, [router]);
 
   useEffect(() => {
-    if (firestoreError !== undefined) {
-      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    const getChannels = async () => {
+      try {
+        const channels = await fetchChannels();
+        setChannels(channels);
+      } catch (err) {
+        console.error(err);
+        // TODO: merge these two dispatches
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        router.refresh();
+      }
+    };
+    if (isAuthenticated) {
+      getChannels();
     }
-  }, [dispatch, firestoreError]);
+  }, [router, isAuthenticated, dispatch]);
 
-  /* 3. Once the firestoreSnapshot is updated with the data from Firestore,
-    the second useEffect hook updates the state with the retrieved channels. */
-  useEffect(() => {
-    const container: TChannel[] = [];
-    if (firestoreSnapshot && !firestoreSnapshot.empty) {
-      firestoreSnapshot.forEach((doc) => {
-        container.push({
-          id: doc.id,
-          ...doc.data()
-        } as TChannel);
-      });
-      setChannels(container);
-    }
-    setIsLoading(false);
-  }, [firestoreSnapshot]);
-
-  if (isLoading) return (
+  // if (!isAuthenticated || FSLoading) return (
+  if (!isAuthenticated) return (
     <div className='h-full flex justify-center items-center'>
       <ProgressIndicator />
     </div>
@@ -71,7 +57,7 @@ const Page = () => {
   else return (<>
     <div className='h-full bg-stone-100'>
       <div className='flex flex-col gap-3'>
-        { channels.map(channel => (
+        { channels && channels.length > 0 && channels.map(channel => (
           <Channel key={channel.id} channel={channel} />  
         )) }
       </div>

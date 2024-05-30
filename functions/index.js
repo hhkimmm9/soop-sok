@@ -18,7 +18,6 @@
 //   response.send('Hello from Firebase!');
 // });
 
-
 const functions = require('firebase-functions');
 
 const admin = require('firebase-admin');
@@ -70,7 +69,7 @@ async function updateBanner() {
   } catch (error) {
     console.error('Error updating banner:', error);
   }
-}
+};
 
 exports.scheduledFunction = functions.pubsub.schedule('every 30 minutes').onRun((context) => {
   console.log('This will be run every hour!');

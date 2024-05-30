@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase';
+import { auth, db } from '@/db/firebase';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query, or, where, } from 'firebase/firestore';
 
@@ -21,42 +21,38 @@ type PrivateChatProps = {
 };
 
 const Page = ({ params }: PrivateChatProps) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isLoading, setIsLoading] = useState(true);
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>([]);
 
   const router = useRouter();
 
   const { state, dispatch } = useAppState();
 
-  const [firestoreSnapshot, firestoreLoading, firestoreError] = useCollection(
-    query(collection(db, 'private_chats'),
-      or(
-        where('from', '==', params.id),
-        where('to', '==', params.id)
-      )
-    ), {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
-
+  // Authenticate a user
   useEffect(() => {
     if (!auth) {
       router.push('/');
-      return;
+    } else {
+      setIsAuthenticated(true);
     }
   }, [router]);
 
-  useEffect(() => {
-    if (firestoreError !== undefined) {
-      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
-    }
-  }, [dispatch, firestoreError]);
+  // Fetch data if a user is authenticated
+  const chatsRef = collection(db, 'private_chats');
+  const chatsQuery = query(chatsRef, or(
+    where('from', '==', params.id),
+    where('to', '==', params.id)
+  ));
+  const [FSSnapshot, FSLoading, FSError] = useCollection(
+    isAuthenticated ? chatsQuery : null
+  );
 
+  // Handling retrieved data
   useEffect(() => {
     const container: TPrivateChat[] = []
-    if (firestoreSnapshot && !firestoreSnapshot.empty) {
-      firestoreSnapshot.forEach((doc) => {
+    if (FSSnapshot && !FSSnapshot.empty) {
+      FSSnapshot.forEach((doc) => {
         container.push({
           id: doc.id,
           ...doc.data()
@@ -64,10 +60,19 @@ const Page = ({ params }: PrivateChatProps) => {
       });
       setPrivateChats(container);
     }
-    setIsLoading(false);
-  }, [firestoreSnapshot]);
+  }, [FSSnapshot]);
 
-  if (isLoading) return (
+  // Error handling
+  useEffect(() => {
+    if (FSError !== undefined) {
+      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    }
+
+    router.refresh();
+  }, [router, FSError, dispatch]);
+
+  if (!isAuthenticated || FSLoading) return (
     <div className='h-full flex justify-center items-center'>
       <ProgressIndicator />
     </div>
