@@ -310,7 +310,7 @@ export async function checkIsMyFriend(uid: string, friendId: string) {
 
 export async function enterChat(cid: string, uid: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/chats/${cid}`, {
+    const res = await fetch(`/api/chats/${cid}?action=enter`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -324,6 +324,31 @@ export async function enterChat(cid: string, uid: string): Promise<boolean> {
     if (!res.ok) {
       // TODO: handle error - chat is full.
     }
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+export async function leaveChat(cid: string, uid: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/chats/${cid}?action=leave`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid })
+    });
+
+    if (!res.ok) {
+      // 
+    }
+
+    const ack = await res.json();
+    console.log(ack.message);
 
     return true;
   } catch (err) {

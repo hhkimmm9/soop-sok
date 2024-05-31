@@ -20,49 +20,39 @@ export async function PUT(
 
   const { id } = params;
   const { uid } = await req.json();
+  const searchParams = req.nextUrl.searchParams
   
+  const chatRef = db.collection('chats').doc(id);
+
   try {
-    // await db.runTransaction(db, async (transaction: Transaction) => {
-    //   const chatDoc = await transaction.get(chatRef);
-
-    //   if (!chatDoc.docs[0].exists) {
-    //     return NextResponse.json({ error: 'No chat found' }, { status: 404 });
-    //   }
-
-    //   const chatData: TChat = chatDoc.docs[0].data() as TChat;
-
-    //   if (chatData.numMembers >= chatData.capacity) {
-    //     return NextResponse.json({ error: 'Chat is full' }, { status: 400 });
-    //   }
-
-    //   const newMembers = [ ...chatData.members, uid ];
-    //   const newNumMembers = chatData.numMembers + 1;
-
-    //   // Add uid to the members and update the number of members in the chat document.
-    //   await transaction.update(chatRef, {
-    //     members: newMembers,
-    //     numMembers: newNumMembers,
-    //     updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    //   });
-    // });
-
-    const chatRef = db.collection('chats').doc(id);
     const chatDoc = await chatRef.get();
     const chatData: TChat = chatDoc.data() as TChat;
 
-    if (chatData.numMembers >= chatData.capacity) {
-      return NextResponse.json({ error: 'Chat is full' }, { status: 400 });
+    if (searchParams.get('action') === 'enter') {
+      if (chatData.numMembers >= chatData.capacity) {
+        return NextResponse.json({ error: 'Chat is full' }, { status: 400 });
+      }
+  
+      const newMembers = [ ...chatData.members, uid ];
+      const newNumMembers = chatData.numMembers + 1;
+  
+      // Add uid to the members and update the number of members in the chat document.
+      await chatRef.update(chatRef, {
+        members: newMembers,
+        numMembers: newNumMembers,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    } else if (searchParams.get('action') === 'leave') {
+      const newMembers = chatData.members.filter(member => member !== uid);
+      const newNumMembers = chatData.numMembers - 1;
+  
+      // Remove uid from the members and update the number of members in the chat document.
+      await chatRef.update(chatRef, {
+        members: newMembers,
+        numMembers: newNumMembers,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
     }
-
-    const newMembers = [ ...chatData.members, uid ];
-    const newNumMembers = chatData.numMembers + 1;
-
-    // Add uid to the members and update the number of members in the chat document.
-    await chatRef.update(chatRef, {
-      members: newMembers,
-      numMembers: newNumMembers,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
 
     return NextResponse.json({ message: "chat updated!" }, { status: 200 });
   } catch (error) {

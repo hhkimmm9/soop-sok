@@ -2,9 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import { runTransaction, Transaction, doc } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { leaveChat } from '@/db/utils';
 
 import {
   PlusIcon,
@@ -32,48 +31,22 @@ type pageProps = {
 const Page = ({ params }: pageProps) => {
   const router = useRouter();
 
-  const { dispatch } = useAppState();
-
   const redirectTo = (feature: TFeatures) => {
     if (auth) feature == 'cancel' ?
       router.push(`/chats/${params.type}/${params.id}`) :
       router.push(`/chats/${params.type}/${params.id}/${feature}`);
   };
 
-  const leaveChat = async () => {
+  const handleLeave = async () => {
     if (auth && auth.currentUser) {
-      try {
-        const memberRef = doc(db, 'channels', params.id, 'members', auth.currentUser?.uid);
-        const channelRef = doc(db, 'channels', params.id);
+      if (params.type == 'chatroom') {
+        const res = await leaveChat(params.id, auth.currentUser.uid);
 
-        await runTransaction(db, async (transaction: Transaction) => {
-          const memberDoc = await transaction.get(memberRef);
-  
-          if (!memberDoc.exists) {
-            throw new Error('Document does not exist!');
-          }
-          
-          const channelDoc = await transaction.get(channelRef)
-          const newNumMembers = channelDoc.data()?.numMembers - 1;
-  
-          transaction.delete(memberRef);
-  
-          transaction.update(channelRef, {
-            numMembers: newNumMembers
-          });
-        }); 
-
-        if (params.type == 'room-chat') {
-          router.push(`chats/channel-chat/${params.id}`);
-        }
-        // If you were in a channel, leave the channel.
-        else {
-          router.push('/channels');
-        }
-      } catch (err) {
-        console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        if (res) router.push(`/chats/channel-chat/${params.id}`);
+      }
+      // If you were in a channel, leave the channel.
+      else if (params.type == 'channel'){
+        router.push('/channels');
       }
     }
   };
@@ -119,7 +92,7 @@ const Page = ({ params }: pageProps) => {
           > <UsersIcon className='h-8' /> </div>
 
           { params.type === 'public-chat' && (  
-            <div onClick={leaveChat}
+            <div onClick={handleLeave}
               className='
                 py-6 rounded-lg bg-stone-100
                 transition duration-300 ease-in-out hover:bg-stone-200
