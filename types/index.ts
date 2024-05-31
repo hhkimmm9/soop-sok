@@ -2,6 +2,7 @@ export type TChannel = {
   id: string,
   capacity: number,
   name: string,
+  numMembers: number,
   order: number
 };
 export type TChat = {
