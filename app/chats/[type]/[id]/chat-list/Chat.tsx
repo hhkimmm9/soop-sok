@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { enterChat } from '@/db/utils';
 
 import { formatTimeAgo } from '@/utils/functions';
 import { TChat } from '@/types'
@@ -12,23 +15,49 @@ type ChatProps = {
 };
 
 const Chat = ({ chat }: ChatProps) => {
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isFull, setIsFull] = useState(false);
+  
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
+  const { dispatch } = useAppState();
 
-  const enterChat = async () => {
-    if (auth) {
-      const statusRef = collection(db, 'status_board');
+  // Authorize users before rendering the page.
+  useEffect(() => {
+    if (!auth) {
+      router.push('/');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
+
+  // Fetch channle data in real time only if a user is authorized.
+  const chatRef = doc(db, 'chats', chat.id);
+  const [FSValue, FSLoading, FSError] = useDocumentData(
+    isAuthenticated ? chatRef : null
+  );
+
+  useEffect(() => {
+    if (FSValue?.numMembers < FSValue?.capacity) {
+      setIsFull(false)
+    }
+  }, [FSValue]);
+
+  // Error: real time data fetching
+  useEffect(() => {
+    if (FSError !== undefined) {
+      // dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+      // dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+    }
+  }, [FSError, dispatch]);
+
+  const handleEnterChat = async () => {
+    // Authorize users.
+    if (auth && auth.currentUser && !isFull) {
       try {
-        await addDoc(statusRef, {
-          cid: chat.id,
-          displayName: auth.currentUser?.displayName,
-          profilePicUrl: auth.currentUser?.photoURL,
-          uid: auth.currentUser?.uid
-        });
-    
-        router.push(`/chats/private-chat/${chat.id}`);
+        const res = await enterChat(chat.id, auth.currentUser.uid);
+
+        if (res) router.push(`/chats/chatroom/${chat.id}`); 
       } catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
@@ -38,7 +67,7 @@ const Chat = ({ chat }: ChatProps) => {
   };
 
   return (
-    <div onClick={enterChat} className='
+    <div onClick={handleEnterChat} className='
       px-3 py-2 rounded-lg bg-stone-100
       flex flex-col gap-1
     '>
