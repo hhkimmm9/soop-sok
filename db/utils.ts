@@ -122,13 +122,14 @@ export async function fetchChannels() {
   }
 };
 
-export async function createChatRoom(
-  capacity: number,
+export async function createChat(
   cid: string,
-  isPrivate: boolean,
+  uid: string,
+  capacity: number,
   name: string,
-  password: string,
-  tag: string
+  tag: string,
+  isPrivate: boolean,
+  password: string
 ) {
   try {
     const res = await fetch('/api/chats', {
@@ -138,13 +139,19 @@ export async function createChatRoom(
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        capacity, cid, isPrivate, name, password, tag
+        cid,
+        uid,
+        capacity,
+        name,
+        tag,
+        isPrivate,
+        password
       })
     });
-    const ack = await res.json();
-    console.log(ack.message);
+    const data = await res.json();
+    console.log(data.message);
 
-    return ack.cid;
+    return data.cid;
   } catch (err) {
     console.error(err);
     return null;
@@ -299,4 +306,5 @@ export async function checkIsMyFriend(uid: string, friendId: string) {
     console.error(err);
     return null;
   }
+};
 };

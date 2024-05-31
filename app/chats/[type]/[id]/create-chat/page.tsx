@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { getBanner, createChatRoom } from '@/db/utils';
+import { getBanner, createChat } from '@/db/utils';
 
 import { TBanner } from '@/types';
 
@@ -104,16 +104,17 @@ const Page = ({ params }: pageProps) => {
     // validate the inputs
     if (auth && auth.currentUser && formState.name.length > 0) {
       try {
-        const cid = await createChatRoom(
-          formState.capacity,
+        const cid = await createChat(
           params.id,
-          formState.isPrivate,
+          auth.currentUser.uid,
+          formState.capacity,
           formState.name,
-          formState.password,
-          formState.tag
+          formState.tag,
+          formState.isPrivate,
+          formState.password
         );
 
-        router.push(`/chats/private-chat/${cid}`);
+        if (cid) router.push(`/chats/chatroom/${cid}`);
       }
       catch (err) {
         console.error(err);
