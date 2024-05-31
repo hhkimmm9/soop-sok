@@ -11,9 +11,12 @@ export type TChat = {
   cid: string,
   createdAt: FirestoreTimestamp,
   isPrivate: boolean,
+  members: string[],
   name: string,
+  numMembers: number,
   password: string,
-  tag: string
+  tag: string,
+  updatedAt: FirestoreTimestamp
 };
 export type TPrivateChat = {
   id: string,
