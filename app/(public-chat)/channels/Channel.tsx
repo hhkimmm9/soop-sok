@@ -3,8 +3,9 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
+import { enterChannel } from '@/db/utils';
+import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
 
 import { TChannel } from '@/types';
 
@@ -51,38 +52,25 @@ export const Channel = ({ channel } : ChannelProps) => {
   }, [FSError, dispatch]);
   
   // When users join a channel, add them to the 'members' subcollection of the associated channel document and update the 'numMembers' field in the channel document accordingly.
-  const enterChannel = async () => {
+  const handleEnterChannel = async () => {
     // Authorize users.
     if (auth && auth.currentUser && !isFull) {
       // Log where the user is in.
       try {
-        // TODO: use Transactions and batched writes.
-        const membersRef = doc(db, 'channels', channel.id, 'members', auth.currentUser.uid);
-        // Add the user to the 'members' subcollection of the channel document.
-        await setDoc(membersRef, {
-          displayName: auth.currentUser.displayName,
-          email: auth.currentUser.email,
-          photoURL: auth.currentUser.photoURL,
-        });
-
-        // Update the number of members in the channel.
-        const channelRef = doc(db, 'channels', channel.id);
-        await updateDoc(channelRef, {
-          numMembers: channel.numMembers + 1
-        });
+        const res = await enterChannel(channel.id, auth.currentUser.uid);
     
         // Redriect to the selected channel page.
-        router.push(`/chats/public-chat/${channel.id}/`);
+        if (res) router.push(`/chats/public-chat/${channel.id}/`);
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
+        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
         dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
       }
     }
   };
 
   return (
-    <div onClick={enterChannel} className={`
+    <div onClick={handleEnterChannel} className={`
       ${!isFull ? '' : 'opacity-50'}
       p-4 rounded-lg shadow-sm bg-white
       transition duration-300 ease-in-out hover:bg-stone-200

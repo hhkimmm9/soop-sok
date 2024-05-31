@@ -331,3 +331,28 @@ export async function enterChat(cid: string, uid: string): Promise<boolean> {
     return false;
   }
 };
+
+export async function enterChannel(cid: string, uid: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/channels/${cid}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid })
+    });
+
+    if (!res.ok) {
+      // 
+    }
+
+    const ack = await res.json();
+    console.log(ack.message);
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
