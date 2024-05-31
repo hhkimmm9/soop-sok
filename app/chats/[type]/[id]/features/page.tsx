@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import { auth } from '@/db/firebase';
-import { leaveChat } from '@/db/utils';
+import { leaveChannel, leaveChat } from '@/db/utils';
 
 import {
   PlusIcon,
@@ -46,7 +46,9 @@ const Page = ({ params }: pageProps) => {
       }
       // If you were in a channel, leave the channel.
       else if (params.type == 'channel'){
-        router.push('/channels');
+        const res = await leaveChannel(params.id, auth.currentUser.uid);
+
+        if (res) router.push('/channels');
       }
     }
   };
