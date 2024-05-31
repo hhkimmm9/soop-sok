@@ -3,8 +3,8 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, where, addDoc, } from 'firebase/firestore';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 
 import { TChannel } from '@/types';
 
@@ -14,13 +14,13 @@ type ChannelProps = {
 
 export const Channel = ({ channel } : ChannelProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isFull, setIsFull] = useState(true);
+  const [isFull, setIsFull] = useState(false);
   
   const router = useRouter();
 
   const { dispatch } = useAppState();
   
-  // Authenticate a user
+  // Authorize users before rendering the page.
   useEffect(() => {
     if (!auth) {
       router.push('/');
@@ -29,40 +29,46 @@ export const Channel = ({ channel } : ChannelProps) => {
     }
   }, [router]);
 
-  // Fetch data if a user is authenticated
-  const boardRef = collection(db, 'status_board');
-  const boardQuery = query(boardRef, where('cid', '==', channel.id));
-  const [FSSnapshot, FSLoading, FSError] = useCollection(
-    isAuthenticated ? boardQuery : null
+  // Fetch channle data in real time only if a user is authorized.
+  const channelRef = doc(db, 'channels', channel.id);
+  const [FSValue, FSLoading, FSError] = useDocumentData(
+    isAuthenticated ? channelRef : null
   );
 
   useEffect(() => {
-    if (FSSnapshot && FSSnapshot?.size < channel.capacity) {
+    console.log('yy',FSValue)
+    if (FSValue?.numMembers < FSValue?.capacity) {
       setIsFull(false)
     }
-  }, [FSSnapshot, channel.capacity]);
+  }, [FSValue]);
 
-  // Handling retrieved data
+  // Error: real time data fetching
   useEffect(() => {
     if (FSError !== undefined) {
       // dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
       // dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
-
-      // TODO: partial error sign
     }
   }, [FSError, dispatch]);
   
-  // Local functions
+  // When users join a channel, add them to the 'members' subcollection of the associated channel document and update the 'numMembers' field in the channel document accordingly.
   const enterChannel = async () => {
-    // Allow entry into the channel only if it is not full.
+    // Authorize users.
     if (auth && auth.currentUser && !isFull) {
       // Log where the user is in.
       try {
-        await addDoc(boardRef, {
-          cid: channel.id,
+        // TODO: use Transactions and batched writes.
+        const membersRef = doc(db, 'channels', channel.id, 'members', auth.currentUser.uid);
+        // Add the user to the 'members' subcollection of the channel document.
+        await setDoc(membersRef, {
           displayName: auth.currentUser.displayName,
-          profilePicUrl: auth.currentUser.photoURL,
-          uid: auth.currentUser.uid
+          email: auth.currentUser.email,
+          photoURL: auth.currentUser.photoURL,
+        });
+
+        // Update the number of members in the channel.
+        const channelRef = doc(db, 'channels', channel.id);
+        await updateDoc(channelRef, {
+          numMembers: channel.numMembers + 1
         });
     
         // Redriect to the selected channel page.
@@ -82,8 +88,8 @@ export const Channel = ({ channel } : ChannelProps) => {
       transition duration-300 ease-in-out hover:bg-stone-200
       flex flex-col gap-2
     `}>
-      <h3>{ channel.name }</h3>
-      <p># of users: { FSSnapshot?.size } / { channel.capacity }</p>
+      <h3 className='font-semibold text-lg'>{ channel.name }</h3>
+      <p>Capacity: { FSValue?.numMembers } / { channel.capacity }</p>
     </div>
   )
 };
