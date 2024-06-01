@@ -1,16 +1,15 @@
 'use client';
 
+import User from '@/app/chats/[type]/[id]/user-list/User';
 import ProgressIndicator from '@/components/ProgressIndicator';
-import { Avatar, } from '@mui/material';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, where, } from 'firebase/firestore';
+import { useDocument } from 'react-firebase-hooks/firestore';
+import { doc } from 'firebase/firestore';
 
 type pageProps = {
   params: {
@@ -22,7 +21,7 @@ type pageProps = {
 const Page = ({ params }: pageProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeUsers, setActiveUsers] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const router = useRouter();
 
@@ -37,28 +36,18 @@ const Page = ({ params }: pageProps) => {
     }
   }, [router]);
 
-  const boardRef = collection(db, 'status_board');
-  const boardQuery = query(boardRef,
-    where('cid', '==', params.id)
-  );
-  const [FSSnapshot, FSLoading, FSError] = useCollection(
-    isAuthenticated ? boardQuery : null
+  const chatRef = doc(db, 'chats', params.id);
+  const [FSValue, FSLoading, FSError] = useDocument(
+    isAuthenticated ? chatRef : null
   );
 
   // Handling retrieved data
   useEffect(() => {
-    const activeUserContainer: any = [];
-    if (FSSnapshot && !FSSnapshot.empty) {
-      FSSnapshot.forEach((doc) => {
-        activeUserContainer.push({
-          id: doc.id,
-          ...doc.data()
-        })
-      })
-      setActiveUsers(activeUserContainer)
+    if (FSValue && FSValue.exists()) {
+      setUsers(FSValue.data().members);
     }
     setIsLoading(false);
-  }, [FSSnapshot]);
+  }, [FSValue]);
 
   // Error handling
   useEffect(() => {
@@ -69,13 +58,6 @@ const Page = ({ params }: pageProps) => {
       router.push(`/chats/${params.type}/${params.id}/features`);
     }
   }, [router, FSError, dispatch, params.type, params.id]);
-
-  // Local functions
-  const redirectToProfile = (uid: string) => {
-    if (auth) {
-      router.push(`/profile/${uid}`);
-    }
-  };
 
   const redirectToFeatures = () => {
     if (auth) {
@@ -95,28 +77,16 @@ const Page = ({ params }: pageProps) => {
         flex flex-col gap-4
       '>
         <ul className='flex flex-col gap-3'>
-          {/* TODO: Refactor: displayName and profilePicUrl is stored in status_board only because of this. */}
-          { activeUsers.map((activeUser: any) => (
-            <li key={activeUser.id}
-              onClick={() => redirectToProfile(activeUser.uid)} className='
-              p-3 rounded-lg shadow-sm bg-stone-200
-              flex items-center justify-between
-            '>
-              <div className='flex items-center gap-3'>
-                {/* <Avatar src={activeUser.profilePicUrl} alt='Profile Picture' sx={{ width: 52, height: 52 }} /> */}
-                <Image src={activeUser.profilePicUrl} alt='Profile Picture'
-                  width={52} height={52} className='object-cover'
-                />
-                <p>{ activeUser.displayName }</p>
-              </div>
-            </li>
+          { users.map((user: any) => (
+            <User key={user} uid={user} />
           )) }
         </ul>
       </div>
 
-      <button type='button' onClick={redirectToFeatures} className='
-        w-full py-4 rounded-lg shadow-sm bg-white
-        transition duration-300 ease-in-out hover:bg-stone-200
+      <button type='button' onClick={redirectToFeatures}
+        className='
+          w-full py-4 rounded-lg shadow-sm bg-white
+          transition duration-300 ease-in-out hover:bg-stone-200
       '> Cancel </button>
     </div>
   )
