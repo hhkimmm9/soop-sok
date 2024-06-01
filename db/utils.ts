@@ -308,9 +308,9 @@ export async function checkIsMyFriend(uid: string, friendId: string) {
   }
 };
 
-export async function enterChat(cid: string, uid: string): Promise<boolean> {
+export async function updateChat(cid: string, uid: string, action: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/chats/${cid}?action=enter`, {
+    const res = await fetch(`/api/chats/${cid}?action=${action}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -332,59 +332,9 @@ export async function enterChat(cid: string, uid: string): Promise<boolean> {
   }
 };
 
-export async function leaveChat(cid: string, uid: string): Promise<boolean> {
+export async function updateChannel(cid: string, uid: string, action: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/chats/${cid}?action=leave`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ uid })
-    });
-
-    if (!res.ok) {
-      // 
-    }
-
-    const ack = await res.json();
-    console.log(ack.message);
-
-    return true;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
-
-export async function enterChannel(cid: string, uid: string): Promise<boolean> {
-  try {
-    const res = await fetch(`/api/channels/${cid}?action=enter`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ uid })
-    });
-
-    if (!res.ok) {
-      // 
-    }
-
-    const ack = await res.json();
-    console.log(ack.message);
-
-    return true;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
-
-export async function leaveChannel(cid: string, uid: string): Promise<boolean> {
-  try {
-    const res = await fetch(`/api/channels/${cid}?action=leave`, {
+    const res = await fetch(`/api/channels/${cid}?action=${action}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,

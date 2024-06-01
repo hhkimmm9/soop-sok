@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
-import { enterChannel } from '@/db/utils';
+import { updateChannel } from '@/db/utils';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 

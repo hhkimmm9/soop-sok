@@ -5,7 +5,7 @@ import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { enterChat } from '@/db/utils';
+import { updateChat } from '@/db/utils';
 
 import { formatTimeAgo } from '@/utils/functions';
 import { TChat } from '@/types'
@@ -55,7 +55,7 @@ const Chat = ({ chat }: ChatProps) => {
     // Authorize users.
     if (auth && auth.currentUser && !isFull) {
       try {
-        const res = await enterChat(chat.id, auth.currentUser.uid);
+        const res = await updateChat(chat.id, auth.currentUser.uid, 'enter');
 
         if (res) router.push(`/chats/chatroom/${chat.id}`); 
       } catch (err) {

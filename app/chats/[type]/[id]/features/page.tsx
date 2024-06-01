@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import { auth } from '@/db/firebase';
-import { leaveChannel, leaveChat } from '@/db/utils';
+import { updateChannel, updateChat } from '@/db/utils';
 
 import {
   PlusIcon,
@@ -39,17 +39,19 @@ const Page = ({ params }: pageProps) => {
 
   const handleLeave = async () => {
     if (auth && auth.currentUser) {
-      if (params.type == 'chatroom') {
-        const res = await leaveChat(params.id, auth.currentUser.uid);
-
-        if (res) router.push(`/chats/channel-chat/${params.id}`);
-      }
       // If you were in a channel, leave the channel.
-      else if (params.type == 'channel'){
-        const res = await leaveChannel(params.id, auth.currentUser.uid);
+      if (params.type === 'channel'){
+        const res = await updateChannel(params.id, auth.currentUser.uid, 'leave');
 
         if (res) router.push('/channels');
       }
+      // If you were in a chatroom, leave the chatroom.
+      else if (params.type === 'chatroom') {
+        const res = await updateChat(params.id, auth.currentUser.uid, 'leave');
+
+        if (res) router.push(`/chats/channel-chat/${params.id}`);
+      }
+      
     }
   };
 
