@@ -194,7 +194,7 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
     {/* features and message input box */}
     <div className='flex justify-between gap-3'>
       <div className='p-2 shadow-sm rounded-lg bg-white flex items-center'>
-        { type === 'public-chat' ? (
+        { (type === 'channel' || type === 'chatroom') ? (
           // for channel chats & room chats
           <div onClick={redirectToFeaturesPage}>
             <Bars3Icon className='h-5 w-5' />

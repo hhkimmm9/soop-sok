@@ -59,7 +59,7 @@ const Page = ({ params }: pageProps) => {
     <div className='h-full flex flex-col gap-4'>
       <div className='grow p-4 rounded-lg overflow-y-auto bg-white'>
         <div className='flex flex-col gap-4'>
-          { params.type === 'public-chat' && (
+          { params.type === 'channel' && (
             <>
               {/* Create Chat */}
               <div onClick={() => redirectTo('create-chat')}
@@ -95,7 +95,7 @@ const Page = ({ params }: pageProps) => {
               flex justify-center'
           > <UsersIcon className='h-8' /> </div>
 
-          { params.type === 'public-chat' && (  
+          { params.type === 'channel' && (  
             <div onClick={handleLeave}
               className='
                 py-6 rounded-lg bg-stone-100

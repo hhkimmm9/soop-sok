@@ -10,13 +10,13 @@ type PageProps = {
 
 const Page = ({ params }: PageProps) => {
   return (
-    <div className="h-full grid grid-rows-12 bg-stone-100">
-      { params.type === "public-chat" && (
+    <div className='h-full grid grid-rows-12 bg-stone-100'>
+      { (params.type === 'channel' || params.type === 'chatroom') && (
         <Banner />
       )}
 
       {/*  */}
-      <div className={`${params.type === "public-chat" ?
+      <div className={`${(params.type === 'channel' || params.type === 'chatroom') ?
         'row-start-2 row-span-11' : 'row-start-1 row-span-12'
       }`}>
         <div className="h-full flex flex-col gap-4">

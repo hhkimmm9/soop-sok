@@ -24,7 +24,7 @@ const NavBar = () => {
     let redirectURL: string | null = null;
   
     // Set the redirectURL based on the current pathname
-    if (pathname.includes('/channels') || pathname.includes('/chats/public-chat')) {
+    if (pathname.includes('/channels') || pathname.includes('/chats/channel') || pathname.includes('/chats/chatroom')) {
       dispatch({ type: 'SET_PUBLIC_URL', payload: pathname });
       redirectURL = '/channels';
     } else if (pathname.includes('/private-chats') || pathname.includes('/chats/private-chat')) {
