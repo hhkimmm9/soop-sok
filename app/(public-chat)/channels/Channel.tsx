@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
-import { enterChannel } from '@/db/utils';
+import { updateChannel } from '@/db/utils';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 
@@ -57,10 +57,10 @@ export const Channel = ({ channel } : ChannelProps) => {
     if (auth && auth.currentUser && !isFull) {
       // Log where the user is in.
       try {
-        const res = await enterChannel(channel.id, auth.currentUser.uid);
+        const res = await updateChannel(channel.id, auth.currentUser.uid, 'enter');
     
         // Redriect to the selected channel page.
-        if (res) router.push(`/chats/public-chat/${channel.id}/`);
+        if (res) router.push(`/chats/channel/${channel.id}/`);
       } catch (err) {
         console.error(err);
         dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });

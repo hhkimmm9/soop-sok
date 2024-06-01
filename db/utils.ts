@@ -308,10 +308,10 @@ export async function checkIsMyFriend(uid: string, friendId: string) {
   }
 };
 
-export async function enterChat(cid: string, uid: string): Promise<boolean> {
+export async function updateChat(cid: string, uid: string, action: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/chats/${cid}`, {
-      method: 'POST',
+    const res = await fetch(`/api/chats/${cid}?action=${action}`, {
+      method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -332,10 +332,10 @@ export async function enterChat(cid: string, uid: string): Promise<boolean> {
   }
 };
 
-export async function enterChannel(cid: string, uid: string): Promise<boolean> {
+export async function updateChannel(cid: string, uid: string, action: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/channels/${cid}`, {
-      method: 'POST',
+    const res = await fetch(`/api/channels/${cid}?action=${action}`, {
+      method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

@@ -19,25 +19,38 @@ export async function PUT(
 
   const { id } = params;
   const { uid } = await req.json();
+  const searchParams = req.nextUrl.searchParams;
+  const action = searchParams.get('action');
 
   const channelRef = db.collection('channels').doc(id);
   
   try {
     const channelDoc = await channelRef.get();
     const channelData: TChannel = channelDoc.data() as TChannel;
-  
-    if (channelData.numMembers >= channelData.capacity) {
-      return NextResponse.json({ error: 'Channel is full' }, { status: 400 });
+
+    if (action === 'enter') {
+      if (channelData.numMembers >= channelData.capacity) {
+        return NextResponse.json({ error: 'Channel is full' }, { status: 400 });
+      }
+    
+      const newMembers = [ ...channelData.members, uid ];
+      const newNumMembers = channelData.numMembers + 1;
+    
+      await channelRef.update(channelRef, {
+        members: newMembers,
+        numMembers: newNumMembers,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    } else if (action === 'leave') {
+      const newMembers = channelData.members.filter(member => member !== uid);
+      const newNumMembers = channelData.numMembers - 1;
+    
+      await channelRef.update(channelRef, {
+        members: newMembers,
+        numMembers: newNumMembers,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
     }
-  
-    const newMembers = [ ...channelData.members, uid ];
-    const newNumMembers = channelData.numMembers + 1;
-  
-    await channelRef.update(channelRef, {
-      members: newMembers,
-      numMembers: newNumMembers,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
 
     return NextResponse.json({ message: 'chat updated!' }, { status: 200 });
   } catch (error) {
