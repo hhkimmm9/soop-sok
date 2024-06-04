@@ -29,7 +29,7 @@ const Transition = React.forwardRef(function Transition(
 type MUIActionsDialogProps = {
   show: boolean,
   handleClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void,
-  type: string | null,
+  type: string | undefined,
 };
 
 const MUIActionsDialog = ({
@@ -56,7 +56,7 @@ const MUIActionsDialog = ({
   }, [type]);
 
   const handleCloseWithButton = () => {
-    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false });
+    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: { show: false, type: undefined } });
   };
 
   const handleButtonClick = () => {

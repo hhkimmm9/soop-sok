@@ -15,7 +15,7 @@ interface AppState {
   showMessageDialog: boolean,
   messageDialogType: string | undefined,
   showActionsDialog: boolean,
-  actionsDialogType: string | null,
+  actionsDialogType: string | undefined,
   actionsDialogResponse: boolean,
 };
 
@@ -24,8 +24,7 @@ type Action = (
   | { type: 'SET_PRIVATE_URL', payload: string }
   | { type: 'SET_CURRENT_BANNER', payload: TBanner }
   | { type: 'SHOW_MESSAGE_DIALOG', payload: { show: boolean, type: string | undefined} }
-  | { type: 'SHOW_ACTIONS_DIALOG', payload: boolean }
-  | { type: 'SET_ACTIONS_DIALOG_TYPE', payload: string }
+  | { type: 'SHOW_ACTIONS_DIALOG', payload: { show: boolean, type: string | undefined} }
   | { type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: boolean }
 );
 
@@ -38,7 +37,7 @@ const initialState: AppState = {
   messageDialogType: undefined,
   // 
   showActionsDialog: false,
-  actionsDialogType: null,
+  actionsDialogType: undefined,
   actionsDialogResponse: false,
 };
 
@@ -73,12 +72,8 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
     case 'SHOW_ACTIONS_DIALOG':
       return {
         ...state,
-        showActionsDialog: action.payload,
-      };
-    case 'SET_ACTIONS_DIALOG_TYPE':
-      return {
-        ...state,
-        actionsDialogType: action.payload,
+        showActionsDialog: action.payload.show,
+        actionsDialogType: action.payload.type
       };
     case 'SET_ACTIONS_DIALOG_RESPONSE':
       return {
