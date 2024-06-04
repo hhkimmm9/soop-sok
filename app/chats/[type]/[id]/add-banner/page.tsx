@@ -67,7 +67,7 @@ const Page = ({ params }: pageProps) => {
         // 
 
         if (res) {
-          router.push(`/chats/public-chat/${params.id}`);
+          router.push(`/chats/channel/${params.id}`);
         }
       } catch (err) {
         console.error(err);

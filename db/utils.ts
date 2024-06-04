@@ -122,13 +122,14 @@ export async function fetchChannels() {
   }
 };
 
-export async function createChatRoom(
-  capacity: number,
+export async function createChat(
   cid: string,
-  isPrivate: boolean,
+  uid: string,
+  capacity: number,
   name: string,
-  password: string,
-  tag: string
+  tag: string,
+  isPrivate: boolean,
+  password: string
 ) {
   try {
     const res = await fetch('/api/chats', {
@@ -138,13 +139,19 @@ export async function createChatRoom(
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        capacity, cid, isPrivate, name, password, tag
+        cid,
+        uid,
+        capacity,
+        name,
+        tag,
+        isPrivate,
+        password
       })
     });
-    const ack = await res.json();
-    console.log(ack.message);
+    const data = await res.json();
+    console.log(data.message);
 
-    return ack.cid;
+    return data.cid;
   } catch (err) {
     console.error(err);
     return null;
@@ -298,5 +305,54 @@ export async function checkIsMyFriend(uid: string, friendId: string) {
   } catch (err) {
     console.error(err);
     return null;
+  }
+};
+
+export async function updateChat(cid: string, uid: string, action: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/chats/${cid}?action=${action}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid })
+    });
+    const ack = await res.json();
+    console.log(ack.message);
+
+    if (!res.ok) {
+      // TODO: handle error - chat is full.
+    }
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+export async function updateChannel(cid: string, uid: string, action: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/channels/${cid}?action=${action}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid })
+    });
+
+    if (!res.ok) {
+      // 
+    }
+
+    const ack = await res.json();
+    console.log(ack.message);
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
   }
 };

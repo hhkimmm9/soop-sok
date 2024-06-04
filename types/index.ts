@@ -1,8 +1,11 @@
 export type TChannel = {
   id: string,
   capacity: number,
+  members: string[],
   name: string,
-  order: number
+  numMembers: number,
+  order: number,
+  updatedAt: FirestoreTimestamp
 };
 export type TChat = {
   id: string,
@@ -10,9 +13,12 @@ export type TChat = {
   cid: string,
   createdAt: FirestoreTimestamp,
   isPrivate: boolean,
+  members: string[],
   name: string,
+  numMembers: number,
   password: string,
-  tag: string
+  tag: string,
+  updatedAt: FirestoreTimestamp
 };
 export type TPrivateChat = {
   id: string,
