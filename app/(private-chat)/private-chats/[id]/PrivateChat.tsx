@@ -23,23 +23,30 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   // fetch user data based on the given user id,
   // or, store user data into the private_chat collection.
   useEffect(() => {
+    let isMounted = true;
+
     const getLatestMessage = async () => {
       if (auth) {
-        
         try {
           const latestMessage = await fetchLatestMessage(privateChat.id);
-          if (latestMessage.length > 0) {
+          if (isMounted && latestMessage.length > 0) {
             setLatestMessage(latestMessage);
           }
         } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          if (isMounted) {
+            console.error(err);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          }
         }
       }
     };
 
     getLatestMessage();
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, privateChat]);
 
   // fetch the latest message associated with this private chat
