@@ -38,8 +38,8 @@ export const Channel = ({ channel } : ChannelProps) => {
 
   useEffect(() => {
     console.log('yy',FSValue)
-    if (FSValue?.numMembers < FSValue?.capacity) {
-      setIsFull(false)
+    if (FSValue?.numMembers >= FSValue?.capacity) {
+      setIsFull(true);
     }
   }, [FSValue]);
 
