@@ -71,8 +71,7 @@ const ProfileEdit = () => {
         } catch (err) {
           if (isMounted) {
             console.error(err);
-            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
           }
         }
       };
@@ -95,8 +94,7 @@ const ProfileEdit = () => {
           router.push(`/profile/${id}`);
         } catch (err) {
           console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_update' } });
         }
       }
     };

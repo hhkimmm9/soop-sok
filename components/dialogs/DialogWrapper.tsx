@@ -11,7 +11,7 @@ const DialogWrapper = () => {
   return (<>
     <MUIMessageDialog
       show={state.showMessageDialog}
-      handleClose={() => { dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: false }) }}
+      handleClose={() => { dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: false, type: undefined } }) }}
       type={state.messageDialogType}
     />
 

@@ -46,8 +46,7 @@ export const Channel = ({ channel } : ChannelProps) => {
   // Error: real time data fetching
   useEffect(() => {
     if (FSError !== undefined) {
-      // dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      // dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
     }
   }, [FSError, dispatch]);
   
@@ -63,8 +62,7 @@ export const Channel = ({ channel } : ChannelProps) => {
         if (res) router.push(`/chats/channel/${channel.id}/`);
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
       }
     }
   };

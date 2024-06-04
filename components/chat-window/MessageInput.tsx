@@ -32,8 +32,7 @@ const MessageInput = ({ cid }: MessageinputProps) => {
         setMessage('');
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
       }
     }
   };
