@@ -18,20 +18,30 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
   const { dispatch } = useAppState();
 
   useEffect(() => {
-    (async () => {
+    let isMounted = true;
+
+    const initCheckIsMyFriend= async () => {
       if (auth && auth.currentUser && profile?.uid) {
         try {
           const friends = await checkIsMyFriend(auth.currentUser?.uid, profile.uid);
-          if (friends) {
+          if (isMounted && friends) {
             setIsMyFriend(true);
           }
         } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          if (isMounted) {
+            console.error(err);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          }
         }
       }
-    })();
+    };
+    
+    initCheckIsMyFriend();
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, profile?.uid]);
 
   const redirectToDMChat = async () => {

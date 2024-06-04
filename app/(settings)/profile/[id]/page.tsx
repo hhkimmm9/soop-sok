@@ -21,7 +21,9 @@ const Page = () => {
   const { dispatch } = useAppState();
 
   useEffect(() => {
-    (async () => {
+    let isMounted = true;
+
+    const getUser = async () => {
       try {
         const res = await fetchUser(id.toString());
         console.log(res);
@@ -30,13 +32,23 @@ const Page = () => {
           // 
         }
   
-        setProfile(res);
+        if (isMounted) {
+          setProfile(res);
+        }
       } catch (err) {
-        console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        if (isMounted) {
+          console.error(err);
+          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        }
       }
-    })();
+    };
+
+    getUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, id]);
 
   return (

@@ -52,7 +52,9 @@ const ProfileEdit = () => {
   const { state, dispatch } = useAppState();
 
   useEffect(() => {
-    (async () => {
+    let isMounted = true;
+
+    const getUser = async () => {
       if (auth && auth.currentUser) {
         try {
           const user = await fetchUser(auth.currentUser.uid);
@@ -62,16 +64,25 @@ const ProfileEdit = () => {
             // 
           }
 
-          setUser(user);
-
-          setIsLoading(false);
+          if (isMounted) {
+            setUser(user);
+            setIsLoading(false);
+          }
         } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          if (isMounted) {
+            console.error(err);
+            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          }
         }
       };
-    })();
+    };
+
+    getUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch]);
 
   // It needs to be in useEffect to work with a confirm dialog.
