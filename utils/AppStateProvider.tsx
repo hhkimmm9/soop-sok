@@ -13,9 +13,9 @@ interface AppState {
   privateChatURL: string,
   currentBanner: TBanner | null,
   showMessageDialog: boolean,
-  messageDialogType: string | undefined,
+  messageDialogType: string | null,
   showActionsDialog: boolean,
-  actionsDialogType: string | undefined,
+  actionsDialogType: string | null,
   actionsDialogResponse: boolean,
 };
 
@@ -23,8 +23,8 @@ type Action = (
   | { type: 'SET_PUBLIC_URL', payload: string }
   | { type: 'SET_PRIVATE_URL', payload: string }
   | { type: 'SET_CURRENT_BANNER', payload: TBanner }
-  | { type: 'SHOW_MESSAGE_DIALOG', payload: { show: boolean, type: string | undefined} }
-  | { type: 'SHOW_ACTIONS_DIALOG', payload: { show: boolean, type: string | undefined} }
+  | { type: 'SHOW_MESSAGE_DIALOG', payload: { show: boolean, type: string | null} }
+  | { type: 'SHOW_ACTIONS_DIALOG', payload: { show: boolean, type: string | null} }
   | { type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: boolean }
 );
 
@@ -34,10 +34,10 @@ const initialState: AppState = {
   currentBanner: null,
   // 
   showMessageDialog: false,
-  messageDialogType: undefined,
+  messageDialogType: null,
   // 
   showActionsDialog: false,
-  actionsDialogType: undefined,
+  actionsDialogType: null,
   actionsDialogResponse: false,
 };
 
