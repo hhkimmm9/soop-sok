@@ -46,10 +46,10 @@ const Chat = ({ chat }: ChatProps) => {
   // Error: real time data fetching
   useEffect(() => {
     if (FSError !== undefined) {
-      // dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      // dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+      router.refresh();
     }
-  }, [FSError, dispatch]);
+  }, [FSError, dispatch, router]);
 
   const handleEnterChat = async () => {
     // Authorize users.
@@ -60,8 +60,7 @@ const Chat = ({ chat }: ChatProps) => {
         if (res) router.push(`/chats/chatroom/${chat.id}`); 
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
       }
     }
   };

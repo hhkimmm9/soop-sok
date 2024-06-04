@@ -47,8 +47,7 @@ export const Friend = ({ friendId }: FriendProp ) => {
           setFriend(user as TUser);
         } catch (err) {
           console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
         }
       }
     };
@@ -84,8 +83,7 @@ export const Friend = ({ friendId }: FriendProp ) => {
             router.push(`/chats/private-chat/${chatRef.id}`);
           } catch (err) {
             console.error(err);
-            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
           }
         } else {
           // redirect the user to the dm chat room.
@@ -93,8 +91,7 @@ export const Friend = ({ friendId }: FriendProp ) => {
         }
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
       }
     }
   };

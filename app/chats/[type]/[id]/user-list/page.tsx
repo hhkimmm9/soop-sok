@@ -52,8 +52,7 @@ const Page = ({ params }: pageProps) => {
   // Error handling
   useEffect(() => {
     if (FSError !== undefined) {
-      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
 
       router.push(`/chats/${params.type}/${params.id}/features`);
     }

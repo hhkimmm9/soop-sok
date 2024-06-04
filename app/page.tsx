@@ -58,8 +58,7 @@ export default function Home() {
               // In case of an error, show an error message.
               catch (err) {
                 console.error('Error getting document:', err);
-                dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
               }
             }
             // If a user is returning,
@@ -76,8 +75,7 @@ export default function Home() {
               // In case of an error, show an error message.
               catch (err) {
                 console.error('Error getting document:', err);
-                dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'general' });
-                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
               }
             }
 

@@ -87,8 +87,9 @@ const MessageContainer = ({ type, cid }: MessageContainerProps) => {
   // Error handling
   useEffect(() => {
     if (FSError !== undefined) {
-      dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+
+      router.refresh();
     }
   }, [router, FSError, dispatch]);
 

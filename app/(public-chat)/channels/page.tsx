@@ -37,9 +37,8 @@ const Page = () => {
         setChannels(channels);
       } catch (err) {
         console.error(err);
-        // TODO: merge these two dispatches
-        dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+        
         router.refresh();
       }
     };

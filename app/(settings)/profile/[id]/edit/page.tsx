@@ -71,8 +71,7 @@ const ProfileEdit = () => {
         } catch (err) {
           if (isMounted) {
             console.error(err);
-            dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_retrieval' });
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
           }
         }
       };
@@ -95,8 +94,8 @@ const ProfileEdit = () => {
           router.push(`/profile/${id}`);
         } catch (err) {
           console.error(err);
-          dispatch({ type: 'SET_MESSAGE_DIALOG_TYPE', payload: 'data_update' });
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: true });
+          dispatch({ type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: false });
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_update' } });
         }
       }
     };
@@ -104,11 +103,13 @@ const ProfileEdit = () => {
     // confirm
     if (state.actionsDialogResponse) {
       handleUpdate();
+
+      // After updating the data, hide the dialog.
       dispatch({ type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: false });
     }
     // cancel
     else {
-      dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: false });
+      dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: { show: false, type: undefined } });
     }
   }, [state.actionsDialogResponse, dispatch, id, user, router]);
 
@@ -151,9 +152,8 @@ const ProfileEdit = () => {
     updateProfileField('introduction', e.target.value);
   };
 
-  const getConfirm = () => {
-    dispatch({ type: 'SET_ACTIONS_DIALOG_TYPE', payload: 'confirm' });
-    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: true });
+  const askConfirm = () => {
+    dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: { show: true, type: 'confirm' } });
   };
 
   if (isLoading) return (
@@ -231,7 +231,7 @@ const ProfileEdit = () => {
         <Link href={`/profile/${auth.currentUser?.uid}`}>
           <Button variant='outlined' className='w-full'> Cancel </Button>
         </Link>
-        <Button onClick={getConfirm} variant='contained'> Update </Button>
+        <Button onClick={askConfirm} variant='contained'> Update </Button>
       </div>
     </div>
   </>);
