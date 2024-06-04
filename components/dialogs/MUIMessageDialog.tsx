@@ -29,7 +29,7 @@ const Transition = React.forwardRef(function Transition(
 
 type DialogComponentProps = {
   show: boolean,
-  type: string | undefined,
+  type: string | null,
   handleClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void,
 };
 

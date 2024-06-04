@@ -109,7 +109,7 @@ const ProfileEdit = () => {
     }
     // cancel
     else {
-      dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: { show: false, type: undefined } });
+      dispatch({ type: 'SHOW_ACTIONS_DIALOG', payload: { show: false, type: null } });
     }
   }, [state.actionsDialogResponse, dispatch, id, user, router]);
 
