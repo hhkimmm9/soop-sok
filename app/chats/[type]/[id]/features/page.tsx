@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
 import { updateChannel, updateChat } from '@/db/utils';
 
@@ -31,6 +32,8 @@ type pageProps = {
 const Page = ({ params }: pageProps) => {
   const router = useRouter();
 
+  const { state, dispatch } = useAppState();
+
   const redirectTo = (feature: TFeatures) => {
     if (auth) feature == 'cancel' ?
       router.push(`/chats/${params.type}/${params.id}`) :
@@ -43,15 +46,17 @@ const Page = ({ params }: pageProps) => {
       if (params.type === 'channel'){
         const res = await updateChannel(params.id, auth.currentUser.uid, 'leave');
 
+        // Clear the channel ID in the global state.
+        dispatch({ type: 'SET_CHANNEL_ID', payload: null });
+
         if (res) router.push('/channels');
       }
       // If you were in a chatroom, leave the chatroom.
       else if (params.type === 'chatroom') {
         const res = await updateChat(params.id, auth.currentUser.uid, 'leave');
 
-        if (res) router.push(`/chats/channel-chat/${params.id}`);
-      }
-      
+        if (res) router.push(`/chats/channel/${state.channelId}`);
+      } 
     }
   };
 
@@ -95,7 +100,7 @@ const Page = ({ params }: pageProps) => {
               flex justify-center'
           > <UsersIcon className='h-8' /> </div>
 
-          { params.type === 'channel' && (  
+          { (params.type === 'channel' || params.type === 'chatroom') && (  
             <div onClick={handleLeave}
               className='
                 py-6 rounded-lg bg-stone-100
