@@ -11,7 +11,7 @@ import { formatTimeAgo } from '@/utils/functions';
 import { TChat } from '@/types'
 
 type ChatProps = {
-  chat: TChat,
+  chat: TChat
 };
 
 const Chat = ({ chat }: ChatProps) => {

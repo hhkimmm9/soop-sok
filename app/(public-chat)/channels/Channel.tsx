@@ -37,7 +37,6 @@ export const Channel = ({ channel } : ChannelProps) => {
   );
 
   useEffect(() => {
-    console.log('yy',FSValue)
     if (FSValue?.numMembers >= FSValue?.capacity) {
       setIsFull(true);
     }
@@ -58,6 +57,9 @@ export const Channel = ({ channel } : ChannelProps) => {
       try {
         const res = await updateChannel(channel.id, auth.currentUser.uid, 'enter');
     
+        // Store the channel ID in the global state.
+        dispatch({ type: 'SET_CHANNEL_ID', payload: channel.id });
+
         // Redriect to the selected channel page.
         if (res) router.push(`/chats/channel/${channel.id}/`);
       } catch (err) {

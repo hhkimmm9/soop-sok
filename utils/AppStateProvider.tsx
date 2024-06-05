@@ -17,28 +17,29 @@ interface AppState {
   showActionsDialog: boolean,
   actionsDialogType: string | null,
   actionsDialogResponse: boolean,
+  channelId: string | null
 };
 
 type Action = (
   | { type: 'SET_PUBLIC_URL', payload: string }
   | { type: 'SET_PRIVATE_URL', payload: string }
   | { type: 'SET_CURRENT_BANNER', payload: TBanner }
-  | { type: 'SHOW_MESSAGE_DIALOG', payload: { show: boolean, type: string | null} }
-  | { type: 'SHOW_ACTIONS_DIALOG', payload: { show: boolean, type: string | null} }
+  | { type: 'SHOW_MESSAGE_DIALOG', payload: { show: boolean, type: string | null } }
+  | { type: 'SHOW_ACTIONS_DIALOG', payload: { show: boolean, type: string | null } }
   | { type: 'SET_ACTIONS_DIALOG_RESPONSE', payload: boolean }
+  | { type: 'SET_CHANNEL_ID', payload: string | null }
 );
 
 const initialState: AppState = {
   publicChatURL: '',
   privateChatURL: '',
   currentBanner: null,
-  // 
   showMessageDialog: false,
   messageDialogType: null,
-  // 
   showActionsDialog: false,
   actionsDialogType: null,
   actionsDialogResponse: false,
+  channelId: null
 };
 
 const AppStateContext = createContext<{
@@ -79,6 +80,11 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         actionsDialogResponse: action.payload,
+      };
+    case 'SET_CHANNEL_ID':
+      return {
+        ...state,
+        channelId: action.payload,
       };
     default:
       return state;
