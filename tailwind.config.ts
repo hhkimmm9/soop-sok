@@ -13,6 +13,11 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        inter: ["var(--font-inter)"],
+        // https://nextjs.org/docs/app/building-your-application/optimizing/fonts#with-tailwind-css
+        dhurjati: ["var(--font-dhurjati)"],
+      }
     },
   },
   plugins: [],

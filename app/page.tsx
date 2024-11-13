@@ -18,7 +18,7 @@ type TFirebaseUI = {
   auth: typeof firebaseui.auth;
 };
 
-const BACKGROUND_IMAGE_URL: string = 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/Forest%20silhouette%20vector.jpg?alt=media&token=ab09391c-8c23-4a21-ac48-c2a256c2005b';
+const BACKGROUND_IMAGE_URL: string = "/images/background.png";
 
 export default function Home() {
   const [firebaseui, setFirebaseUI] = useState<TFirebaseUI | null>(null);
@@ -121,7 +121,9 @@ export default function Home() {
         flex flex-col gap-96 text-center
       '>
         {/* App name */}
-        <h1 className='font-bold text-5xl text-green-950'>Soop Sok</h1>
+        <h1 className='font-dhurjati font-bold text-7xl text-white bg-gradient-to-r from-green-400 via-white to-yellow-400 bg-clip-text text-transparent'>
+          Soop Sok
+        </h1>
 
         {/* Firebase UI */}
         <div id='firebaseui-auth-container' />
@@ -130,7 +132,7 @@ export default function Home() {
       <Image
         src={BACKGROUND_IMAGE_URL}
         alt='background image'
-        width={1668} height={2388}
+        width={1024} height={1792}
         className='h-screen object-cover'
       />
     </div>
