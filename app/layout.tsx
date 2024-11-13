@@ -3,7 +3,7 @@ import { Inter, Dhurjati } from "next/font/google";
 import "./globals.css";
 
 import { AppStateProvider } from "@/utils/AppStateProvider";
-import Wrapper from "@/app/Wrapper";
+import LayoutWrapper from "@/app/LayoutWrapper";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 // https://nextjs.org/docs/app/building-your-application/optimizing/fonts#with-tailwind-css
@@ -21,13 +21,13 @@ type Props = {
 export default async function RootLayout({ children }: Readonly<Props>) {
   return (
     <html lang="en">
-      <AppStateProvider>
-        <body className={`${inter.variable} ${dhurjati.variable}`}>
-          <Wrapper>
+      <body className={`${inter.variable} ${dhurjati.variable}`}>
+        <AppStateProvider>
+          <LayoutWrapper>
             { children }
-          </Wrapper>
-        </body>
-      </AppStateProvider>
+          </LayoutWrapper>
+        </AppStateProvider>
+      </body>
     </html>
   );
 };
