@@ -21,78 +21,52 @@ const NavBar = () => {
   const { state, dispatch } = useAppState();
 
   const redirectTo = (tab: string) => {
-    let redirectURL: string | null = null;
-  
-    // Set the redirectURL based on the current pathname
-    if (pathname.includes('/channels') || pathname.includes('/chats/channel') || pathname.includes('/chats/chatroom')) {
+    const { currentUser } = auth;
+    const { publicChatURL, privateChatURL } = state;
+
+    let redirectURL = '';
+
+    if (pathname.includes('/chats/channel') || pathname.includes('/chats/chatroom')) {
       dispatch({ type: 'SET_PUBLIC_URL', payload: pathname });
-      redirectURL = '/channels';
     } else if (pathname.includes('/private-chats') || pathname.includes('/chats/private-chat')) {
       dispatch({ type: 'SET_PRIVATE_URL', payload: pathname });
-      redirectURL = `/private-chats/${auth.currentUser?.uid}`;
     }
-  
-    // Determine the final redirectURL based on the requested URL
-    switch (tab) {
-      case 'public-chat':
-        redirectURL = state.publicChatURL !== '' ? state.publicChatURL : '/channels';
-        break;
-      case 'private-chat':
-        redirectURL = state.privateChatURL !== '' ? state.privateChatURL : `/private-chats/${auth.currentUser?.uid}`;
-        break;
-      case 'friends':
-        redirectURL = '/friends';
-        break;
-      case 'settings':
-        redirectURL = '/settings';
-        break;
-      default:
-        break;
-    }
-  
-    // Perform the redirection
+
+    const tabURLs: { [key: string]: string } = {
+      'public-chat': publicChatURL || '/channels',
+      'private-chat': privateChatURL || `/private-chats/${currentUser?.uid}`,
+      'friends': '/friends',
+      'settings': '/settings'
+    };
+
+    redirectURL = tabURLs[tab] || '';
+
     if (redirectURL) router.push(redirectURL);
   };
   
   return (
     <nav>
-      { pathname !== '/'  && (
+      {pathname !== '/' && (
         <div className='
-          absolute bottom-0 w-full h-14 px-12 bg-yellow-900
-          flex justify-between items-center
+          absolute bottom-0 w-full h-14 px-12
+          flex justify-between items-center bg-stone-200
         '>
-          {/* Channels */}
-          <div onClick={() => redirectTo('public-chat')}
-            className='p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700'
-          >
-            <QueueListIcon className='h-5 w-5' />
-          </div>
-
-          {/* Private chats */}
-          <Badge badgeContent={256} color='primary'>
-            <div onClick={() => redirectTo('private-chat')}
-              className='p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700'
-            >
-              <ChatBubbleBottomCenterIcon className='h-5 w-5' />
-            </div>
-          </Badge>
-
-          {/* Friends List */}
-          <Badge badgeContent={1} color='primary'>
-            <div onClick={() => redirectTo('friends')}
-              className='p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700'
-            >
-              <UserIcon className='h-5 w-5' />
-            </div>
-          </Badge>
-
-          {/* Settings */}
-          <div onClick={() => redirectTo('settings')}
-            className='p-2 rounded-full border border-yellow-700 bg-yellow-500 hover:bg-yellow-700'
-          >
-            <Cog6ToothIcon className='h-5 w-5' />
-          </div>
-        </div> 
+          {[
+            { tab: 'public-chat', icon: <QueueListIcon className='h-5 w-5' />, badge: 1 },
+            { tab: 'private-chat', icon: <ChatBubbleBottomCenterIcon className='h-5 w-5' />, badge: 2 },
+            { tab: 'friends', icon: <UserIcon className='h-5 w-5' />, badge: 3 },
+            { tab: 'settings', icon: <Cog6ToothIcon className='h-5 w-5' />, badge: 4 }
+          ].map(({ tab, icon, badge }) => (
+            <Badge key={tab} badgeContent={badge} color='primary'>
+              <div onClick={() => redirectTo(tab)}
+                className='
+                  p-2 rounded-full
+                  bg-stone-300 hover:bg-stone-400
+                  transition duration-300 ease-in-out
+              '>{icon}</div>
+            </Badge>
+          ))}
+        </div>
       )}
     </nav>
   )
