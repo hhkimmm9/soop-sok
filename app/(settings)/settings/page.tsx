@@ -42,18 +42,23 @@ const Settings = () => {
   };
 
   return (
-    <div className='flex flex-col gap-4 items-center'>
+    <div>
+      <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Settings</h1>
+      <div className='flex flex-col gap-4 items-center'>
       <Link href={`/profile/${auth.currentUser?.uid}`} className='
-        w-full py-4 rounded-lg shadow-md bg-green-800
-        font-medium text-center text-base text-white
-        transition duration-300 ease-in-out hover:bg-green-600
+        w-full py-3 rounded-lg shadow border border-earth-300 bg-white
+        font-semibold text-center text-base text-earth-500
+        hover:border-earth-500 hover:bg-earth-500 hover:text-white
+        transition duration-300 ease-in-out
       '> Profile </Link>
 
       <button onClick={handleSignout} className='
-        w-full py-4 rounded-lg shadow-md bg-green-800
-        font-medium text-base text-white
-        transition duration-300 ease-in-out hover:bg-red-500
+        w-full py-3 rounded-lg shadow border border-earth-300 bg-white
+        font-semibold text-base text-earth-500
+        hover:border-red-500 hover:bg-red-500 hover:text-white
+        transition duration-300 ease-in-out
       '> Sign Out </button>
+      </div>
     </div>
   )
 };
