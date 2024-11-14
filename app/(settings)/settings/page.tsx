@@ -13,36 +13,24 @@ const Settings = () => {
   const [signOut] = useSignOut(auth);
 
   const handleSignout = async () => {
-    if (auth && auth.currentUser) {
-      // Toggle isLogin to off.
-      try {
-        const res = await updateUserStatus(auth.currentUser.uid, 'signout');
+    if (!auth?.currentUser) return;
 
-        // Error handling: session expired.
-        if (!res) {
-          // 
-        }
-      }
-      // 
-      catch (err) {
-        console.error(err);
+    try {
+      const res = await updateUserStatus(auth.currentUser.uid, 'signout');
+      if (!res) {
+        console.error('Session expired or update failed');
+        return;
       }
 
-      // Clean up the user session.
-      try {
-        await signOut();
-      }
-      // 
-      catch (err) {
-        console.error(err);
-      }
-
+      await signOut();
       router.push('/');
+    } catch (err) {
+      console.error('Error during sign out:', err);
     }
   };
 
   return (
-    <div>
+    <>
       <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Settings</h1>
       <div className='flex flex-col gap-4 items-center'>
       <Link href={`/profile/${auth.currentUser?.uid}`} className='
@@ -59,7 +47,7 @@ const Settings = () => {
         transition duration-300 ease-in-out
       '> Sign Out </button>
       </div>
-    </div>
+    </>
   )
 };
 
