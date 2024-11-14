@@ -49,7 +49,7 @@ const NavBar = () => {
       {pathname !== '/' && (
         <div className='
           absolute bottom-0 w-full h-14 px-12
-          flex justify-between items-center bg-stone-200
+          flex justify-between items-center bg-earth-50
         '>
           {[
             { tab: 'public-chat', icon: <QueueListIcon className='h-5 w-5' />, badge: 1 },
@@ -61,7 +61,7 @@ const NavBar = () => {
               <div onClick={() => redirectTo(tab)}
                 className='
                   p-2 rounded-full
-                  bg-stone-300 hover:bg-stone-400
+                  bg-earth-100 hover:bg-earth-200
                   transition duration-300 ease-in-out
               '>{icon}</div>
             </Badge>
