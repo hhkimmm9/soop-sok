@@ -1,36 +1,21 @@
 import { FirestoreTimestamp } from '@/types'
 
-export const formatTimeAgo = (unixSeconds: FirestoreTimestamp) => {
-  const timestamp = unixSeconds._seconds;
+export const formatTimeAgo = (unixSeconds: FirestoreTimestamp | undefined): string => {
+  if (!unixSeconds) return '';
 
-  // Create a new Date object using the Unix timestamp
-  const date = new Date(timestamp * 1000);
+  const timestamp = unixSeconds._seconds * 1000;
+  const now = Date.now();
+  const difference = now - timestamp;
 
-  // Get the current time
-  const now = new Date();
-
-  // Calculate the difference in milliseconds
-  const difference = now.getTime() - date.getTime();
-
-  // Convert the difference from milliseconds to minutes
   const minutesDifference = Math.floor(difference / (1000 * 60));
+  const hoursDifference = Math.floor(minutesDifference / 60);
+  const daysDifference = Math.floor(hoursDifference / 24);
 
-  // Format the time difference
-  let timeAgo;
-  if (minutesDifference < 1) {
-      timeAgo = 'just now';
-  } else if (minutesDifference === 1) {
-      timeAgo = '1 minute ago';
-  } else if (minutesDifference < 60) {
-      timeAgo = `${minutesDifference} minutes ago`;
-  } else if (minutesDifference < 120) {
-      timeAgo = '1 hour ago';
-  } else if (minutesDifference < 24 * 60) {
-      timeAgo = `${Math.floor(minutesDifference / 60)} hours ago`;
-  } else if (minutesDifference < 24 * 60 * 2) {
-      timeAgo = '1 day ago';
-  } else {
-      timeAgo = `${Math.floor(minutesDifference / (60 * 24))} days ago`;
-  }
-  return timeAgo;
+  if (minutesDifference < 1) return 'just now';
+  if (minutesDifference === 1) return '1 minute ago';
+  if (minutesDifference < 60) return `${minutesDifference} minutes ago`;
+  if (hoursDifference === 1) return '1 hour ago';
+  if (hoursDifference < 24) return `${hoursDifference} hours ago`;
+  if (daysDifference === 1) return '1 day ago';
+  return `${daysDifference} days ago`;
 };

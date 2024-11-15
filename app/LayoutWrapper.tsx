@@ -19,7 +19,7 @@ const Wrapper = ({ children }: IWrapperProps) => {
       h-screen min-h-[667px]
       mx-auto
     ">
-      <div className="h-[calc(100vh-3.5rem)] p-4 bg-stone-50">
+      <div className="h-[calc(100vh-3.5rem)] bg-stone-50">
         { children }
       </div>
       

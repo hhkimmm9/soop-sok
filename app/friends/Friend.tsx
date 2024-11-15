@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
 import { fetchUser } from '@/db/utils';
 import {
@@ -15,6 +14,7 @@ import {
   addDoc, getDoc, getDocs,
   serverTimestamp
 } from 'firebase/firestore';
+import useDialogs from '@/functions/dispatcher';
 
 import { TUser } from '@/types';
 import { formatTimeAgo } from '@/utils/functions';
@@ -31,29 +31,26 @@ export const Friend = ({ friendId }: FriendProp ) => {
 
   const router = useRouter();
 
-  const { dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   useEffect(() => {
     const getUser = async () => {
-      if (auth) {
-        
-        try {
-          const user = await fetchUser(friendId);
-          
-          if (!user) {
-            
-          }
+      if (!auth) return;
 
+      try {
+        const user = await fetchUser(friendId);
+        if (user) {
           setFriend(user as TUser);
-        } catch (err) {
-          console.error(err);
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
         }
+      } catch (err) {
+        console.error(err);
+        messageDialog.show('data_retrieval');
       }
     };
     getUser();
-  }, [dispatch, friendId]);
+  }, [friendId, messageDialog]);
   
+  // TODO:
   const redirectToDMChat = async () => {
     const myId = auth.currentUser?.uid;
     const opponentId = friendId;
@@ -83,7 +80,7 @@ export const Friend = ({ friendId }: FriendProp ) => {
             router.push(`/chats/private-chat/${chatRef.id}`);
           } catch (err) {
             console.error(err);
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
+            messageDialog.show('general');
           }
         } else {
           // redirect the user to the dm chat room.
@@ -91,47 +88,45 @@ export const Friend = ({ friendId }: FriendProp ) => {
         }
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+        messageDialog.show('data_retrieval');
       }
     }
   };
 
-  if (friend) return (
-    <div className='p-5 rounded-lg shadow-md bg-white flex gap-4'>
-      <Link href={`/profile/${friendId}`} className='flex items-center'>
-        { friend?.photoURL !== undefined ? (
-          <Image src={friend?.photoURL} alt=''
-            width={1324} height={1827} className='object-cover w-12 h-12 rounded-full'
-          />
-        ) : (
-          <Image
-            src={NO_PIC_PLACEHOLDER}
-            alt=''
-            width={1324} height={1827}
-            className='object-cover w-12 h-12 rounded-full'
-          />
-        )} 
+  return (
+    <div className='p-5 flex gap-4 rounded-lg shadow bg-white'>
+      <Link
+        href={`/profile/${friendId}`}
+        className={`
+          flex items-center rounded-full border-4
+          ${friend?.isOnline ? 'border-lime-400' : 'border-red-400'}
+      `}>
+        <Image
+          src={friend?.photoURL || NO_PIC_PLACEHOLDER}
+          alt={`${friend?.displayName}'s profile picture`}
+          width={48}
+          height={48}
+          className='object-cover w-12 h-12 rounded-full'
+        />
       </Link>
 
       <div className='grow grid grid-cols-6'>
-        <div className='col-span-4'>
-          {/* last signed in, where they are */}
-          <div className='flex gap-4 items-center'>
-            <p className='text-lg font-semibold'>{ friend.displayName }</p>
-            { friend.isOnline === true ? (
-              <p className='px-2 rounded-full bg-lime-400'>Online</p>
-            ) : (
-              <p className='px-2 rounded-full bg-red-400'>Offline</p>
-            )}
-            
-          </div>
-          <p>Last login: { formatTimeAgo(friend?.lastLoginTime) }</p>
-        </div>
+        <Link
+          href={`/profile/${friendId}`}
+          className='col-span-4 cursor-pointer'
+        >
+          <p className='text-xl font-medium truncate'>{ friend?.displayName }</p>
+          <p className='text-gray-600'>Last login: { formatTimeAgo(friend?.lastLoginTime) }</p>
+        </Link>
 
         <div className='col-span-2 flex items-center justify-end'>
-          <div onClick={redirectToDMChat} className='p-3 rounded-full border'>
-            <ChatBubbleBottomCenterIcon className='w-5 h-5' />
-          </div>
+          <button
+            onClick={redirectToDMChat}
+            aria-label='Direct Message'
+            className='p-2 rounded-full border border-earth-100 bg-white hover:bg-earth-50 transition-colors duration-200'
+          >
+            <ChatBubbleBottomCenterIcon className='w-6 h-6 text-earth-600' />
+          </button>
         </div>
       </div>
     </div>

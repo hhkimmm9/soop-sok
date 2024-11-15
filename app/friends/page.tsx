@@ -1,21 +1,19 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
 import Friend from '@/app/friends/Friend';
 
 import { useState, useEffect, } from 'react';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
 import { fetchFriends } from '@/db/utils';
 
 import { TFriend } from '@/types';
+import useDialogs from '@/functions/dispatcher';
 
 const Friends = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [friends, setFriends] = useState<TFriend[]>([]);
 
-  const { dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   useEffect(() => {
     const fetchFriendList = async () => {
@@ -29,31 +27,29 @@ const Friends = () => {
             // });
             setFriends(friends);
           }
-          setIsLoading(false);
         } catch (err) {
           console.error(err);
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+          messageDialog.show('data_retrieval');
         }
       }
     };
     fetchFriendList();
-  }, [dispatch]);
+  }, [messageDialog]);
 
-  if (isLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (
-    <div className='flex flex-col gap-2'>
-      { friends.length > 0 ? friends.map((friend: TFriend) => (
-        <Friend key={friend.id}
-          friendId={auth.currentUser?.uid == friend.friendId ?
-            friend.senderId : friend.friendId
-        }/>
-      )) : (
-        <p>You have no friends. 😭 (just yet)</p>
-      ) }
+  return (
+    <div className='h-full overflow-y-auto p-4'>
+      <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Friends</h1>
+      <div className='flex flex-col gap-2'>
+        {friends.length > 0 ? friends.map((friend: TFriend) => (
+          <Friend key={friend.id}
+            friendId={auth.currentUser?.uid == friend.friendId
+              ? friend.senderId
+              : friend.friendId
+          }/>
+        )) : (
+          <p>You have no friends. 😭 (just yet)</p>
+        )}
+      </div>
     </div>
   );
 };
