@@ -121,7 +121,11 @@ export default function Home() {
         flex flex-col gap-96 text-center
       '>
         {/* App name */}
-        <h1 className='font-dhurjati font-bold text-7xl text-white bg-gradient-to-r from-green-400 via-white to-yellow-400 bg-clip-text text-transparent'>
+        <h1 className='
+          font-dhurjati font-bold text-7xl
+          bg-gradient-to-r from-green-400 via-white to-yellow-400
+          bg-clip-text text-transparent
+        '>
           Soop Sok
         </h1>
 
