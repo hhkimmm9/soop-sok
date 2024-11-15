@@ -18,29 +18,22 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
   const { dispatch } = useAppState();
 
   useEffect(() => {
-    let isMounted = true;
 
     const initCheckIsMyFriend= async () => {
       if (auth && auth.currentUser && profile?.uid) {
         try {
           const friends = await checkIsMyFriend(auth.currentUser?.uid, profile.uid);
-          if (isMounted && friends) {
+          if (friends) {
             setIsMyFriend(true);
           }
         } catch (err) {
-          if (isMounted) {
-            console.error(err);
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
-          }
+          console.error(err);
+          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
         }
       }
     };
     
     initCheckIsMyFriend();
-
-    return () => {
-      isMounted = false;
-    };
   }, [dispatch, profile?.uid]);
 
   const redirectToDMChat = async () => {
@@ -90,19 +83,19 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
 
   return (
     <div className='w-full grid grid-cols-2 gap-2'>
-      { isMyFriend ? (
-          <button type='button' onClick={() => {}}
-            className='border rounded-lg py-2 block shadow-sm bg-white
-          '> Poke! (Say Hi!) </button>
-        ) : (
-          <button type='button' onClick={addUserToFriendList}
-            className='border rounded-lg py-2 block shadow-sm bg-white
-          '> Send Friend Request </button>
-        )
-      }
+      {isMyFriend ? (
+        <button type='button' onClick={() => {}}
+          className='border rounded-lg py-2 block shadow-sm bg-white'
+        >Poke! (Say Hi!)</button>
+      ) : (
+        <button type='button' onClick={addUserToFriendList}
+          className='border rounded-lg py-2 block shadow-sm bg-white'
+        >Send Friend Request</button>
+      )}
+
       <button type='button' onClick={redirectToDMChat}
-        className='border rounded-lg py-2 block shadow-sm bg-white
-      '> Send DM </button>
+        className='border rounded-lg py-2 block shadow-sm bg-white'
+      >Send DM</button>
     </div>
   );
 };
