@@ -115,8 +115,8 @@ export const Friend = ({ friendId }: FriendProp ) => {
           href={`/profile/${friendId}`}
           className='col-span-4 cursor-pointer'
         >
-          <p className='text-xl font-medium truncate'>{ friend?.displayName }</p>
-          <p className='text-gray-600'>Last login: { formatTimeAgo(friend?.lastLoginTime) }</p>
+          <p className='text-xl font-medium truncate'>{friend?.displayName}</p>
+          <p className='whitespace-nowrap text-gray-600'>Last login: {formatTimeAgo(friend?.lastLoginTime)}</p>
         </Link>
 
         <div className='col-span-2 flex items-center justify-end'>
