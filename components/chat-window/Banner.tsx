@@ -3,29 +3,31 @@
 import { useEffect } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
+import useDialogs from '@/functions/dispatcher';
 
 import '@/components/Marquee.css';
 import { getBanner } from '@/db/utils';
 
 const Banner = () => {
-  const { state, dispatch } = useAppState();
+  const { state } = useAppState();
+  const { bannerState } = useDialogs();
 
   useEffect(() => {
     const fetchBanner = async () => {
       try {
         const res = await getBanner();
-        dispatch({ type: 'SET_CURRENT_BANNER', payload: res });
+        bannerState.set(res);
       } catch (err) {
         console.error(err);
       }
     };
     fetchBanner();
-  }, [dispatch]);
+  }, [bannerState]);
 
   return (
-    <div className='h-min mt-1 py-2 rounded-lg overflow-hidden shadow-sm bg-white'>
-      <div className='marquee w-screen'>
-        <span className='inline-block px-4'>{ state.currentBanner?.content }</span>
+    <div className='h-min py-2 rounded-lg overflow-hidden bg-white'>
+      <div className='marquee'>
+        <p className='inline-block px-4'>{state.currentBanner?.content}</p>
       </div>
     </div>
   )

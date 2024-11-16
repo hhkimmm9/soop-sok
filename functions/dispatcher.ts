@@ -1,3 +1,4 @@
+import { TBanner } from '@/types';
 import { useAppState } from '@/utils/AppStateProvider';
 import { useMemo } from 'react';
 
@@ -31,10 +32,17 @@ const useDialogs = () => {
     }
   }), [dispatch]);
 
+  const bannerState = useMemo(() => ({
+    set: (banner: TBanner) => {
+      dispatch({ type: 'SET_CURRENT_BANNER', payload: banner });
+    }
+  }), [dispatch]);
+
   return {
     actionsDialog,
     messageDialog,
-    channelState
+    channelState,
+    bannerState
   };
 };
 
