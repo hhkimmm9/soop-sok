@@ -25,9 +25,16 @@ const useDialogs = () => {
     }
   }), [dispatch]);
 
+  const channelState = useMemo(() => ({
+    set: (cid: string) => {
+      dispatch({ type: 'SET_CHANNEL_ID', payload: cid });
+    }
+  }), [dispatch]);
+
   return {
     actionsDialog,
-    messageDialog
+    messageDialog,
+    channelState
   };
 };
 

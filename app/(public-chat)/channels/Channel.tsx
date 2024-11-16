@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
 import { updateChannel } from '@/db/utils';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
+import useDialogs from '@/functions/dispatcher';
 
 import { TChannel } from '@/types';
 
-type ChannelProps = {
+interface ChannelProps {
   channel: TChannel
 };
 
-export const Channel = ({ channel } : ChannelProps) => {
+export const Channel = ({ channel }: ChannelProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isFull, setIsFull] = useState(false);
   
   const router = useRouter();
 
-  const { dispatch } = useAppState();
+  const { messageDialog, channelState } = useDialogs();
   
   // Authorize users before rendering the page.
   useEffect(() => {
@@ -45,39 +45,49 @@ export const Channel = ({ channel } : ChannelProps) => {
   // Error: real time data fetching
   useEffect(() => {
     if (FSError !== undefined) {
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+      messageDialog.show('data_retrieval');
     }
-  }, [FSError, dispatch]);
+  }, [FSError, messageDialog]);
   
   // When users join a channel, add them to the 'members' subcollection of the associated channel document and update the 'numMembers' field in the channel document accordingly.
   const handleEnterChannel = async () => {
+    const currentUser = auth.currentUser;
+    
+    if (!currentUser) {
+      router.push('/');
+      return;
+    }
+
     // Authorize users.
-    if (auth && auth.currentUser && !isFull) {
+    if (!isFull) {
       // Log where the user is in.
       try {
-        const res = await updateChannel(channel.id, auth.currentUser.uid, 'enter');
+        const res = await updateChannel(channel.id, currentUser.uid, 'enter');
     
         // Store the channel ID in the global state.
-        dispatch({ type: 'SET_CHANNEL_ID', payload: channel.id });
+        channelState.set(channel.id);
 
         // Redriect to the selected channel page.
         if (res) router.push(`/chats/channel/${channel.id}/`);
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+        messageDialog.show('data_retrieval');
       }
     }
   };
 
   return (
-    <div onClick={handleEnterChannel} className={`
-      ${!isFull ? '' : 'opacity-50'}
-      p-4 rounded-lg shadow-sm bg-white
-      transition duration-300 ease-in-out hover:bg-stone-200
-      flex flex-col gap-2
-    `}>
-      <h3 className='font-semibold text-lg'>{ channel.name }</h3>
-      <p>Capacity: { FSValue?.numMembers } / { channel.capacity }</p>
+    <div
+      onClick={handleEnterChannel} 
+      className={`
+        ${!isFull ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}
+        p-4 rounded-lg shadow-md bg-white
+        transition duration-300 ease-in-out hover:bg-gray-100
+        flex flex-col gap-2
+      `}
+    >
+      <h3 className='font-semibold text-lg text-gray-800'>{ channel.name }</h3>
+      <p className='text-sm text-gray-600'>Capacity: { FSValue?.numMembers } / { channel.capacity }</p>
     </div>
   )
 };

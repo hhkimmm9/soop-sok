@@ -1,12 +1,11 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
 import Channel from '@/app/(public-chat)/channels/Channel';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
+import useDialogs from '@/functions/dispatcher'; // Adjust the import path as necessary
 import { auth } from '@/db/firebase';
 import { fetchChannels } from '@/db/utils';
 
@@ -18,16 +17,19 @@ const Page = () => {
   const [channels, setChannels] = useState<TChannel[]>([]);
   
   const router = useRouter();
-
-  const { dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   // Authenticate a user
   useEffect(() => {
-    if (!auth) {
-      router.push('/');
-    } else {
-      setIsAuthenticated(true);
-    }
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        router.push('/');
+      }
+    });
+
+    return () => unsubscribe();
   }, [router]);
 
   useEffect(() => {
@@ -37,31 +39,25 @@ const Page = () => {
         setChannels(channels);
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
-        
-        router.refresh();
+        messageDialog.show('data_retrieval');
       }
     };
+    
     if (isAuthenticated) {
       getChannels();
     }
-  }, [router, isAuthenticated, dispatch]);
+  }, [router, isAuthenticated, messageDialog]);
 
-  // if (!isAuthenticated || FSLoading) return (
-  if (!isAuthenticated) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (<>
-    <div className='h-full bg-stone-100'>
-      <div className='flex flex-col gap-3'>
-        { channels && channels.length > 0 && channels.map(channel => (
-          <Channel key={channel.id} channel={channel} />  
-        )) }
+  return (
+    <div>
+      <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Channels</h1>
+      <div className='h-full overflow-y-auto flex flex-col gap-3'>
+        {channels && channels.length > 0 && channels.map(channel => (
+          <Channel key={channel.id} channel={channel} />
+        ))}
       </div>
     </div>
-  </>);
+  );
 };
 
 export default Page;

@@ -4,7 +4,7 @@ const PublicChatLayout = ({
   children: React.ReactNode
 }) => {
   return (
-    <div className="p-4">
+    <div className="h-full p-4">
       {children}
     </div>
   );
