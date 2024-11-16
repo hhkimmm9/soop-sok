@@ -39,7 +39,7 @@ const Page = () => {
   }, [dispatch, id, profile?.uid]);
 
   return (
-    <div className='p-4 pt-10 flex flex-col gap-4'>
+    <div className='pt-10 flex flex-col gap-4'>
       {/* pic and name */}
       <div className='w-full grid grid-cols-4'>
         <div className='pl-2'>

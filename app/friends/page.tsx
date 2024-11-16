@@ -37,7 +37,7 @@ const Friends = () => {
   }, [messageDialog]);
 
   return (
-    <div className='h-full overflow-y-auto p-4'>
+    <div className='h-full overflow-y-auto'>
       <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Friends</h1>
       <div className='flex flex-col gap-2'>
         {friends.length > 0 ? friends.map((friend: TFriend) => (

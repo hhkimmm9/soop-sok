@@ -30,7 +30,7 @@ const Settings = () => {
   };
 
   return (
-    <div className='p-4'>
+    <>
       <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Settings</h1>
       <div className='flex flex-col gap-4 items-center'>
       <Link href={`/profile/${auth.currentUser?.uid}`} className='
@@ -47,7 +47,7 @@ const Settings = () => {
         transition duration-300 ease-in-out
       '> Sign Out </button>
       </div>
-    </div>
+    </>
   )
 };
 
