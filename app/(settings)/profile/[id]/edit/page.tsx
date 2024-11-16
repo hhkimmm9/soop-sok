@@ -48,7 +48,7 @@ const ProfileEdit = () => {
     };
 
     getUser();
-  }, []);
+  }, [messageDialog, router]);
 
   // Update user profile when the user confirms the action dialog.
   useEffect(() => {
@@ -73,7 +73,7 @@ const ProfileEdit = () => {
     } else {
       actionsDialog.hide();
     }
-  }, [state.actionsDialogResponse, actionsDialog]);
+  }, [state.actionsDialogResponse, actionsDialog, id, messageDialog, router, user]);
 
 
   const updateField = useCallback((field: string, value: any, isProfileField = false) => {
