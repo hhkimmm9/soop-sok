@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   try {
     const res = await channelsRef.get();
     if (res.empty) {
-      return NextResponse.json([], { status: 200 });
+      return NextResponse.json({ error: 'No channels found' }, { status: 404 });
     }
 
     const channels: TChannel[] = res.docs.map((doc: any) => ({
