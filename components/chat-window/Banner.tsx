@@ -6,7 +6,7 @@ import { useAppState } from '@/utils/AppStateProvider';
 import useDialogs from '@/functions/dispatcher';
 
 import '@/components/Marquee.css';
-import { getBanner } from '@/db/utils';
+import { getBanner } from '@/db/services';
 
 const Banner = () => {
   const { state } = useAppState();

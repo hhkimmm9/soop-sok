@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { addBanner } from '@/db/utils';
+import { addBanner } from '@/db/services';
 
 import {
   BackspaceIcon

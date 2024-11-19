@@ -12,7 +12,7 @@ import UpdateButton from '@/app/(settings)/profile/[id]/edit/_components/UpdateB
 import useDialogs from '@/functions/dispatcher';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { fetchUser, updateUserProfile } from '@/db/utils';
+import { fetchUser, updateUserProfile } from '@/db/services';
 import { TUser } from '@/types';
 
 

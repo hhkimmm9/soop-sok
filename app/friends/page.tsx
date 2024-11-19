@@ -5,7 +5,7 @@ import Friend from '@/app/friends/Friend';
 import { useState, useEffect, } from 'react';
 
 import { auth } from '@/db/firebase';
-import { fetchFriends } from '@/db/utils';
+import { fetchFriends } from '@/db/services';
 
 import { TFriend } from '@/types';
 import useDialogs from '@/functions/dispatcher';

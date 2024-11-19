@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth, db } from '@/db/firebase';
-import { checkIsMyFriend, makeFriend } from '@/db/utils';
+import { checkIsMyFriend, makeFriend } from '@/db/services';
 import {
   collection, query, where,
   addDoc, getDocs, serverTimestamp

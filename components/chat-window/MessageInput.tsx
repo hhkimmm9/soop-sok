@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { sendMessage } from '@/db/utils';
+import { sendMessage } from '@/db/services';
 
 import {
   PaperAirplaneIcon,

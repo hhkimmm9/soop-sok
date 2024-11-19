@@ -7,7 +7,7 @@ import Link from 'next/link';
 import OthersProfile from './OthersProfile';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { fetchUser } from '@/db/utils';
+import { fetchUser } from '@/db/services';
 import { TUser } from '@/types';
 
 const Page = () => {

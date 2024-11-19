@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { updateChannel, updateChat } from '@/db/utils';
+import { updateChannel, updateChat } from '@/db/services';
 
 import {
   PlusIcon,

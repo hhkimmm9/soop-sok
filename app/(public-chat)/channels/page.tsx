@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import useDialogs from '@/functions/dispatcher'; // Adjust the import path as necessary
 import { auth } from '@/db/firebase';
-import { fetchChannels } from '@/db/utils';
+import { fetchChannels } from '@/db/services';
 
 import { TChannel } from '@/types';
 

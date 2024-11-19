@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
-import { getBanner, createChat } from '@/db/utils';
+import { getBanner, createChat } from '@/db/services';
 
 import { TBanner } from '@/types';
 

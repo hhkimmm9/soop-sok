@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 import { auth } from '@/db/firebase';
 import { useRouter } from 'next/navigation';
-import { fetchUser } from '@/db/utils';
+import { fetchUser } from '@/db/services';
 
 import { TUser } from '@/types';
 

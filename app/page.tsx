@@ -10,7 +10,7 @@ import 'firebaseui/dist/firebaseui.css'
 import Cookies from 'universal-cookie';
 
 import { auth } from '@/db/firebase';
-import { registerUserWithUID, updateUserStatus } from '@/db/utils';
+import { registerUserWithUID, updateUserStatus } from '@/db/services';
 import { useAppState } from '@/utils/AppStateProvider';
 
 type TFirebaseUI = {
