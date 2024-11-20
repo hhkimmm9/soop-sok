@@ -16,25 +16,19 @@ const ChatMessage = ({ message } : ChatMessageProps) => {
 
   return (
     <div className='grid grid-cols-6'>
-      <div className='col-span-1 mt-2'>
-        <div onClick={redirectToProfile}>
-          <Image src={message?.senderPhotoURL} alt='Profile Picture'
-            width={48} height={48}
-            className='object-cover rounded-full'
-          />
-        </div>
+      <div onClick={redirectToProfile} className='col-span-1 mt-2'>
+        <Image src={message?.senderPhotoURL} alt='Profile Picture'
+          width={48} height={48}
+          className='object-cover rounded-full'
+        />
       </div>
       <div className='col-span-5 ml-2 flex flex-col gap-1'>
-        <span className='text-sm text-gray-600'>
-          { message?.senderName }
-        </span>
+        <p className='text-sm text-gray-600'>{ message?.senderName }</p>
         <div className='
-          px-3 py-2 rounded-lg
+          px-3 py-2 rounded-xl
           bg-gradient-to-b from-sky-500 to-sky-400
         '>
-          <span className='text-neutral-100'>
-            { message.message }
-          </span>
+          <p className='text-neutral-100'>{ message.message }</p>
         </div>
       </div>
     </div>
