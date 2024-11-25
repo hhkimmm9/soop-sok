@@ -1,13 +1,11 @@
 'use client';
 
-import {
-  TextField, Button,
-} from '@mui/material';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
+import { TextField, Button } from '@mui/material';
+
+import useDialogs from '@/functions/dispatcher';
 import { auth } from '@/db/firebase';
 import { addBanner } from '@/db/services';
 
@@ -29,7 +27,7 @@ const Page = ({ params }: pageProps) => {
 
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   const addToList = () => {
     if (tagOptions.length < 5) {
@@ -51,17 +49,18 @@ const Page = ({ params }: pageProps) => {
   };
 
   const redirectToFeaturesPage = () => {
-    if (auth) {
-      router.push(`/chats/${params.type}/${params.id}/features`);
-    }
+    if (auth) router.push(`/chats/${params.type}/${params.id}/features`);
+    else router.push('/');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
 
-    if (auth && auth.currentUser && bannerContent.length > 0) {
+    if (bannerContent.length > 0) {
       try {
-
         const res = await addBanner(params.id, bannerContent, tagOptions);
 
         // 
@@ -71,7 +70,7 @@ const Page = ({ params }: pageProps) => {
         }
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
+        messageDialog.show('general');
       }
     }
   };
@@ -80,8 +79,10 @@ const Page = ({ params }: pageProps) => {
     <form onSubmit={(e) => handleSubmit(e)} className='h-full flex flex-col gap-4'>
       <div className='
         grow p-4 overflow-y-auto rounded-lg bg-white
-        flex flex-col gap-2
+        flex flex-col gap-6
       '>
+        <h1 className='font-semibold capitalize text-center text-2xl text-earth-600'>add a new banner</h1>
+
         {/* name */}
         <TextField id='outlined-basic' label='Banner' variant='outlined'
           value={bannerContent} onChange={(e) => setBannerContent(e.target.value)}
@@ -98,41 +99,40 @@ const Page = ({ params }: pageProps) => {
               Add
             </Button>
           </div>
+        </div>
 
-          {/* container for tag options */}
-          <div>
+        {/* container for tag options */}
+        <div>
+          {tagOptions.length > 0 && (
+          <>
             <div className='min-h-14 p-3 border border-gray-300 rounded-sm'>
-              <div className='flex flex-col items-start gap-3'>
-                { tagOptions.map((tagOption, index) => (
-                  <div key={`${index}-${tagOption}`} className='w-full flex items-center justify-between'>
-                    <p className='whitespace-nowrap'>
-                      { `${index+1}. ${tagOption}` }
-                    </p>
-                    <div onClick={() => deleteFromList(tagOption)}>
-                      <BackspaceIcon className='h-5 text-gray-500' />
-                    </div>
+              <div className='flex flex-col gap-3'>
+                {tagOptions.map((tagOption, index) => (
+                  <div key={tagOption} className='flex justify-between items-center'>
+                    <p className='whitespace-nowrap'>{`${index + 1}. ${tagOption}`}</p>
+                    <BackspaceIcon className='h-5 text-gray-500 cursor-pointer' onClick={() => deleteFromList(tagOption)} />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* instruction */}
-            { tagOptions.length > 0 && (
-              <p className='mt-2 px-1 text-gray-400 text-sm'>Other users would only be able to choose one of the avilable options</p>
-            )}
-          </div>
+            <p className='mt-2 px-1 text-gray-400 text-sm'>Other users would only be able to choose one of the available options</p>
+          </>
+          )}
         </div>
       </div>
 
       <div className='grid grid-cols-2 gap-2.5'>
-        <button type='button' onClick={redirectToFeaturesPage} className='
-          w-full py-4 rounded-lg shadow-sm bg-white
-          transition duration-300 ease-in-out hover:bg-stone-200
+        <button type="button" onClick={redirectToFeaturesPage} className='
+          w-full py-4 rounded-lg shadow bg-white
+          font-semibold text-xl text-earth-400
+          transition duration-300 ease-in-out hover:bg-earth-50
         '> Cancel </button>
 
         <button type='submit' className='
-          w-full py-4 rounded-lg shadow-sm bg-white
-          transition duration-300 ease-in-out hover:bg-stone-200
+          w-full py-4 rounded-lg shadow bg-earth-100
+          font-semibold text-xl text-earth-600
+          transition duration-300 ease-in-out hover:bg-earth-200
         '> Create </button>
       </div>
     </form>

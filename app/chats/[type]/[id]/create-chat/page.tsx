@@ -1,19 +1,20 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
-import {
-  TextField,
-  FormControl, InputLabel, Select, MenuItem,
-  Stack, Slider,
-  SelectChangeEvent,
-} from '@mui/material';
-
 import { useState, useEffect, ChangeEvent, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/db/firebase';
 import { getBanner, createChat } from '@/db/services';
+import useDialogs from '@/functions/dispatcher';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Stack,
+  Slider,
+  SelectChangeEvent,
+} from '@mui/material';
 
 import { TBanner } from '@/types';
 
@@ -25,8 +26,6 @@ type pageProps = {
 };
 
 const Page = ({ params }: pageProps) => {
-  const [isLoading, setIsLoading] = useState(true);
-
   const [formState, setFormState] = useState({
     capacity: 2,
     isPrivate: false,
@@ -38,7 +37,7 @@ const Page = ({ params }: pageProps) => {
 
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   useEffect(() => {
     const fetchBannerOptions = async () => {
@@ -51,16 +50,15 @@ const Page = ({ params }: pageProps) => {
               tagOptions: banner.tagOptions
             }));
           }
-          setIsLoading(false);
         }
         catch (err) {
           console.error(err);
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+          messageDialog.show('data_retrieval');
         }
       }
     };
     fetchBannerOptions();
-  }, [dispatch]);
+  }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -92,20 +90,21 @@ const Page = ({ params }: pageProps) => {
   };
 
   const redirectToFeaturesPage = () => {
-    if (auth) {
-      router.push(`/chats/${params.type}/${params.id}/features`);
-    }
+    if (auth) router.push(`/chats/${params.type}/${params.id}/features`);
+    else router.push('/');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const currentUser = auth.currentUser;
     
-    // validate the inputs
-    if (auth && auth.currentUser && formState.name.length > 0) {
+    // TODO: validate the inputs
+    if (currentUser && formState.name.length > 0) {
       try {
         const cid = await createChat(
           params.id,
-          auth.currentUser.uid,
+          currentUser.uid,
           formState.capacity,
           formState.name,
           formState.tag,
@@ -117,25 +116,24 @@ const Page = ({ params }: pageProps) => {
       }
       catch (err) {
         console.error(err);
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
+        messageDialog.show('general');
       }
     }
   };
-
-  if (isLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
   
   return (
+    
     <form onSubmit={handleSubmit} className='h-full flex flex-col gap-4'>
+      {/* input fields */}
       <div className='
-        grow p-4 overflow-y-auto rounded-lg shadow-sm bg-white
+        grow p-5 overflow-y-auto rounded-lg shadow-sm bg-white
         flex flex-col gap-6
       '>
+        <h1 className='font-semibold capitalize text-center text-2xl text-earth-600'>create a new chat</h1>
+
         {/* name */}
         <div className='flex flex-col gap-2'>
+          {/* TODO: no rounded? */}
           <TextField id="name" label="Name" variant="outlined"
             name="name"
             value={formState.name}
@@ -145,6 +143,7 @@ const Page = ({ params }: pageProps) => {
 
         {/* tag */}
         <div className='flex flex-col gap-2'>
+          {/* TODO: no rounded? */}
           <FormControl fullWidth>
             <InputLabel id="tag-select-label">Tag</InputLabel>
             <Select
@@ -165,11 +164,12 @@ const Page = ({ params }: pageProps) => {
           <div className='grid grid-cols-6'>
             <div className='col-span-3 pl-3'>
               <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+                {/* TODO: color: earth */}
                 <Slider
                   aria-label="capacity"
-                  min={2}
-                  max={5}
-                  step={1}
+                  min={2} max={5}
+                  step={1} marks={true}
+                  color="primary"
                   value={formState.capacity}
                   onChange={handleSliderChange}
                 />
@@ -189,7 +189,7 @@ const Page = ({ params }: pageProps) => {
                 className='hidden'
               />
               <label htmlFor="public" className='inline-flex items-center cursor-pointer'>
-                <span className={`w-4 h-4 border rounded-full flex-shrink-0 mr-2 ${!formState.isPrivate ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-400'}`}></span>
+                <span className={`w-4 h-4 border rounded-full flex-shrink-0 mr-2 ${!formState.isPrivate ? 'bg-earth-500 border-earth-500' : 'bg-white border-gray-400'}`}></span>
                 Public
               </label>
             </div>
@@ -201,7 +201,7 @@ const Page = ({ params }: pageProps) => {
                 className='hidden'
               />
               <label htmlFor="private" className='inline-flex items-center cursor-pointer'>
-                <span className={`w-4 h-4 border rounded-full flex-shrink-0 mr-2 ${formState.isPrivate ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-400'}`}></span>
+                <span className={`w-4 h-4 border rounded-full flex-shrink-0 mr-2 ${formState.isPrivate ? 'bg-earth-500 border-earth-500' : 'bg-white border-gray-400'}`}></span>
                 Private
               </label>
             </div>
@@ -223,15 +223,18 @@ const Page = ({ params }: pageProps) => {
         </div>
       </div>
 
+      {/* buttons */}
       <div className='grid grid-cols-2 gap-2.5'>
         <button type="button" onClick={redirectToFeaturesPage} className='
-          w-full py-4 rounded-lg shadow-sm bg-white
-          transition duration-300 ease-in-out hover:bg-stone-200
+          w-full py-4 rounded-lg shadow bg-white
+          font-semibold text-xl text-earth-400
+          transition duration-300 ease-in-out hover:bg-earth-50
         '> Cancel </button>
 
         <button type='submit' className='
-          w-full py-4 rounded-lg shadow-sm bg-white
-          transition duration-300 ease-in-out hover:bg-stone-200
+          w-full py-4 rounded-lg shadow bg-earth-100
+          font-semibold text-xl text-earth-600
+          transition duration-300 ease-in-out hover:bg-earth-200
         '> Create </button>
       </div>
     </form>

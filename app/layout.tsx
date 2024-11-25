@@ -3,6 +3,10 @@ import { Inter, Dhurjati } from "next/font/google";
 import "./globals.css";
 
 import { AppStateProvider } from "@/utils/AppStateProvider";
+import { ThemeProvider } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "@/functions/ThemeProvider";
+
 import LayoutWrapper from "@/app/LayoutWrapper";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -23,9 +27,12 @@ export default async function RootLayout({ children }: Readonly<Props>) {
     <html lang="en">
       <body className={`${inter.variable} ${dhurjati.variable}`}>
         <AppStateProvider>
-          <LayoutWrapper>
-            { children }
-          </LayoutWrapper>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <LayoutWrapper>
+              { children }
+            </LayoutWrapper>
+          </ThemeProvider>
         </AppStateProvider>
       </body>
     </html>

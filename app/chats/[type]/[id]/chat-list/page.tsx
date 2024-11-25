@@ -1,7 +1,6 @@
 'use client';
 
 import ProgressIndicator from '@/components/ProgressIndicator';
-import SearchBar from '@/components/SearchBar';
 import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 
 import { useState, useEffect } from 'react';
@@ -89,23 +88,24 @@ const Page = ({ params }: pageProps) => {
   )
   else return (
     <div className='h-full flex flex-col gap-4'>
-      <SearchBar
-        onSubmit={(searchQuery: string) => console.log(searchQuery) }
-      />
-
       {/* chat list */}
       <div className='
         row-span-11 grow p-4 overflow-y-auto rounded-lg bg-white
-        flex flex-col gap-3
+        flex flex-col gap-6
       '>
-        { chats.map((chat: TChat) => (
-          <Chat key={chat.id} chat={chat} />
-        )) }
+        <h1 className='font-semibold capitalize text-center text-2xl text-earth-600'>Chats</h1>
+
+        <div className='flex flex-col gap-3'>
+          {chats.map((chat: TChat) => (
+            <Chat key={chat.id} chat={chat} />
+          ))}
+        </div>
       </div>
 
-      <button type='button' onClick={redirectToFeaturesPage} className='
-        w-full py-4 rounded-lg shadow-sm bg-white
-        transition duration-300 ease-in-out hover:bg-stone-200
+      <button type="button" onClick={redirectToFeaturesPage} className='
+        w-full py-4 rounded-lg shadow bg-white
+        font-semibold text-xl text-earth-400
+        transition duration-300 ease-in-out hover:bg-earth-50
       '> Cancel </button>
     </div>
   )
