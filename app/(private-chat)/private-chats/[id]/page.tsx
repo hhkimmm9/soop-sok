@@ -1,16 +1,13 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
 import SearchBar from '@/components/SearchBar';
 import PrivateChat from '@/app/(private-chat)/private-chats/[id]/PrivateChat';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, or, where, } from 'firebase/firestore';
+import { auth } from '@/db/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import { TPrivateChat } from '@/types';
 
@@ -27,56 +24,23 @@ const Page = ({ params }: PrivateChatProps) => {
 
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
-
   // Authenticate a user
   useEffect(() => {
-    if (!auth) {
-      router.push('/');
-    } else {
-      setIsAuthenticated(true);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push('/');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
     }
-  }, [router]);
+  }, [isAuthenticated, router]);
 
-  // Fetch data if a user is authenticated
-  const chatsRef = collection(db, 'private_chats');
-  const chatsQuery = query(chatsRef, or(
-    where('from', '==', params.id),
-    where('to', '==', params.id)
-  ));
-  const [FSSnapshot, FSLoading, FSError] = useCollection(
-    isAuthenticated ? chatsQuery : null
-  );
-
-  // Handling retrieved data
-  useEffect(() => {
-    const container: TPrivateChat[] = []
-    if (FSSnapshot && !FSSnapshot.empty) {
-      FSSnapshot.forEach((doc) => {
-        container.push({
-          id: doc.id,
-          ...doc.data()
-        } as TPrivateChat)
-      });
-      setPrivateChats(container);
-    }
-  }, [FSSnapshot]);
-
-  // Error handling
-  useEffect(() => {
-    if (FSError !== undefined) {
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
-      router.refresh();
-    }
-  }, [router, FSError, dispatch]);
-
-  if (!isAuthenticated || FSLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-
-  if (privateChats) return (<>
+  return (
     <div className='h-full bg-stone-100'>
       <div className='flex flex-col gap-6'>
         {/* interaction area */}
@@ -94,7 +58,7 @@ const Page = ({ params }: PrivateChatProps) => {
         </div>
       </div>
     </div>
-  </>);
+  );
 };
 
 export default Page;

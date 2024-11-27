@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation';
+
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/db/firebase';
 import useDialog from "@/functions/dispatcher"
 
 import ChatMessage from '@/components/chat-window/ChatMessage';
 
-import { auth } from '@/db/firebase';
 import { TMessage } from '@/types';
 
 type MessageContainerProps = {
@@ -26,7 +28,7 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
 
   const { messageDialog } = useDialog();
 
-  // Authenticate a user
+  // If it's an authenticated user, fetch messages.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -36,17 +38,11 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
       }
     });
 
-    const fetchMessages = async () => {
-      // 
-    }
-
-    if (isAuthenticated) fetchMessages()
-
     // Cleanup subscription on unmount
     return () => {
       unsubscribe();
     }
-  }, [cid, isAuthenticated, messageDialog, router]);
+  }, [cid, isAuthenticated, router]);
   
   // Local functions
   const lazyLoadMessages = async () => {

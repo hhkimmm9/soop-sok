@@ -1,18 +1,13 @@
 'use client';
 
-import ProgressIndicator from '@/components/ProgressIndicator';
-import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/db/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import {
-  collection, query,
-  where, orderBy,
-} from 'firebase/firestore'
+import { auth } from '@/db/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import useDialog from "@/functions/dispatcher"
+
+import Chat from '@/app/chats/[type]/[id]/chat-list/Chat';
 
 import { TChat } from '@/types'
 
@@ -30,63 +25,31 @@ const Page = ({ params }: pageProps) => {
 
   const router = useRouter();
 
-  const { dispatch } = useAppState();
+  const { messageDialog } = useDialog();
 
   // Authenticate a user
   useEffect(() => {
-    if (!auth) {
-      router.push('/');
-    } else {
-      setIsAuthenticated(true);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push('/');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
     }
+
   }, [router]);
 
-  // Fetch data if a user is authenticated
-  const chatsRef = collection(db, 'chats');
-  const chatsQuery = query(chatsRef,
-    where('cid', '==', params.id),
-    orderBy('createdAt', 'asc')
-  );
-  const [FSSnapshot, FSLoading, FSError] = useCollection(
-    isAuthenticated ? chatsQuery : null
-  );
-
-  // Handling retrieved data
-  useEffect(() => {
-    const chatList: TChat[] = [];
-    if (FSSnapshot && !FSSnapshot.empty) {
-      FSSnapshot.forEach((doc) => {
-        chatList.push({
-          id: doc.id,
-          ...doc.data()
-        } as TChat);
-      });
-      setChats(chatList);
-    }
-  }, [FSSnapshot])
-
-  // Error handling
-  useEffect(() => {
-    if (FSError !== undefined) {
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
-
-      router.push(`/chats/${params.type}/${params.id}/features`);
-    }
-  }, [router, FSError, dispatch, params.type, params.id]);
-
-  // Local functions
-  const redirectToFeaturesPage = () => {
-    if (auth) {
-      router.push(`/chats/${params.type}/${params.id}/features`);
-    }
+  // Local functions ----------------------------------------------------------
+  const handleCancelClick = () => {
+    if (auth) router.push(`/chats/${params.type}/${params.id}/features`);
   };
 
-  if (!isAuthenticated || FSLoading) return (
-    <div className='h-full flex justify-center items-center'>
-      <ProgressIndicator />
-    </div>
-  )
-  else return (
+  return (
     <div className='h-full flex flex-col gap-4'>
       {/* chat list */}
       <div className='
@@ -102,7 +65,7 @@ const Page = ({ params }: pageProps) => {
         </div>
       </div>
 
-      <button type="button" onClick={redirectToFeaturesPage} className='
+      <button type="button" onClick={handleCancelClick} className='
         w-full py-4 rounded-lg shadow bg-white
         font-semibold text-xl text-earth-400
         transition duration-300 ease-in-out hover:bg-earth-50

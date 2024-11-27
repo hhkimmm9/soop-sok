@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { admin, db } from '@/db/firebaseAdmin';
+import { db } from '@/db/firebaseAdmin';
 import { TChannel } from "@/types";
 
 // Utility function to extract token

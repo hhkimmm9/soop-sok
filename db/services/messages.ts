@@ -22,7 +22,7 @@ export async function sendMessage(
 
 export async function fetchLatestMessage(cid: string) {
   try {
-    const data = await fetchWithAuth(`/api/messages?cid=${cid}&latest=true`, { method: 'GET' });
+    const data = await fetchWithAuth(`/api/messages/latest?cid=${cid}`, { method: 'GET' });
     console.log(data.latestMessage);
     return data.latestMessage;
   } catch (err) {
