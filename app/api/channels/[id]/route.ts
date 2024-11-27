@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { admin, db } from '@/db/firebaseAdmin';
+import { firestore, FieldValue } from '@/db/firebaseAdmin';
 import { TChannel } from "@/types";
 
 // Utility function to extract token
@@ -27,7 +27,7 @@ export async function PUT(
   const action = searchParams.get('action');
   console.log(`Action: ${action}`);
 
-  const channelRef = db.collection('channels').doc(id);
+  const channelRef = firestore.collection('channels').doc(id);
   
   try {
     const channelDoc = await channelRef.get();
@@ -48,7 +48,7 @@ export async function PUT(
       await channelRef.update({
         members: newMembers,
         numMembers: newNumMembers,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: FieldValue.serverTimestamp()
       });
     } else if (action === 'leave') {
       const newMembers = channelData.members.filter(member => member !== uid);
@@ -59,7 +59,7 @@ export async function PUT(
       await channelRef.update({
         members: newMembers,
         numMembers: newNumMembers,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: FieldValue.serverTimestamp()
       });
     }
 

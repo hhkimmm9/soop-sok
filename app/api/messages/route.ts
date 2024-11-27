@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { admin, db } from '@/db/firebaseAdmin';
+import { firestore, FieldValue } from '@/db/firebaseAdmin';
 
 // Utility function to extract token
 function getToken(req: NextRequest): string | null {
@@ -17,13 +17,13 @@ export async function POST(req: NextRequest) {
   const { uid, cid, senderName, senderPhotoURL, message }  = await req.json();
 
   try {
-    await db.collection('messages').add({
+    await firestore.collection('messages').add({
       uid,
       cid,
       senderName,
       senderPhotoURL,
       message,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp()
     })
     return NextResponse.json({ ack: "message sent!" }, { status: 200 });
   } catch (error) {

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { admin, db } from '@/db/firebaseAdmin';
+import { firestore, FieldValue } from '@/db/firebaseAdmin';
 import { TBanner } from "@/types";
 
 // Utility function to extract token
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
   }
 
-  const bannerRef = db.collection('banners');
+  const bannerRef = firestore.collection('banners');
   const bannerQuery = bannerRef.where('selected', '==', true);
   try {
     const res = await bannerQuery.get();
@@ -39,10 +39,10 @@ export  async function POST(req: NextRequest) {
   const { cid, content, tagOptions }  = await req.json();
 
   try {
-    await db.collection('banners').add({
+    await firestore.collection('banners').add({
       cid,
       content,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       selected: false,
       tagOptions,
     });

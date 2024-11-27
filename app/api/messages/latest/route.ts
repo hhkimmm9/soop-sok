@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { db } from "@/db/firebaseAdmin";
+import { firestore } from "@/db/firebaseAdmin";
 
 // Utility function to extract token
 function getToken(req: NextRequest): string | null {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const messageRef = db.collection("messages");
+    const messageRef = firestore.collection("messages");
     const res = await messageRef
       .where("cid", "==", cid)
       .orderBy("createdAt", "desc")

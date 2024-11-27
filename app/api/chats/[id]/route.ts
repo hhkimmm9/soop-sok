@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { admin, db } from '@/db/firebaseAdmin';
-import { Transaction } from "firebase-admin/firestore";
+import { firestore, FieldValue } from '@/db/firebaseAdmin';
 import { TChat } from "@/types";
 
 // Utility function to extract token
@@ -22,7 +21,7 @@ export async function PUT(
   const { uid } = await req.json();
   const searchParams = req.nextUrl.searchParams
   
-  const chatRef = db.collection('chats').doc(id);
+  const chatRef = firestore.collection('chats').doc(id);
 
   try {
     const chatDoc = await chatRef.get();
@@ -40,7 +39,7 @@ export async function PUT(
       await chatRef.update(chatRef, {
         members: newMembers,
         numMembers: newNumMembers,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: FieldValue.serverTimestamp()
       });
     } else if (searchParams.get('action') === 'leave') {
       const newMembers = chatData.members.filter(member => member !== uid);
@@ -50,7 +49,7 @@ export async function PUT(
       await chatRef.update(chatRef, {
         members: newMembers,
         numMembers: newNumMembers,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: FieldValue.serverTimestamp()
       });
     }
 

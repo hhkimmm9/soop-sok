@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase-admin/firestore";
+
 const admin = require('firebase-admin');
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -16,8 +18,7 @@ if (!admin.apps.length) {
   });
 }
 
-const db = admin.firestore();
+const auth = admin.auth();
+const firestore = admin.firestore();
 
-// TODO: need auth
-
-export { admin, db };
+export { auth, firestore, FieldValue};

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { admin, db } from '@/db/firebaseAdmin';
+import { firestore, FieldValue } from '@/db/firebaseAdmin';
 import { Filter } from "firebase-admin/firestore";
 import { TUser } from "@/types";
 
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const senderId = searchParams.get('senderId');
   const friendId = searchParams.get('friendId');
 
-  const friendRef = db.collection('friend_list');
+  const friendRef = firestore.collection('friend_list');
   
   if (friendId == null) {
     try {
@@ -75,8 +75,8 @@ export async function POST(req: NextRequest) {
   const { senderId, friendId } = await req.json();
 
   try {
-    db.collection('friend_list').add({
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    firestore.collection('friend_list').add({
+      createdAt: FieldValue.serverTimestamp(),
       friendId,
       senderId,
     });

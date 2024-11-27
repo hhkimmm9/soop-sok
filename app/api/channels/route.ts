@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { db } from '@/db/firebaseAdmin';
+import { firestore } from '@/db/firebaseAdmin';
 import { TChannel } from "@/types";
 
 // Utility function to extract token
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
   }
 
-  const channelsRef = db.collection('channels');
+  const channelsRef = firestore.collection('channels');
   try {
     const res = await channelsRef.get();
     if (res.empty) {
