@@ -20,8 +20,8 @@ const Wrapper = ({ children }: IWrapperProps) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {/* TODO: doesn"t fit on iphones. */}
-      <main className="w-screen h-screen mx-auto">
-        <div className="h-[calc(100vh-3.5rem)] bg-stone-50">
+      <main className="w-screen h-screen mx-auto bg-stone-50">
+        <div className="h-[calc(100vh-3.5rem)">
           { children }
         </div>
         
