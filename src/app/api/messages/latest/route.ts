@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { firestore } from "@/utils/db/firebaseAdmin";
+import { firestore } from "@/utils/firebase/firebaseAdmin";
 
 // Utility function to extract token
 function getToken(req: NextRequest): string | null {
