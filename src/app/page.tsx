@@ -2,16 +2,17 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'universal-cookie';
+import useDialogs from '@/utils/dispatcher';
 
-import Image from 'next/image';
+import { auth } from '@/utils/firebase/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'
-import Cookies from 'universal-cookie';
 
-import { auth } from '@/utils/firebase/firebase';
 import { registerUserWithUID, updateUserStatus } from '@/utils/firebase/firestore/services';
-import { useAppState } from '@/utils/AppStateProvider';
+
+import Image from 'next/image';
 
 type TFirebaseUI = {
   default: typeof firebaseui;
@@ -25,7 +26,7 @@ export default function Home() {
 
   const router = useRouter();
 
-  const { state, dispatch } = useAppState();
+  const { messageDialog } = useDialogs(); 
   
   const uiConfig = useMemo(() => {
     const cookies = new Cookies();
@@ -58,7 +59,7 @@ export default function Home() {
               // In case of an error, show an error message.
               catch (err) {
                 console.error('Error getting document:', err);
-                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
+                messageDialog.show('general');
               }
             }
             // If a user is returning,
@@ -75,7 +76,7 @@ export default function Home() {
               // In case of an error, show an error message.
               catch (err) {
                 console.error('Error getting document:', err);
-                dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
+                messageDialog.show('general');
               }
             }
 
@@ -92,7 +93,7 @@ export default function Home() {
         GoogleAuthProvider.PROVIDER_ID
       ]
     };
-  }, [dispatch, router]);
+  }, [router]);
 
   useEffect(() => {
     const loadFirebaseUI = async () => {
@@ -115,17 +116,9 @@ export default function Home() {
 
   return firebaseui ? (<>
     <div className='relative'>
-      <div className='
-        absolute left-0 right-0 z-10
-        h-screen py-40
-        flex flex-col gap-96 text-center
-      '>
+      <div className='absolute left-0 right-0 z-10 h-screen py-40 flex flex-col gap-96 text-center'>
         {/* App name */}
-        <h1 className='
-          font-dhurjati font-bold text-7xl
-          bg-gradient-to-r from-green-400 via-white to-yellow-400
-          bg-clip-text text-transparent
-        '>
+        <h1 className='font-dhurjati font-bold text-7xl bg-gradient-to-r from-green-400 via-white to-yellow-400 bg-clip-text text-transparent'>
           Soop Sok
         </h1>
 
