@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
-import { auth } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import useDialog from "@/utils/dispatcher"
+import { collection } from 'firebase/firestore';
 
 import Chat from '@/app/(pages)/chats/[type]/[id]/chat-list/Chat';
 
@@ -25,7 +26,11 @@ const Page = ({ params }: pageProps) => {
 
   const router = useRouter();
 
-  const { messageDialog } = useDialog();
+  const [value, loading, error] = useCollection(collection(firestore, "chats"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true }
+    }
+  );
 
   // Authenticate a user
   useEffect(() => {
@@ -37,12 +42,31 @@ const Page = ({ params }: pageProps) => {
       }
     });
 
+    if (isAuthenticated && value) {
+      const chatList = value.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      } as TChat));
+
+      setChats(chatList);
+    }
+
     // Cleanup subscription on unmount
     return () => {
       unsubscribe();
     }
 
-  }, [router]);
+  }, [isAuthenticated, value, router]);
+
+  useEffect(() => {
+    if (loading) {
+      console.log('Loading messages...');
+    }
+
+    if (error) {
+      console.error('Error fetching messages:', error);
+    }
+  }, [loading, error]);
 
   // Local functions ----------------------------------------------------------
   const handleCancelClick = () => {

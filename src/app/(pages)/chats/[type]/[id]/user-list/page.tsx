@@ -1,15 +1,15 @@
 'use client';
 
-import User from '@/app/(pages)/chats/[type]/[id]/user-list/User';
-import ProgressIndicator from '@/app/(components)/ProgressIndicator';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { doc } from 'firebase/firestore';
+import useDialogs from '@/utils/dispatcher';
+
+import User from '@/app/(pages)/chats/[type]/[id]/user-list/User';
 
 type pageProps = {
   params: {
@@ -24,7 +24,7 @@ const Page = ({ params }: pageProps) => {
 
   const router = useRouter();
 
-  const { dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   // Authenticate a user
   useEffect(() => {
@@ -35,7 +35,7 @@ const Page = ({ params }: pageProps) => {
     }
   }, [router]);
 
-  const chatRef = doc(db, 'chats', params.id);
+  const chatRef = doc(firestore, 'chats', params.id);
   const [FSValue, FSLoading, FSError] = useDocument(
     isAuthenticated ? chatRef : null
   );
@@ -50,11 +50,11 @@ const Page = ({ params }: pageProps) => {
   // Error handling
   useEffect(() => {
     if (FSError !== undefined) {
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+      messageDialog.show('data_retrieval');
 
       router.push(`/chats/${params.type}/${params.id}/features`);
     }
-  }, [router, FSError, dispatch, params.type, params.id]);
+  }, [router, FSError, params.type, params.id]);
 
   const redirectToFeaturesPage = () => {
     if (auth) {

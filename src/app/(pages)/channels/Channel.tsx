@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { updateChannel } from '@/utils/firebase/firestore/services';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
@@ -31,7 +31,7 @@ export const Channel = ({ channel }: ChannelProps) => {
   }, [router]);
 
   // Fetch channle data in real time only if a user is authorized.
-  const channelRef = doc(db, 'channels', channel.id);
+  const channelRef = doc(firestore, 'channels', channel.id);
   const [FSValue, FSLoading, FSError] = useDocumentData(
     isAuthenticated ? channelRef : null
   );

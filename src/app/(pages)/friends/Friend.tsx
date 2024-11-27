@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, db } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { fetchUser } from '@/utils/firebase/firestore/services';
 import {
   collection, doc, query,
@@ -58,7 +58,7 @@ export const Friend = ({ friendId }: FriendProp ) => {
     // check if their dm chat exists
     if (auth) {
       try {
-        const q = query(collection(db, 'private_chats'),
+        const q = query(collection(firestore, 'private_chats'),
           or(
             (where('from', '==', myId), where('to', '==', opponentId)),
             (where('from', '==', opponentId), where('to', '==', myId)),
@@ -71,7 +71,7 @@ export const Friend = ({ friendId }: FriendProp ) => {
         if (querySnapshot.empty) {
           try {
             // TODO: createPrivateChat
-            const chatRef = await addDoc(collection(db, 'private_chats'), {
+            const chatRef = await addDoc(collection(firestore, 'private_chats'), {
               from: myId,
               to: opponentId,
               createdAt: serverTimestamp(),

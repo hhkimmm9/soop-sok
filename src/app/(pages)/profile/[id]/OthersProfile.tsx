@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; 
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { checkIsMyFriend, makeFriend } from '@/utils/firebase/firestore/services';
 import {
   collection, query, where,
@@ -41,7 +41,7 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
     const opponentId = profile?.uid;
 
     // check if their dm chat exists
-    const privateChatRef = collection(db, 'private_chats');
+    const privateChatRef = collection(firestore, 'private_chats');
     const q = query(privateChatRef,
       where('from', 'in', [myId, opponentId]),
       where('to', 'in', [myId, opponentId])

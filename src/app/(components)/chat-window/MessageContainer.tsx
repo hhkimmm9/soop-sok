@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/utils/firebase/firebase';
-import useDialog from "@/utils/dispatcher"
+import { collection } from 'firebase/firestore';
 
 import ChatMessage from '@/app/(components)/chat-window/ChatMessage';
 
@@ -25,8 +26,13 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
-
-  const { messageDialog } = useDialog();
+  
+  // check rules in Cloud Firestore for security concerns.
+  const [value, loading, error] = useCollection(collection(firestore, "messages"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true }
+    }
+  );
 
   // If it's an authenticated user, fetch messages.
   useEffect(() => {
@@ -38,62 +44,38 @@ const MessageContainer = ({ cid }: MessageContainerProps) => {
       }
     });
 
+    if (isAuthenticated && value) {
+      const messageList = value.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      } as TMessage));
+
+      setMessages(messageList);
+    }
+
     // Cleanup subscription on unmount
     return () => {
       unsubscribe();
     }
-  }, [cid, isAuthenticated, router]);
+  }, [isAuthenticated, value, router]);
+
+  useEffect(() => {
+    if (loading) {
+      console.log('Loading messages...');
+    }
+
+    if (error) {
+      console.error('Error fetching messages:', error);
+    }
+  }, [loading, error]);
   
-  // Local functions
-  const lazyLoadMessages = async () => {
-    // const prevMessageList: TMessage[] = [];
-    // const q = query(collection(db, 'messages'),
-    //   where('cid', '==', cid),
-    //   orderBy('createdAt', 'desc'),
-    //   startAfter(firstVisible),
-    //   limit(NUM_MESSAGES_PER_FETCH)
-    // );
-    // const prevMessagesSnapshot = await getDocs(q);
-
-    // if (!prevMessagesSnapshot.empty) {
-    //   prevMessagesSnapshot.forEach((doc) => {
-    //     prevMessageList.push({
-    //       id: doc.id,
-    //       ...doc.data()
-    //     } as TMessage);
-    //   });
-      
-    //   const reversedMessageList = prevMessageList.reverse();
-      
-    //   // update the first visible value for pagination.
-    //   setFirstVisible(reversedMessageList[0].createdAt);
-    //   setPrevMessages((prev) => [ ...reversedMessageList, ...prev ]);
-    // } else setIsAll(true);
-  };
-
-  // When the scroll hits the top of the window, lazy load previous messages.
-  const handleScroll = async () => {
-    // const scrollContainer = chatWindowRef.current;
-
-    // if (scrollContainer?.scrollTop === 0 && !isAll) {
-    //   await lazyLoadMessages();
-
-    //   // TODO: scroll down to the bottom.
-    //   setTimeout(() => {
-    //     if (chatWindowRef.current) {
-    //       chatWindowRef.current.scrollTo(0, chatWindowRef.current.clientHeight);
-    //     }
-    //   }, 300);
-    // }
-  };
-
   return (
-    <div ref={chatWindowRef} onScroll={handleScroll}
+    <div ref={chatWindowRef} onScroll={() => {}}
       className='grow p-4 flex flex-col gap-5 rounded-lg shadow-sm overflow-y-auto bg-white 
     '>
       { messages.map((message: TMessage) => (
-        <ChatMessage key={message.createdAt.toString()} message={message} />
-      ))}
+        <ChatMessage key={message.id} message={message} />
+      )) }
     </div>
   );
 };

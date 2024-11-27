@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppState } from '@/utils/AppStateProvider';
-import { auth, db } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { updateChat } from '@/utils/firebase/firestore/services';
@@ -32,7 +32,7 @@ const Chat = ({ chat }: ChatProps) => {
   }, [router]);
 
   // Fetch channle data in real time only if a user is authorized.
-  const chatRef = doc(db, 'chats', chat.id);
+  const chatRef = doc(firestore, 'chats', chat.id);
   const [FSValue, FSLoading, FSError] = useDocumentData(
     isAuthenticated ? chatRef : null
   );
