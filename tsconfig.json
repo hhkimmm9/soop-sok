@@ -18,7 +18,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -26,7 +26,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "db/firebase.ts"
+    "src/utils/firebase/firebase.ts"
   ],
   "exclude": ["node_modules"]
 }

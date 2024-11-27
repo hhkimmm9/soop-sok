@@ -1,5 +1,0 @@
-// TODO: 
-
-export type newUser = {
-
-};
