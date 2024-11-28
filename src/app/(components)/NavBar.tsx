@@ -14,6 +14,13 @@ import {
   Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 
+const tabs = [
+  { tab: 'public-chat', icon: <QueueListIcon className='h-5 w-5' />, badge: 1 },
+  { tab: 'private-chat', icon: <ChatBubbleBottomCenterIcon className='h-5 w-5' />, badge: 2 },
+  { tab: 'friends', icon: <UserIcon className='h-5 w-5' />, badge: 3 },
+  { tab: 'settings', icon: <Cog6ToothIcon className='h-5 w-5' />, badge: 4 }
+];
+
 const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -45,30 +52,20 @@ const NavBar = () => {
   };
   
   return (
-    <nav>
+    <>
       {pathname !== '/' && (
-        <div className='
-          absolute bottom-0 w-full h-14 px-12
-          flex justify-between items-center bg-earth-50
-        '>
-          {[
-            { tab: 'public-chat', icon: <QueueListIcon className='h-5 w-5' />, badge: 1 },
-            { tab: 'private-chat', icon: <ChatBubbleBottomCenterIcon className='h-5 w-5' />, badge: 2 },
-            { tab: 'friends', icon: <UserIcon className='h-5 w-5' />, badge: 3 },
-            { tab: 'settings', icon: <Cog6ToothIcon className='h-5 w-5' />, badge: 4 }
-          ].map(({ tab, icon, badge }) => (
+        <nav className='absolute bottom-0 w-full h-14 px-12 py-3 flex justify-between items-center bg-earth-50'>
+          {tabs.map(({ tab, icon, badge }) => (
             <Badge key={tab} badgeContent={badge} color='primary'>
-              <div onClick={() => redirectTo(tab)}
-                className='
-                  p-2 rounded-full
-                  bg-earth-100 hover:bg-earth-200
-                  transition duration-300 ease-in-out
-              '>{icon}</div>
+              <div
+                onClick={() => redirectTo(tab)}
+                className='p-2 rounded-full bg-earth-100 hover:bg-earth-200 transition duration-300 ease-in-out'
+              >{ icon }</div>
             </Badge>
           ))}
-        </div>
+        </nav>
       )}
-    </nav>
+    </>
   )
 };
 
