@@ -1,13 +1,12 @@
 'use client';
 
-import Friend from '@/app/(pages)/friends/Friend';
-
 import { useState, useEffect, } from 'react';
 
+import PageTitle from '@/app/(components)/PageTitle';
+import Friend from '@/app/(pages)/friends/Friend';
+import { TFriend } from '@/types';
 import { auth } from '@/utils/firebase/firebase';
 import { fetchFriends } from '@/utils/firebase/firestore/services';
-
-import { TFriend } from '@/types';
 import useDialogs from '@/utils/dispatcher';
 
 const Friends = () => {
@@ -38,7 +37,7 @@ const Friends = () => {
 
   return (
     <div className='h-full overflow-y-auto'>
-      <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Friends</h1>
+      <PageTitle title="Friends" />
       <div className='flex flex-col gap-2'>
         {friends.length > 0 ? friends.map((friend: TFriend) => (
           <Friend key={friend.id}
