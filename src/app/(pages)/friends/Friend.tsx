@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { auth, firestore } from '@/utils/firebase/firebase';
-import { fetchUser } from '@/utils/firebase/firestore/services';
+import { fetchUser } from '@/utils/firebase/firestore';
 import {
   collection, doc, query,
   or, where,

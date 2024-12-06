@@ -8,7 +8,7 @@ import Channel from '@/app/(pages)/channels/Channel';
 
 import { TChannel } from '@/types';
 import { auth } from '@/utils/firebase/firebase';
-import { fetchChannels } from '@/utils/firebase/firestore/services';
+import { fetchChannels } from '@/utils/firebase/firestore';
 import useDialogs from '@/utils/dispatcher'; // Adjust the import path as necessary
 
 const Page = () => {

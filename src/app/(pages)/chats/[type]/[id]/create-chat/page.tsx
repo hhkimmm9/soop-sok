@@ -3,7 +3,7 @@
 import { useState, useEffect, ChangeEvent, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/utils/firebase/firebase';
-import { getBanner, createChat } from '@/utils/firebase/firestore/services';
+import { getBanner, createChat } from '@/utils/firebase/firestore';
 import useDialogs from '@/utils/dispatcher';
 import {
   TextField,

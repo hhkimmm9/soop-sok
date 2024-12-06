@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/utils/firebase/firebase';
-import { fetchLatestMessage } from '@/utils/firebase/firestore/services';
+import { fetchLatestMessage } from '@/utils/firebase/firestore';
 
 import { formatTimeAgo } from '@/utils/functions';
 import { TMessage, TPrivateChat, TUser } from '@/types';

@@ -6,7 +6,7 @@ import PageTitle from '@/app/(components)/PageTitle';
 import Friend from '@/app/(pages)/friends/Friend';
 import { TFriend } from '@/types';
 import { auth } from '@/utils/firebase/firebase';
-import { fetchFriends } from '@/utils/firebase/firestore/services';
+import { fetchFriends } from '@/utils/firebase/firestore';
 import useDialogs from '@/utils/dispatcher';
 
 const Friends = () => {

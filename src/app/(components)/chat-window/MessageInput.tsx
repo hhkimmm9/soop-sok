@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useDialog from '@/utils/dispatcher';
 import { auth } from '@/utils/firebase/firebase';
-import { sendMessage } from '@/utils/firebase/firestore/services';
+import { sendMessage } from '@/utils/firebase/firestore';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 
 type MessageInputProps = {

@@ -10,7 +10,7 @@ import { GoogleAuthProvider } from 'firebase/auth';
 import firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'
 
-import { registerUserWithUID, updateUserStatus } from '@/utils/firebase/firestore/services';
+import { registerUserWithUID, updateUserStatus } from '@/utils/firebase/firestore';
 
 import Image from 'next/image';
 
