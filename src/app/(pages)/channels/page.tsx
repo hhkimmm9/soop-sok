@@ -1,15 +1,15 @@
 'use client';
 
-import Channel from '@/app/(pages)/channels/Channel';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import useDialogs from '@/utils/dispatcher'; // Adjust the import path as necessary
-import { auth } from '@/utils/firebase/firebase';
-import { fetchChannels } from '@/utils/firebase/firestore/services';
+import PageTitle from '@/app/(components)/PageTitle';
+import Channel from '@/app/(pages)/channels/Channel';
 
 import { TChannel } from '@/types';
+import { auth } from '@/utils/firebase/firebase';
+import { fetchChannels } from '@/utils/firebase/firestore/services';
+import useDialogs from '@/utils/dispatcher'; // Adjust the import path as necessary
 
 const Page = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -49,14 +49,14 @@ const Page = () => {
   }, [router, isAuthenticated, messageDialog]);
 
   return (
-    <div>
-      <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Channels</h1>
+    <>
+      <PageTitle title="Channels" />
       <div className='h-full overflow-y-auto flex flex-col gap-3'>
         {channels && channels.length > 0 && channels.map(channel => (
           <Channel key={channel.id} channel={channel} />
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -95,10 +95,9 @@ export const Friend = ({ friendId }: FriendProp ) => {
 
   return (
     <div className='p-5 flex gap-4 rounded-lg shadow bg-white'>
-      <Link
-        href={`/profile/${friendId}`}
+      <Link href={`/profile/${friendId}`}
         className={`
-          flex items-center rounded-full border-4
+          h-min flex items-center rounded-full border-4
           ${friend?.isOnline ? 'border-lime-400' : 'border-red-400'}
       `}>
         <Image
@@ -106,26 +105,29 @@ export const Friend = ({ friendId }: FriendProp ) => {
           alt={`${friend?.displayName}'s profile picture`}
           width={48}
           height={48}
-          className='object-cover w-12 h-12 rounded-full'
+          className='object-cover w-10 h-10 rounded-full'
         />
       </Link>
 
       <div className='grow grid grid-cols-6'>
-        <Link
-          href={`/profile/${friendId}`}
+        <Link href={`/profile/${friendId}`}
           className='col-span-4 cursor-pointer'
         >
-          <p className='text-xl font-medium truncate'>{friend?.displayName}</p>
-          <p className='whitespace-nowrap text-gray-600'>Last login: {formatTimeAgo(friend?.lastLoginTime)}</p>
+          <p className='text-lg font-medium truncate'>{ friend?.displayName }</p>
+          <p className='whitespace-nowrap text-sm text-gray-600'>
+            Last login: { formatTimeAgo(friend?.lastLoginTime) }
+          </p>
         </Link>
 
         <div className='col-span-2 flex items-center justify-end'>
           <button
             onClick={redirectToDMChat}
             aria-label='Direct Message'
-            className='p-2 rounded-full border border-earth-100 bg-white hover:bg-earth-50 transition-colors duration-200'
-          >
-            <ChatBubbleBottomCenterIcon className='w-6 h-6 text-earth-600' />
+            className='
+              p-2 rounded-full border border-earth-100 bg-white
+              transition-colors duration-200 hover:bg-earth-50
+          '>
+            <ChatBubbleBottomCenterIcon className='w-5 h-5 text-earth-600' />
           </button>
         </div>
       </div>
