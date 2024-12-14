@@ -4,7 +4,6 @@ import Image from 'next/image';
 
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/utils/firebase/firebase';
-import { fetchLatestMessage } from '@/utils/firebase/firestore';
 
 import { formatTimeAgo } from '@/utils/functions';
 import { TMessage, TPrivateChat, TUser } from '@/types';
@@ -20,33 +19,22 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
 
   const { state, dispatch } = useAppState();
 
-  // fetch user data based on the given user id,
-  // or, store user data into the private_chat collection.
+  const messageRef = firestore.collection("messages").where("cid", "==", cid).orderBy("createdAt", "desc").limit(1);
+  const [snapshot, loading, error] = useCollection(messageRef);
+
   useEffect(() => {
-    let isMounted = true;
-
-    const getLatestMessage = async () => {
-      if (auth) {
-        try {
-          const latestMessage = await fetchLatestMessage(privateChat.id);
-          if (isMounted && latestMessage.length > 0) {
-            setLatestMessage(latestMessage);
-          }
-        } catch (err) {
-          if (isMounted) {
-            console.error(err);
-            dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
-          }
-        }
+    if (snapshot && !loading) {
+      const latestMessage = snapshot.empty ? [] : snapshot.docs.map(doc => doc.data());
+      if (latestMessage.length > 0) {
+        setLatestMessage(latestMessage);
       }
-    };
+    }
 
-    getLatestMessage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [dispatch, privateChat]);
+    if (error) {
+      console.error(error);
+      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+    }
+  }, [snapshot, loading, error, setLatestMessage, dispatch]);
 
   // fetch the latest message associated with this private chat
   // to display when it is sent and the content of it.
