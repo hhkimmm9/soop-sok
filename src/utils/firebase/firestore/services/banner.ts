@@ -1,8 +1,8 @@
-import { fetchWithAuth } from './fetchWithAuth';
+import { apiReqWithAuth } from './apiReqWithAuth';
 
 export async function addBanner(cid: string, content: string, tagOptions: string[]): Promise<boolean> {
   try {
-    const addBannerAck = await fetchWithAuth('/api/banners', {
+    const addBannerAck = await apiReqWithAuth('/api/banners', {
       method: 'POST',
       body: JSON.stringify({ cid, content, tagOptions }),
     });
@@ -16,7 +16,7 @@ export async function addBanner(cid: string, content: string, tagOptions: string
 
 export async function getBanner() {
   try {
-    const banner = await fetchWithAuth('/api/banners', { method: 'GET' });
+    const banner = await apiReqWithAuth('/api/banners', { method: 'GET' });
     console.log('getBanner', banner);
     return banner;
   } catch (err) {

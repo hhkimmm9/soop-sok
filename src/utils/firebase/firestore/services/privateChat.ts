@@ -1,15 +1,16 @@
-import { fetchWithAuth } from './fetchWithAuth';
+import { apiReqWithAuth } from './apiReqWithAuth';
 
 export async function getOrCreateChatId(myId: string, friendId: string) {
   if (!myId || !friendId) return null;
 
   try {
     const url = `/api/private-chats?myId=${myId}&friendId=${friendId}`;
-    let data = await fetchWithAuth(url, { method: 'GET' });
+
+    let data = await apiReqWithAuth(url, { method: 'GET' });
     console.log(data.message);
 
     if (!data.id) {
-      data = await fetchWithAuth(url, { method: 'POST' });
+      data = await apiReqWithAuth(url, { method: 'POST' });
       console.log(data.message);
     }
 

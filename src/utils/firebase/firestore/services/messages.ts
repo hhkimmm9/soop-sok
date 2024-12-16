@@ -1,4 +1,4 @@
-import { fetchWithAuth } from './fetchWithAuth';
+import { apiReqWithAuth } from './apiReqWithAuth';
 
 export async function sendMessage(
   uid: string,
@@ -8,7 +8,7 @@ export async function sendMessage(
   message: string
 ) {
   try {
-    const response = await fetchWithAuth('/api/messages', {
+    const response = await apiReqWithAuth('/api/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { fetchWithAuth } from './fetchWithAuth';
+import { apiReqWithAuth } from './apiReqWithAuth';
 
 export async function createChat(
   cid: string,
@@ -10,7 +10,7 @@ export async function createChat(
   password: string
 ) {
   try {
-    const data = await fetchWithAuth('/api/chats', {
+    const data = await apiReqWithAuth('/api/chats', {
       method: 'POST',
       body: JSON.stringify({ cid, uid, capacity, name, tag, isPrivate, password }),
     });
@@ -24,7 +24,7 @@ export async function createChat(
 
 export async function updateChat(cid: string, uid: string, action: string): Promise<boolean> {
   try {
-    const ack = await fetchWithAuth(`/api/chats/${cid}?action=${action}`, {
+    const ack = await apiReqWithAuth(`/api/chats/${cid}?action=${action}`, {
       method: 'PUT',
       body: JSON.stringify({ uid }),
     });

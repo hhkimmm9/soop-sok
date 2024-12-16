@@ -1,8 +1,8 @@
-import { fetchWithAuth } from './fetchWithAuth';
+import { apiReqWithAuth } from './apiReqWithAuth';
 
 export async function updateChannel(cid: string, uid: string, action: string): Promise<boolean> {
   try {
-    const ack = await fetchWithAuth(`/api/channels/${cid}?action=${action}`, {
+    const ack = await apiReqWithAuth(`/api/channels/${cid}?action=${action}`, {
       method: 'PUT',
       body: JSON.stringify({ uid }),
     });

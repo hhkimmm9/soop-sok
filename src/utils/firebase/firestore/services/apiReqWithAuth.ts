@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 const token = cookies.get('auth-token');
 
-export async function fetchWithAuth(url: string, options: RequestInit) {
+export async function apiReqWithAuth(url: string, options: RequestInit) {
   try {
     const res = await fetch(url, {
       ...options,

@@ -1,5 +1,5 @@
 import { TUser } from '@/types';
-import { fetchWithAuth } from './fetchWithAuth';
+import { apiReqWithAuth } from './apiReqWithAuth';
 
 export async function registerUserWithUID(
   displayName: string,
@@ -8,7 +8,7 @@ export async function registerUserWithUID(
   uid: string
 ): Promise<boolean> {
   try {
-    const ack = await fetchWithAuth(`/api/users/${uid}`, {
+    const ack = await apiReqWithAuth(`/api/users/${uid}`, {
       method: 'POST',
       body: JSON.stringify({ displayName, email, photoURL }),
     });
@@ -22,7 +22,7 @@ export async function registerUserWithUID(
 
 export async function updateUserStatus(uid: string, status: string): Promise<boolean> {
   try {
-    const ack = await fetchWithAuth(`/api/users/${uid}?type=${status}`, { method: 'PUT' });
+    const ack = await apiReqWithAuth(`/api/users/${uid}?type=${status}`, { method: 'PUT' });
     console.log(ack.message);
     return true;
   } catch (err) {
@@ -33,7 +33,7 @@ export async function updateUserStatus(uid: string, status: string): Promise<boo
 
 export async function updateUserProfile(uid: string, user: TUser): Promise<boolean> {
   try {
-    const ack = await fetchWithAuth(`/api/users/${uid}`, {
+    const ack = await apiReqWithAuth(`/api/users/${uid}`, {
       method: 'PUT',
       body: JSON.stringify({ user }),
     });
@@ -47,7 +47,7 @@ export async function updateUserProfile(uid: string, user: TUser): Promise<boole
 
 export async function fetchUser(uid: string): Promise<TUser | null> {
   try {
-    const user = await fetchWithAuth(`/api/users/${uid}`, { method: 'GET' });
+    const user = await apiReqWithAuth(`/api/users/${uid}`, { method: 'GET' });
     console.log('fetchUser', user);
     return user;
   } catch (err) {
