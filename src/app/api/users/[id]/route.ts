@@ -8,10 +8,7 @@ function getToken(req: NextRequest): string | null {
   return authHeader ? authHeader.split('Bearer ')[1] : null;
 };
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string }}
-) {
+export async function GET(req: NextRequest, { params }: { params: { id: string }}) {
   const token = getToken(req);
   if (!token) {
     return NextResponse.json({ error: 'No token provided' }, { status: 401 });
@@ -55,7 +52,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       createdAt: FieldValue.serverTimestamp(),
       displayName,
       email,
-      isObject: true,
       lastLoginTime: FieldValue.serverTimestamp(),
       photoURL,
       profile: {

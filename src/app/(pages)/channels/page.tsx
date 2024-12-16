@@ -7,9 +7,11 @@ import PageTitle from '@/app/(components)/PageTitle';
 import Channel from '@/app/(pages)/channels/Channel';
 
 import { TChannel } from '@/types';
-import { auth } from '@/utils/firebase/firebase';
-import { fetchChannels } from '@/utils/firebase/firestore';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import useDialogs from '@/utils/dispatcher'; // Adjust the import path as necessary
+
+import { collection } from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 const Page = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,12 +21,17 @@ const Page = () => {
   const router = useRouter();
   const { messageDialog } = useDialogs();
 
+  const channelsRef = collection(firestore, 'channels');
+  const [snapshot, loading, error] = useCollection(channelsRef, {
+    snapshotListenOptions: { includeMetadataChanges: true }
+  });
+
+  // TODO: custom hook
   // Authenticate a user
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        setIsAuthenticated(true);
-      } else {
+      setIsAuthenticated(!!user);
+      if (!user) {
         router.push('/');
       }
     });
@@ -33,20 +40,30 @@ const Page = () => {
   }, [router]);
 
   useEffect(() => {
-    const getChannels = async () => {
-      try {
-        const channels = await fetchChannels();
-        setChannels(channels);
-      } catch (err) {
-        console.error(err);
-        messageDialog.show('data_retrieval');
-      }
-    };
-    
-    if (isAuthenticated) {
-      getChannels();
+    if (!isAuthenticated || loading) return;
+  
+    if (error) {
+      console.error(error);
+      messageDialog.show('data_retrieval');
+      return;
     }
-  }, [router, isAuthenticated, messageDialog]);
+  
+    if (snapshot) {
+      const channels: TChannel[] = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          capacity: data.capacity,
+          members: data.members,
+          name: data.name,
+          numMembers: data.numMembers,
+          order: data.order,
+          updatedAt: data.updatedAt
+        } as TChannel;
+      });
+      setChannels(channels);
+    }
+  }, [isAuthenticated, snapshot, loading, error, messageDialog]);
 
   return (
     <>

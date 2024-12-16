@@ -1,26 +1,24 @@
+import useDialogs from '@/utils/dispatcher';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; 
-
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth, firestore } from '@/utils/firebase/firebase';
-import { checkIsMyFriend, makeFriend } from '@/utils/firebase/firestore';
-import {
-  collection, query, where,
-  addDoc, getDocs, serverTimestamp
-} from 'firebase/firestore';
+import { auth } from '@/utils/firebase/firebase';
 import { TUser } from '@/types';
+import {
+  checkIsMyFriend,
+  makeFriend,
+  getOrCreateChatId
+} from '@/utils/firebase/firestore';
 
 const OthersProfile = ({ profile }: { profile: TUser | null }) => {
   const [isMyFriend, setIsMyFriend] = useState(false);
-
+  
   const router = useRouter();
 
-  const { dispatch } = useAppState();
+  const { messageDialog } = useDialogs();
 
   useEffect(() => {
-
     const initCheckIsMyFriend= async () => {
-      if (auth && auth.currentUser && profile?.uid) {
+      if (auth?.currentUser && profile?.uid) {
         try {
           const friends = await checkIsMyFriend(auth.currentUser?.uid, profile.uid);
           if (friends) {
@@ -28,55 +26,40 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
           }
         } catch (err) {
           console.error(err);
-          dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+          messageDialog.show('data_retrieval');
         }
       }
     };
-    
     initCheckIsMyFriend();
-  }, [dispatch, profile?.uid]);
+  }, [messageDialog, profile?.uid]);
 
   const redirectToDMChat = async () => {
     const myId = auth.currentUser?.uid;
-    const opponentId = profile?.uid;
+    const friendId = profile?.uid;
 
-    // check if their dm chat exists
-    const privateChatRef = collection(firestore, 'private_chats');
-    const q = query(privateChatRef,
-      where('from', 'in', [myId, opponentId]),
-      where('to', 'in', [myId, opponentId])
-    );
+    if (!myId || !friendId) return;
 
     try {
-      // TODO: add havePrivateChat to friend_list
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        // TODO: createPrivateChat
-        const chatRef = await addDoc(privateChatRef, {
-          from: myId,
-          to: opponentId,
-          createdAt: serverTimestamp(),
-        });
-        // redirect the user to the newly created dm chat room.
-        router.push(`/chats/private-chat/${chatRef.id}`);
-      } else {
-        // redirect the user to the dm chat room.
-        router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
+      const chat = await getOrCreateChatId(myId, friendId);
+
+      if (chat) {
+        router.push(`/chats/private-chat/${chat.id}`);
+        return;
       }
     } catch (err) {
       console.error(err);
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'general' } });
+      messageDialog.show('data_retrieval');
     }
   };
 
   const addUserToFriendList = async () => {
-    if (auth && auth.currentUser && profile) {
+    if (auth?.currentUser && profile) {
       try {
         await makeFriend(auth.currentUser?.uid, profile?.uid,);
         setIsMyFriend(true);
       } catch (err) {
         console.error(err);
-        dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_update' } });
+        messageDialog.show('data_update');
       }
     }
   };

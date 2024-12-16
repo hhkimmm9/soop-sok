@@ -5,3 +5,4 @@ export * from "./services/banner";
 export * from "./services/friend";
 export * from "./services/fetchWithAuth";
 export * from "./services/messages";
+export * from "./services/privateChat";

@@ -56,7 +56,7 @@ const Page = ({ params }: PrivateChatProps) => {
     return () => {
       unsubscribe();
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, value]);
 
   useEffect(() => {
     if (loading) {
