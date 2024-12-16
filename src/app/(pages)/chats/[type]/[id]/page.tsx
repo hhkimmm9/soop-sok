@@ -1,8 +1,8 @@
 "use client";
 
-import Banner from "@/app/(components)/chat-window/Banner";
-import MessageContainer from "@/app/(components)/chat-window/MessageContainer";
-import MessageInput from '@/app/(components)/chat-window/MessageInput';
+import Banner from "@/app/_components/chat-window/Banner";
+import MessageContainer from "@/app/_components/chat-window/MessageContainer";
+import MessageInput from '@/app/_components/chat-window/MessageInput';
 import IconBesideInputContainer from "@/app/(pages)/chats/_components/IconBesideInputContainer";
 
 interface ChatPageProps {

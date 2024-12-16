@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Dhurjati } from "next/font/google";
 import "./globals.css";
 
-import ProviderWrapper from "@/app/(components)/ProviderWrapper";
+import ProviderWrapper from "@/app/_components/ProviderWrapper";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 // https://nextjs.org/docs/app/building-your-application/optimizing/fonts#with-tailwind-css

@@ -1,4 +1,4 @@
-import ProgressIndicator from '@/app/(components)/ProgressIndicator';
+import ProgressIndicator from '@/app/_components/ProgressIndicator';
 
 const Loading = () => {
   return (

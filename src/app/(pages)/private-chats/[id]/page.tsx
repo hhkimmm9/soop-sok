@@ -9,7 +9,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firestore } from '@/utils/firebase/firebase';
 import { collection } from 'firebase/firestore';
 
-import SearchBar from '@/app/(components)/SearchBar';
+import SearchBar from '@/app/_components/SearchBar';
 import PrivateChat from '@/app/(pages)/private-chats/[id]/PrivateChat';
 
 import { TPrivateChat } from '@/types';

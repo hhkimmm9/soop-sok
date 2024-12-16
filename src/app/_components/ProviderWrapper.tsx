@@ -4,10 +4,10 @@ import { ThemeProvider } from "@mui/material";
 import theme from "@/utils/ThemeProvider";
 import CssBaseline from "@mui/material/CssBaseline";
 
-import NavBar from "@/app/(components)/NavBar";
+import NavBar from "@/app/_components/NavBar";
 
 import dynamic from "next/dynamic";
-const DialogWrapper = dynamic(() => import("@/app/(components)/dialogs/DialogWrapper"), { ssr: false });
+const DialogWrapper = dynamic(() => import("@/app/_components/dialogs/DialogWrapper"), { ssr: false });
 
 interface IWrapperProps {
   children: React.ReactNode;

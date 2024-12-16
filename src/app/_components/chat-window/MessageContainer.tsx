@@ -8,7 +8,7 @@ import { auth, firestore } from '@/utils/firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection } from 'firebase/firestore';
 
-import ChatMessage from '@/app/(components)/chat-window/ChatMessage';
+import ChatMessage from '@/app/_components/chat-window/ChatMessage';
 
 import { TMessage } from '@/types';
 

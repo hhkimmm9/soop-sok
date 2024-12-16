@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import PageTitle from '@/app/(components)/PageTitle';
+import PageTitle from '@/app/_components/PageTitle';
 import Channel from '@/app/(pages)/channels/Channel';
 
 import { TChannel } from '@/types';

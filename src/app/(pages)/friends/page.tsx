@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-import PageTitle from '@/app/(components)/PageTitle';
+import PageTitle from '@/app/_components/PageTitle';
 import Friend from '@/app/(pages)/friends/Friend';
 import { TFriend } from '@/types';
 import { auth, firestore } from '@/utils/firebase/firebase';
