@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-import { useAppState } from '@/utils/AppStateProvider';
-import { auth } from '@/utils/firebase/firebase';
+import { auth, firestore } from '@/utils/firebase/firebase';
+import useDialogs from '@/utils/dispatcher'; // Adjust the import path as necessary
 
 import { formatTimeAgo } from '@/utils/functions';
-import { TMessage, TPrivateChat, TUser } from '@/types';
+import { TMessage, TPrivateChat } from '@/types';
+
+import { collection, query, where, orderBy, limit } from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 type PrivateChatProps = {
   privateChat: TPrivateChat
@@ -16,25 +19,32 @@ const PrivateChat = ({ privateChat } : PrivateChatProps ) => {
   const [latestMessage, setLatestMessage] = useState<TMessage | null>(null);
 
   const router = useRouter();
+  const { messageDialog } = useDialogs();
 
-  const { state, dispatch } = useAppState();
+  const messageRef = query(
+    collection(firestore, "messages"),
+    where("cid", "==", privateChat.id),
+    orderBy("createdAt", "desc"),
+    limit(1)
+  );
 
-  const messageRef = firestore.collection("messages").where("cid", "==", cid).orderBy("createdAt", "desc").limit(1);
-  const [snapshot, loading, error] = useCollection(messageRef);
+  const [snapshot, loading, error] = useCollection(messageRef, {
+    snapshotListenOptions: { includeMetadataChanges: true }
+  });
 
   useEffect(() => {
     if (snapshot && !loading) {
       const latestMessage = snapshot.empty ? [] : snapshot.docs.map(doc => doc.data());
       if (latestMessage.length > 0) {
-        setLatestMessage(latestMessage);
+        setLatestMessage(latestMessage[0] as TMessage || null);
       }
     }
 
     if (error) {
       console.error(error);
-      dispatch({ type: 'SHOW_MESSAGE_DIALOG', payload: { show: true, type: 'data_retrieval' } });
+      messageDialog.show('data_retrieval');
     }
-  }, [snapshot, loading, error, setLatestMessage, dispatch]);
+  }, [snapshot, loading, error, messageDialog]);
 
   // fetch the latest message associated with this private chat
   // to display when it is sent and the content of it.
