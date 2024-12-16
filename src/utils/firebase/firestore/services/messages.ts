@@ -1,23 +1,30 @@
 import { fetchWithAuth } from './fetchWithAuth';
 
-interface SendMessageProps {
-  uid: string;
-  cid: string;
-  senderName: string | null;
-  senderPhotoURL: string | null;
-  message: string;
-};
-
-export async function sendMessage({ uid, cid, senderName, senderPhotoURL, message }: SendMessageProps) {
+export async function sendMessage(
+  uid: string,
+  cid: string,
+  senderName: string | null,
+  senderPhotoURL: string | null,
+  message: string
+) {
   try {
-    const sendMessageAck = await fetchWithAuth('/api/messages', {
+    const response = await fetchWithAuth('/api/messages', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ uid, cid, senderName, senderPhotoURL, message }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const sendMessageAck = await response.json();
     console.log(sendMessageAck);
     return sendMessageAck;
   } catch (err) {
-    console.error(err);
+    console.error('Failed to send message:', err);
     return null;
   }
 };
