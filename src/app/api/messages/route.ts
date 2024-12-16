@@ -1,11 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { getToken } from "@/app/api/_utils/functions";
 import { firestore, FieldValue } from '@/utils/firebase/firebaseAdmin';
-
-// Utility function to extract token
-function getToken(req: NextRequest): string | null {
-  const authHeader = req.headers?.get('Authorization');
-  return authHeader ? authHeader.split('Bearer ')[1] : null;
-};
 
 export async function POST(req: NextRequest) {
 
