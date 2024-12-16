@@ -7,7 +7,9 @@ import { Button } from '@mui/material';
 const UpdateButtons: React.FC = React.memo(() => {
   const { actionsDialog } = useDialogs();
 
-  const askConfirm = useCallback(() => { actionsDialog.show('confirm'); }, []);
+  const askConfirm = useCallback(() => {
+    actionsDialog.show('confirm');
+  }, [actionsDialog]);
 
   return (
     <div className='mt-4 grid grid-cols-2 gap-3'>

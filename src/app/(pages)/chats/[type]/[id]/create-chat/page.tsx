@@ -58,7 +58,7 @@ const Page = ({ params }: pageProps) => {
       }
     };
     fetchBannerOptions();
-  }, []);
+  }, [messageDialog]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
