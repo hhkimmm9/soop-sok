@@ -54,7 +54,7 @@ const Page = ({ params }: pageProps) => {
 
       router.push(`/chats/${params.type}/${params.id}/features`);
     }
-  }, [router, FSError, params.type, params.id]);
+  }, [router, FSError, params.type, params.id, messageDialog]);
 
   const redirectToFeaturesPage = () => {
     if (auth) {

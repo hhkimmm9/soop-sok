@@ -93,7 +93,7 @@ export default function Home() {
         GoogleAuthProvider.PROVIDER_ID
       ]
     };
-  }, [router]);
+  }, [router, messageDialog]);
 
   useEffect(() => {
     const loadFirebaseUI = async () => {
