@@ -7,7 +7,7 @@ import { TextField, Button } from '@mui/material';
 
 import useDialogs from '@/utils/dispatcher';
 import { auth } from '@/utils/firebase/firebase';
-import { addBanner } from '@/utils/firebase/firestore/services';
+import { addBanner } from '@/utils/firebase/firestore';
 
 import {
   BackspaceIcon

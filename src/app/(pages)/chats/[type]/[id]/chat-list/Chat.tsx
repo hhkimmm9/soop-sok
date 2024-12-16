@@ -5,7 +5,7 @@ import { useAppState } from '@/utils/AppStateProvider';
 import { auth, firestore } from '@/utils/firebase/firebase';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { updateChat } from '@/utils/firebase/firestore/services';
+import { updateChat } from '@/utils/firebase/firestore';
 
 import { formatTimeAgo } from '@/utils/functions';
 import { TChat } from '@/types'

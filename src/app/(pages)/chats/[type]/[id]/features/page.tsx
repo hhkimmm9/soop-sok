@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAppState } from '@/utils/AppStateProvider';
 import { auth } from '@/utils/firebase/firebase';
-import { updateChannel, updateChat } from '@/utils/firebase/firestore/services';
+import { updateChannel, updateChat } from '@/utils/firebase/firestore';
 import useDialogs from '@/utils/dispatcher';
 import {
   PlusIcon,

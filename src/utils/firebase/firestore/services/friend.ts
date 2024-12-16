@@ -14,20 +14,10 @@ export async function makeFriend(friendId: string, senderId: string): Promise<bo
   }
 }
 
-export async function fetchFriends(senderId: string) {
-  try {
-    const friends = await fetchWithAuth(`/api/friends?senderId=${senderId}`, { method: 'GET' });
-    console.log('fetchFriends', friends);
-    return friends;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
-
+// TODO: can we make it more efficient?
 export async function checkIsMyFriend(uid: string, friendId: string) {
   try {
-    const isMyFriend = await fetchWithAuth(`/api/friends?senderId=${uid}&friendId=${friendId}`, { method: 'GET' });
+    const isMyFriend = await fetchWithAuth(`/api/friends/${friendId}?senderId=${uid}`, { method: 'GET' });
     console.log('checkIsMyFriend', isMyFriend.isMyFriend);
     return isMyFriend.isMyFriend;
   } catch (err) {

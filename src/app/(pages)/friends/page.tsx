@@ -1,39 +1,51 @@
 'use client';
 
-import { useState, useEffect, } from 'react';
+import { useState, useEffect } from 'react';
 
 import PageTitle from '@/app/(components)/PageTitle';
 import Friend from '@/app/(pages)/friends/Friend';
 import { TFriend } from '@/types';
-import { auth } from '@/utils/firebase/firebase';
-import { fetchFriends } from '@/utils/firebase/firestore/services';
+import { auth, firestore } from '@/utils/firebase/firebase';
 import useDialogs from '@/utils/dispatcher';
+import { collection, query, where, or } from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 const Friends = () => {
   const [friends, setFriends] = useState<TFriend[]>([]);
 
   const { messageDialog } = useDialogs();
 
+  const userId = auth.currentUser?.uid || '';
+
+  const friendQuery = query(
+    collection(firestore, 'friend_list'),
+    or(
+      where('senderId', '==', userId),
+      where('friendId', '==', userId)
+    )
+  );
+
+  const [snapshot, loading, error] = useCollection(friendQuery, {
+    snapshotListenOptions: { includeMetadataChanges: true }
+  });
+
   useEffect(() => {
-    const fetchFriendList = async () => {
-      if (auth && auth.currentUser) {
-        try {
-          // const frsiendList: TFriend[] = [];
-          const friends = await fetchFriends(auth.currentUser?.uid);
-          if (friends) {
-            // friends.forEach((doc: any) => {
-            //   friendList.push({ id: doc.id, ...doc.data() } as TFriend);
-            // });
-            setFriends(friends);
-          }
-        } catch (err) {
-          console.error(err);
-          messageDialog.show('data_retrieval');
-        }
-      }
-    };
-    fetchFriendList();
-  }, [messageDialog]);
+    if (!auth.currentUser) return;
+
+    if (error) {
+      console.error(error);
+      messageDialog.show('data_retrieval');
+      return;
+    }
+
+    if (snapshot && !loading) {
+      const friends: TFriend[] = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as TFriend));
+      setFriends(friends);
+    }
+  }, [messageDialog, snapshot, loading, error, userId]);
 
   return (
     <div className='h-full overflow-y-auto'>

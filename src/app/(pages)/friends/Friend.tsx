@@ -6,19 +6,15 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, firestore } from '@/utils/firebase/firebase';
-import { fetchUser } from '@/utils/firebase/firestore/services';
-import {
-  collection, doc, query,
-  or, where,
-  addDoc, getDoc, getDocs,
-  serverTimestamp
-} from 'firebase/firestore';
+import { auth } from '@/utils/firebase/firebase';
+import { fetchUser } from '@/utils/firebase/firestore';
 import useDialogs from '@/utils/dispatcher';
 
 import { TUser } from '@/types';
 import { formatTimeAgo } from '@/utils/functions';
 import { ChatBubbleBottomCenterIcon } from '@heroicons/react/24/outline';
+
+import { getOrCreateChatId } from '@/utils/firebase/firestore';
 
 const NO_PIC_PLACEHOLDER = 'https://firebasestorage.googleapis.com/v0/b/chat-platform-for-introv-9f70c.appspot.com/o/No%20Image.png?alt=media&token=18067651-9566-4522-bf2e-9a7963731676';
 
@@ -50,41 +46,20 @@ export const Friend = ({ friendId }: FriendProp ) => {
     getUser();
   }, [friendId, messageDialog]);
   
-  // TODO:
   const redirectToDMChat = async () => {
     const myId = auth.currentUser?.uid;
     const opponentId = friendId;
 
+    if (!myId || !opponentId) return;
+
     // check if their dm chat exists
     if (auth) {
       try {
-        const q = query(collection(firestore, 'private_chats'),
-          or(
-            (where('from', '==', myId), where('to', '==', opponentId)),
-            (where('from', '==', opponentId), where('to', '==', myId)),
-          )
-        );
-        // TODO: add havePrivateChat to friend_list
-        const querySnapshot = await getDocs(q);
-    
-        // if it doesn't, create a dm chat room first
-        if (querySnapshot.empty) {
-          try {
-            // TODO: createPrivateChat
-            const chatRef = await addDoc(collection(firestore, 'private_chats'), {
-              from: myId,
-              to: opponentId,
-              createdAt: serverTimestamp(),
-            });
-            // redirect the user to the newly created dm chat room.
-            router.push(`/chats/private-chat/${chatRef.id}`);
-          } catch (err) {
-            console.error(err);
-            messageDialog.show('general');
-          }
-        } else {
-          // redirect the user to the dm chat room.
-          router.push(`/chats/private-chat/${querySnapshot.docs[0].id}`);
+        const chat = await getOrCreateChatId(myId, friendId);
+  
+        if (chat) {
+          router.push(`/chats/private-chat/${chat.id}`);
+          return;
         }
       } catch (err) {
         console.error(err);

@@ -6,7 +6,7 @@ import { useAppState } from '@/utils/AppStateProvider';
 import useDialogs from '@/utils/dispatcher';
 
 import '@/app/(components)/Marquee.css';
-import { getBanner } from '@/utils/firebase/firestore/services';
+import { getBanner } from '@/utils/firebase/firestore';
 
 const Banner = () => {
   const { state } = useAppState();

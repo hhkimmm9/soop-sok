@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { auth } from '@/utils/firebase/firebase';
-import { updateUserStatus } from '@/utils/firebase/firestore/services';
+import { updateUserStatus } from '@/utils/firebase/firestore';
 import { useSignOut } from 'react-firebase-hooks/auth';
 
 const Settings = () => {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { auth, firestore } from '@/utils/firebase/firebase';
-import { updateChannel } from '@/utils/firebase/firestore/services';
+import { updateChannel } from '@/utils/firebase/firestore';
 import { doc } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import useDialogs from '@/utils/dispatcher';

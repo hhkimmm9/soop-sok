@@ -8,10 +8,7 @@ function getToken(req: NextRequest): string | null {
   return authHeader ? authHeader.split('Bearer ')[1] : null;
 };
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   console.log('Received PUT request');
   const token = getToken(req);
   if (!token) {
