@@ -1,37 +1,45 @@
-import { useState } from 'react';
-import useDialog from '@/utils/dispatcher';
-import { auth } from '@/utils/firebase/firebase';
-import { sendMessage } from '@/utils/firebase/firestore';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline"
+import { useState } from "react"
+
+import useDialog from "@/utils/dispatcher"
+import { auth } from "@/utils/firebase/firebase"
+import { sendMessage } from "@/utils/firebase/firestore"
 
 type MessageInputProps = {
-  cid: string;
-};
+  cid: string
+}
 
 const MessageInput = ({ cid }: MessageInputProps) => {
-  const [message, setMessage] = useState('');
-  const { messageDialog } = useDialog();
+  const [message, setMessage] = useState("")
+  const { messageDialog } = useDialog()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!auth?.currentUser || !message.trim()) return;
+    if (!auth?.currentUser || !message.trim()) return
 
-    const { uid, displayName: senderName, photoURL: senderPhotoURL } = auth.currentUser;
+    const {
+      uid,
+      displayName: senderName,
+      photoURL: senderPhotoURL,
+    } = auth.currentUser
 
     try {
-      await sendMessage(uid, cid, senderName, senderPhotoURL, message.trim());
-      setMessage('');
+      await sendMessage(uid, cid, senderName, senderPhotoURL, message.trim())
+      setMessage("")
     } catch (err) {
-      console.error(err);
-      messageDialog.show('general');
+      console.error(err)
+      messageDialog.show("general")
     }
-  };
+  }
 
   return (
-    <div className="grow flex gap-3 items-center">
-      <div className="grow p-0.5 rounded-lg shadow-sm bg-white">
-        <form onSubmit={handleSubmit} className="h-8 flex items-center justify-between">
+    <div className="flex grow items-center gap-3">
+      <div className="grow rounded-lg bg-white p-0.5 shadow-sm">
+        <form
+          onSubmit={handleSubmit}
+          className="flex h-8 items-center justify-between"
+        >
           <input
             type="text"
             value={message}
@@ -44,7 +52,7 @@ const MessageInput = ({ cid }: MessageInputProps) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MessageInput;
+export default MessageInput

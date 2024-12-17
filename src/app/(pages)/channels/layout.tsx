@@ -1,15 +1,7 @@
-const PublicChatLayout = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
-  return (
-    <div className="h-full p-4">
-      {children}
-    </div>
-  );
-};
+const PublicChatLayout = ({ children }: { children: React.ReactNode }) => {
+  return <div className="h-full p-4">{children}</div>
+}
 
-PublicChatLayout.displayName = 'PublicChatLayout';
+PublicChatLayout.displayName = "PublicChatLayout"
 
-export default PublicChatLayout;
+export default PublicChatLayout

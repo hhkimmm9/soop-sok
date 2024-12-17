@@ -1,35 +1,38 @@
-import Image from 'next/image';
-import { useCallback, ChangeEvent } from 'react';
+import Image from "next/image"
+import { ChangeEvent, useCallback } from "react"
 
 interface ProfilePictureProps {
-  photoURL: string | undefined;
-  updateField: (field: string, value: any, isProfileField: boolean) => void;
+  photoURL: string | undefined
+  updateField: (field: string, value: any, isProfileField: boolean) => void
 }
 
-const ProfilePicture: React.FC<ProfilePictureProps> = ({ photoURL, updateField }) => {
-  const handlePhotoURLChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    updateField('photoURL', e, false);
-  }, [updateField]);
+const ProfilePicture = ({ photoURL, updateField }: ProfilePictureProps) => {
+  const handlePhotoURLChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      updateField("photoURL", e, false)
+    },
+    [updateField],
+  )
 
   return (
-    <div className='flex justify-center'>
-      <label htmlFor='profilePic' className='cursor-pointer'>
+    <div className="flex justify-center">
+      <label htmlFor="profilePic" className="cursor-pointer">
         <Image
-          src={photoURL || '/images/default-avatar.png'}
-          alt='Profile Picture'
+          src={photoURL || "/images/default-avatar.png"}
+          alt="Profile Picture"
           width={192}
           height={192}
-          className='object-cover rounded-full'
+          className="rounded-full object-cover"
         />
       </label>
       <input
-        type='file'
-        id='profilePic'
+        type="file"
+        id="profilePic"
         onChange={handlePhotoURLChange}
-        className='hidden'
+        className="hidden"
       />
     </div>
-  );
-};
+  )
+}
 
-export default ProfilePicture;
+export default ProfilePicture

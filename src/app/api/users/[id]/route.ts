@@ -1,46 +1,50 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { getToken } from "@/app/api/_utils/functions";
-import { firestore, FieldValue } from '@/utils/firebase/firebaseAdmin';
+import { type NextRequest, NextResponse } from "next/server"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string }}) {
-  const token = getToken(req);
+import { getToken } from "@/app/api/_utils/functions"
+import { FieldValue, firestore } from "@/utils/firebase/firebaseAdmin"
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const token = getToken(req)
   if (!token) {
-    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+    return NextResponse.json({ error: "No token provided" }, { status: 401 })
   }
 
-  const id = params.id;
+  const id = params.id
 
-  const userRef = firestore.collection('users').doc(id);
-  
+  const userRef = firestore.collection("users").doc(id)
+
   try {
-    const res = await userRef.get();
-    
+    const res = await userRef.get()
+
     if (!res.exists) {
-      return NextResponse.json({ error: 'No user found' }, { status: 404 });
+      return NextResponse.json({ error: "No user found" }, { status: 404 })
     }
 
-    return NextResponse.json(res.data(), { status: 200 });
-    
+    return NextResponse.json(res.data(), { status: 200 })
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(error, { status: 500 });
+    console.error(error)
+    return NextResponse.json(error, { status: 500 })
   }
+}
 
-  
-};
-
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const token = getToken(req);
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const token = getToken(req)
   if (!token) {
-    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+    return NextResponse.json({ error: "No token provided" }, { status: 401 })
   }
 
-  const id = params.id;
+  const id = params.id
   // const searchParams = req.nextUrl.searchParams;
-  const { displayName, email, photoURL }  = await req.json();
+  const { displayName, email, photoURL } = await req.json()
 
-  const userRef = firestore.collection('users').doc(id);
-  
+  const userRef = firestore.collection("users").doc(id)
+
   try {
     await userRef.set({
       createdAt: FieldValue.serverTimestamp(),
@@ -49,60 +53,62 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       lastLoginTime: FieldValue.serverTimestamp(),
       photoURL,
       profile: {
-        introduction: '',
+        introduction: "",
         interests: [],
-        mbti: ''
+        mbti: "",
       },
-      uid: id
-    });
+      uid: id,
+    })
 
-    return NextResponse.json({ message: 'User registered!' }, { status: 200 });
+    return NextResponse.json({ message: "User registered!" }, { status: 200 })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json(error, { status: 500 })
   }
-  
-  catch (error) {
-    console.error(error);
-    return NextResponse.json(error, { status: 500 });
-  }
-};
+}
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const token = getToken(req);
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const token = getToken(req)
   if (!token) {
-    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+    return NextResponse.json({ error: "No token provided" }, { status: 401 })
   }
 
-  const id = params.id;
-  const searchParams = req.nextUrl.searchParams;
-  
-  const userRef = firestore.collection('users').doc(id);
-  
+  const id = params.id
+  const searchParams = req.nextUrl.searchParams
+
+  const userRef = firestore.collection("users").doc(id)
+
   try {
     // user sign in
-    if (searchParams.get('type') === 'signin') {
+    if (searchParams.get("type") === "signin") {
       await userRef.update({
         isOnline: true,
-        lastLoginTime: FieldValue.serverTimestamp()
+        lastLoginTime: FieldValue.serverTimestamp(),
       })
     }
-    
+
     // user sign out
-    else if (searchParams.get('type') === 'signout') {
+    else if (searchParams.get("type") === "signout") {
       await userRef.update({
         isOnline: false,
-      }) 
-    }
-    
-    // user profile update
-    else if (searchParams.get('type') === null) {
-      const { user } = await req.json();
-      await userRef.update(user);
+      })
     }
 
-    return NextResponse.json({ message: 'User status updated!' }, { status: 200 });
+    // user profile update
+    else if (searchParams.get("type") === null) {
+      const { user } = await req.json()
+      await userRef.update(user)
+    }
+
+    return NextResponse.json(
+      { message: "User status updated!" },
+      { status: 200 },
+    )
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json(error, { status: 500 })
   }
-  
-  catch (error) {
-    console.error(error);
-    return NextResponse.json(error, { status: 500 });
-  }
-};
+}

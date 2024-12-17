@@ -1,15 +1,7 @@
-const PrivateChatLayout = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
-  return (
-    <div className="p-4">
-      {children}
-    </div>
-  );
-};
+const PrivateChatLayout = ({ children }: { children: React.ReactNode }) => {
+  return <div className="p-4">{children}</div>
+}
 
-PrivateChatLayout.displayName = 'PrivateChatLayout';
+PrivateChatLayout.displayName = "PrivateChatLayout"
 
-export default PrivateChatLayout;
+export default PrivateChatLayout

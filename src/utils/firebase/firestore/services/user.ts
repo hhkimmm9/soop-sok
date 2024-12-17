@@ -1,57 +1,66 @@
-import { TUser } from '@/types';
-import { apiReqWithAuth } from './apiReqWithAuth';
+// eslint-disable-next-line simple-import-sort/imports
+import { TUser } from "@/types"
+import { apiReqWithAuth } from "./apiReqWithAuth"
 
 export async function registerUserWithUID(
   displayName: string,
   email: string,
   photoURL: string,
-  uid: string
+  uid: string,
 ): Promise<boolean> {
   try {
     const ack = await apiReqWithAuth(`/api/users/${uid}`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ displayName, email, photoURL }),
-    });
-    console.log(ack.message);
-    return true;
+    })
+    console.log(ack.message)
+    return true
   } catch (err) {
-    console.error(err);
-    return false;
+    console.error(err)
+    return false
   }
 }
 
-export async function updateUserStatus(uid: string, status: string): Promise<boolean> {
+export async function updateUserStatus(
+  uid: string,
+  status: string,
+): Promise<boolean> {
   try {
-    const ack = await apiReqWithAuth(`/api/users/${uid}?type=${status}`, { method: 'PUT' });
-    console.log(ack.message);
-    return true;
+    const ack = await apiReqWithAuth(`/api/users/${uid}?type=${status}`, {
+      method: "PUT",
+    })
+    console.log(ack.message)
+    return true
   } catch (err) {
-    console.error(err);
-    return false;
+    console.error(err)
+    return false
   }
 }
 
-export async function updateUserProfile(uid: string, user: TUser): Promise<boolean> {
+export async function updateUserProfile(
+  uid: string,
+  user: TUser,
+): Promise<boolean> {
   try {
     const ack = await apiReqWithAuth(`/api/users/${uid}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({ user }),
-    });
-    console.log('updateUserProfile >> ', ack.message);
-    return true;
+    })
+    console.log("updateUserProfile >> ", ack.message)
+    return true
   } catch (err) {
-    console.error(err);
-    return false;
+    console.error(err)
+    return false
   }
 }
 
 export async function fetchUser(uid: string): Promise<TUser | null> {
   try {
-    const user = await apiReqWithAuth(`/api/users/${uid}`, { method: 'GET' });
-    console.log('fetchUser', user);
-    return user;
+    const user = await apiReqWithAuth(`/api/users/${uid}`, { method: "GET" })
+    console.log("fetchUser", user)
+    return user
   } catch (err) {
-    console.error(err);
-    return null;
+    console.error(err)
+    return null
   }
 }

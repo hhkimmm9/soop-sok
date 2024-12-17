@@ -1,8 +1,8 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+  preset: "ts-jest",
+  testEnvironment: "node",
   moduleNameMapper: {
-    '\\.(css|less|scss)$': 'identity-obj-proxy',
+    "\\.(css|less|scss)$": "identity-obj-proxy",
   },
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-};
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+}

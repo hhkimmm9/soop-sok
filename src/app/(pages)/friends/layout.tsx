@@ -1,15 +1,7 @@
-const FriendsLayout = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
-  return (
-    <div className="p-4">
-      {children}
-    </div>
-  );
-};
+const FriendsLayout = ({ children }: { children: React.ReactNode }) => {
+  return <div className="p-4">{children}</div>
+}
 
-FriendsLayout.displayName = 'FriendsLayout';
+FriendsLayout.displayName = "FriendsLayout"
 
-export default FriendsLayout;
+export default FriendsLayout

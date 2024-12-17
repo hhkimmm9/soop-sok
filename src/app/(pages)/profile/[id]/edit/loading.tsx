@@ -1,11 +1,11 @@
-import ProgressIndicator from '@/app/_components/ProgressIndicator';
+import ProgressIndicator from "@/app/_components/ProgressIndicator"
 
 const Loading = () => {
   return (
-    <div className='h-full flex justify-center items-center'>
+    <div className="flex h-full items-center justify-center">
       <ProgressIndicator />
     </div>
-  );
-};
+  )
+}
 
-export default Loading;
+export default Loading

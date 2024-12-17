@@ -1,24 +1,26 @@
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore"
 
-const admin = require('firebase-admin');
+const admin = require("firebase-admin")
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
-  console.error('Error: FIREBASE_SERVICE_ACCOUNT environment variable is not defined.');
-  process.exit(1); // Exit the process with an error code
+  console.error(
+    "Error: FIREBASE_SERVICE_ACCOUNT environment variable is not defined.",
+  )
+  process.exit(1) // Exit the process with an error code
 }
 // Fetch the service account key JSON file contents
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
 
 // Initialize the app with a service account, granting admin privileges
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-     // The database URL depends on the location of the database
+    // The database URL depends on the location of the database
     databaseURL: `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseio.com`,
-  });
+  })
 }
 
-const auth = admin.auth();
-const firestore = admin.firestore();
+const auth = admin.auth()
+const firestore = admin.firestore()
 
-export { auth, firestore, FieldValue };
+export { auth, FieldValue, firestore }

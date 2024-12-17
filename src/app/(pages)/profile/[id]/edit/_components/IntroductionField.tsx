@@ -1,30 +1,35 @@
-"use client";
+"use client"
 
-import React, { useCallback, ChangeEvent } from 'react';
-import { TextField } from '@mui/material';
+import { TextField } from "@mui/material"
+import React, { ChangeEvent, useCallback } from "react"
 
 interface IntroductionFieldProps {
-  introduction: string | undefined;
-  updateField: (field: string, value: any, isProfileField: boolean) => void;
+  introduction: string | undefined
+  updateField: (field: string, value: any, isProfileField: boolean) => void
 }
-const IntroductionField: React.FC<IntroductionFieldProps> = React.memo(({ introduction, updateField }) => {
-  const handleIntroductionChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    updateField('introduction', e.target.value, true);
-  }, [updateField]);
-  
-  return (
-    <TextField
-      id='outlined-basic'
-      label='Introduction'
-      variant='outlined'
-      multiline
-      maxRows={8}
-      value={introduction || ''}
-      onChange={handleIntroductionChange}
-    />
-  );
-});
+const IntroductionField = React.memo(
+  ({ introduction, updateField }: IntroductionFieldProps) => {
+    const handleIntroductionChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        updateField("introduction", e.target.value, true)
+      },
+      [updateField],
+    )
 
-IntroductionField.displayName = 'IntroductionField';
+    return (
+      <TextField
+        id="outlined-basic"
+        label="Introduction"
+        variant="outlined"
+        multiline
+        maxRows={8}
+        value={introduction || ""}
+        onChange={handleIntroductionChange}
+      />
+    )
+  },
+)
 
-export default IntroductionField;
+IntroductionField.displayName = "IntroductionField"
+
+export default IntroductionField

@@ -1,22 +1,22 @@
-import { apiReqWithAuth } from './apiReqWithAuth';
+import { apiReqWithAuth } from "./apiReqWithAuth"
 
 export async function getOrCreateChatId(myId: string, friendId: string) {
-  if (!myId || !friendId) return null;
+  if (!myId || !friendId) return null
 
   try {
-    const url = `/api/private-chats?myId=${myId}&friendId=${friendId}`;
+    const url = `/api/private-chats?myId=${myId}&friendId=${friendId}`
 
-    let data = await apiReqWithAuth(url, { method: 'GET' });
-    console.log(data.message);
+    let data = await apiReqWithAuth(url, { method: "GET" })
+    console.log(data.message)
 
     if (!data.id) {
-      data = await apiReqWithAuth(url, { method: 'POST' });
-      console.log(data.message);
+      data = await apiReqWithAuth(url, { method: "POST" })
+      console.log(data.message)
     }
 
-    return data;
+    return data
   } catch (err) {
-    console.error(err);
-    return null;
+    console.error(err)
+    return null
   }
-};
+}

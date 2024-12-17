@@ -1,54 +1,58 @@
-'use client';
+"use client"
 
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useSignOut } from "react-firebase-hooks/auth"
 
-import { auth } from '@/utils/firebase/firebase';
-import { updateUserStatus } from '@/utils/firebase/firestore';
-import { useSignOut } from 'react-firebase-hooks/auth';
+import { auth } from "@/utils/firebase/firebase"
+import { updateUserStatus } from "@/utils/firebase/firestore"
 
 const Settings = () => {
-  const router = useRouter();
-  
-  const [signOut] = useSignOut(auth);
+  const router = useRouter()
+
+  const [signOut] = useSignOut(auth)
 
   const handleSignout = async () => {
-    if (!auth?.currentUser) return;
+    if (!auth?.currentUser) return
 
     try {
-      const res = await updateUserStatus(auth.currentUser.uid, 'signout');
+      const res = await updateUserStatus(auth.currentUser.uid, "signout")
       if (!res) {
-        console.error('Session expired or update failed');
-        return;
+        console.error("Session expired or update failed")
+        return
       }
 
-      await signOut();
-      router.push('/');
+      await signOut()
+      router.push("/")
     } catch (err) {
-      console.error('Error during sign out:', err);
+      console.error("Error during sign out:", err)
     }
-  };
+  }
 
   return (
     <>
-      <h1 className='my-8 font-semibold text-3xl text-center text-earth-600'>Settings</h1>
-      <div className='flex flex-col gap-4 items-center'>
-      <Link href={`/profile/${auth.currentUser?.uid}`} className='
-        w-full py-3 rounded-lg shadow border border-earth-300 bg-white
-        font-semibold text-center text-base text-earth-500
-        hover:border-earth-500 hover:bg-earth-500 hover:text-white
-        transition duration-300 ease-in-out
-      '> Profile </Link>
+      <h1 className="my-8 text-center text-3xl font-semibold text-earth-600">
+        Settings
+      </h1>
+      <div className="flex flex-col items-center gap-4">
+        <Link
+          href={`/profile/${auth.currentUser?.uid}`}
+          className="w-full rounded-lg border border-earth-300 bg-white py-3 text-center text-base font-semibold text-earth-500 shadow transition duration-300 ease-in-out hover:border-earth-500 hover:bg-earth-500 hover:text-white"
+        >
+          {" "}
+          Profile{" "}
+        </Link>
 
-      <button onClick={handleSignout} className='
-        w-full py-3 rounded-lg shadow border border-earth-300 bg-white
-        font-semibold text-base text-earth-500
-        hover:border-red-500 hover:bg-red-500 hover:text-white
-        transition duration-300 ease-in-out
-      '> Sign Out </button>
+        <button
+          onClick={handleSignout}
+          className="w-full rounded-lg border border-earth-300 bg-white py-3 text-base font-semibold text-earth-500 shadow transition duration-300 ease-in-out hover:border-red-500 hover:bg-red-500 hover:text-white"
+        >
+          {" "}
+          Sign Out{" "}
+        </button>
       </div>
     </>
   )
-};
+}
 
-export default Settings;
+export default Settings
