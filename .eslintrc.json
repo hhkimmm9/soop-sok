@@ -9,7 +9,13 @@
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-var-requires": "off",
-    "prettier/prettier": ["error", { "singleQuote": false, "semi": false }],
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": false,
+        "semi": false
+      }
+    ],
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "import/order": [
