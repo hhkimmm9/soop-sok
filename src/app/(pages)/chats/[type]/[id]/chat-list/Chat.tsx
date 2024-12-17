@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useDocumentData } from "react-firebase-hooks/firestore"
 
 import { TChat } from "@/types"
-import { useAppState } from "@/utils/AppStateProvider"
+import useDialogs from "@/utils/dispatcher"
 import { auth, firestore } from "@/utils/firebase/firebase"
 import { updateChat } from "@/utils/firebase/firestore"
 import { formatTimeAgo } from "@/utils/functions"
@@ -19,7 +19,7 @@ const Chat = ({ chat }: ChatProps) => {
 
   const router = useRouter()
 
-  const { dispatch } = useAppState()
+  const { messageDialog } = useDialogs()
 
   // Authorize users before rendering the page.
   useEffect(() => {
@@ -45,13 +45,10 @@ const Chat = ({ chat }: ChatProps) => {
   // Error: real time data fetching
   useEffect(() => {
     if (error !== undefined) {
-      dispatch({
-        type: "SHOW_MESSAGE_DIALOG",
-        payload: { show: true, type: "data_retrieval" },
-      })
+      messageDialog.show("data_retrieval")
       router.refresh()
     }
-  }, [error, dispatch, router])
+  }, [error, router])
 
   const handleEnterChat = async () => {
     // Authorize users.
@@ -62,10 +59,7 @@ const Chat = ({ chat }: ChatProps) => {
         if (res) router.push(`/chats/chatroom/${chat.id}`)
       } catch (err) {
         console.error(err)
-        dispatch({
-          type: "SHOW_MESSAGE_DIALOG",
-          payload: { show: true, type: "general" },
-        })
+        messageDialog.show("general")
       }
     }
   }

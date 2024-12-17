@@ -7,10 +7,10 @@ import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { TUser } from "@/types"
-import { useAppState } from "@/utils/AppStateProvider"
 import { auth } from "@/utils/firebase/firebase"
 import { fetchUser } from "@/utils/firebase/firestore"
 import OthersProfile from "./OthersProfile"
+import useDialogs from "@/utils/dispatcher"
 
 const Page = () => {
   // const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,7 @@ const Page = () => {
 
   const { id } = useParams()
 
-  const { dispatch } = useAppState()
+  const { messageDialog } = useDialogs()
 
   useEffect(() => {
     const getUser = async () => {
@@ -33,15 +33,12 @@ const Page = () => {
         }
       } catch (err) {
         console.error(err)
-        dispatch({
-          type: "SHOW_MESSAGE_DIALOG",
-          payload: { show: true, type: "data_retrieval" },
-        })
+        messageDialog.show("data_retrieval")
       }
     }
 
     getUser()
-  }, [dispatch, id, profile?.uid])
+  }, [id, profile?.uid])
 
   return (
     <div className="flex flex-col gap-4 pt-10">
