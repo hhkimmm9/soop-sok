@@ -1,6 +1,9 @@
 import { apiReqWithAuth } from "./apiReqWithAuth"
 
-export async function getOrCreateChatId(myId: string, friendId: string) {
+export async function getOrCreateChatId(
+  myId: string,
+  friendId: string,
+): Promise<any> {
   if (!myId || !friendId) return null
 
   try {

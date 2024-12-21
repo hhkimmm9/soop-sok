@@ -1,5 +1,9 @@
 "use client"
 
+import { TBanner } from "@/types"
+import useDialogs from "@/utils/dispatcher"
+import { auth } from "@/utils/firebase/firebase"
+import { createChat, getBanner } from "@/utils/firebase/firestore"
 import {
   FormControl,
   InputLabel,
@@ -11,12 +15,8 @@ import {
   TextField,
 } from "@mui/material"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, ReactNode, useEffect, useState } from "react"
-
-import { TBanner } from "@/types"
-import useDialogs from "@/utils/dispatcher"
-import { auth } from "@/utils/firebase/firebase"
-import { createChat, getBanner } from "@/utils/firebase/firestore"
+import React, { ChangeEvent, useEffect, useState } from "react"
+import type { JSX } from "react"
 
 type pageProps = {
   params: {
@@ -25,7 +25,7 @@ type pageProps = {
   }
 }
 
-const Page = ({ params }: pageProps) => {
+const CreateChatPage = ({ params }: pageProps): JSX.Element => {
   const [formState, setFormState] = useState({
     capacity: 2,
     isPrivate: false,
@@ -40,7 +40,7 @@ const Page = ({ params }: pageProps) => {
   const { messageDialog } = useDialogs()
 
   useEffect(() => {
-    const fetchBannerOptions = async () => {
+    const fetchBannerOptions = async (): Promise<void> => {
       if (auth) {
         try {
           const banner: TBanner | null = await getBanner()
@@ -59,7 +59,7 @@ const Page = ({ params }: pageProps) => {
     fetchBannerOptions()
   }, [messageDialog])
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
     setFormState((prevState) => ({
       ...prevState,
@@ -67,7 +67,7 @@ const Page = ({ params }: pageProps) => {
     }))
   }
 
-  const handleSliderChange = (e: Event, newValue: number | number[]) => {
+  const handleSliderChange = (e: Event, newValue: number | number[]): void => {
     setFormState((prevState) => ({
       ...prevState,
       capacity: newValue as number,
@@ -76,27 +76,27 @@ const Page = ({ params }: pageProps) => {
 
   const handleSelectChange = (
     e: SelectChangeEvent<string>,
-    child: ReactNode,
-  ) => {
+    // child: ReactNode,
+  ): void => {
     setFormState((prevState) => ({
       ...prevState,
       tag: e.target.value as string,
     }))
   }
 
-  const handlePrivacyChange = (isPrivate: boolean) => {
+  const handlePrivacyChange = (isPrivate: boolean): void => {
     setFormState((prevState) => ({
       ...prevState,
       isPrivate,
     }))
   }
 
-  const redirectToFeaturesPage = () => {
+  const redirectToFeaturesPage = (): void => {
     if (auth) router.push(`/chats/${params.type}/${params.id}/features`)
     else router.push("/")
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
 
     const currentUser = auth.currentUser
@@ -283,4 +283,6 @@ const Page = ({ params }: pageProps) => {
   )
 }
 
-export default Page
+CreateChatPage.displayName = "CreateChatPage"
+
+export default CreateChatPage

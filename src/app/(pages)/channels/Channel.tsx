@@ -1,18 +1,18 @@
-import { doc } from "firebase/firestore"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { useDocumentData } from "react-firebase-hooks/firestore"
-
 import { TChannel } from "@/types"
 import useDialogs from "@/utils/dispatcher"
 import { auth, firestore } from "@/utils/firebase/firebase"
 import { updateChannel } from "@/utils/firebase/firestore"
+import { doc } from "firebase/firestore"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import type { JSX } from "react"
+import { useDocumentData } from "react-firebase-hooks/firestore"
 
 interface ChannelProps {
   channel: TChannel
 }
 
-export const Channel = ({ channel }: ChannelProps) => {
+export const Channel = (props: ChannelProps): JSX.Element => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isFull, setIsFull] = useState(false)
 
@@ -30,10 +30,8 @@ export const Channel = ({ channel }: ChannelProps) => {
   }, [router])
 
   // Fetch channle data in real time only if a user is authorized.
-  const channelRef = doc(firestore, "channels", channel.id)
-  const [value, loading, error] = useDocumentData(
-    isAuthenticated ? channelRef : null,
-  )
+  const channelRef = doc(firestore, "channels", props.channel.id)
+  const [value, error] = useDocumentData(isAuthenticated ? channelRef : null)
 
   useEffect(() => {
     if (value?.numMembers >= value?.capacity) {
@@ -49,7 +47,7 @@ export const Channel = ({ channel }: ChannelProps) => {
   }, [error, messageDialog])
 
   // When users join a channel, add them to the 'members' subcollection of the associated channel document and update the 'numMembers' field in the channel document accordingly.
-  const handleEnterChannel = async () => {
+  const handleEnterChannel = async (): Promise<void> => {
     const currentUser = auth.currentUser
 
     if (!currentUser) {
@@ -61,13 +59,17 @@ export const Channel = ({ channel }: ChannelProps) => {
     if (!isFull) {
       // Log where the user is in.
       try {
-        const res = await updateChannel(channel.id, currentUser.uid, "enter")
+        const res = await updateChannel(
+          props.channel.id,
+          currentUser.uid,
+          "enter",
+        )
 
         // Store the channel ID in the global state.
-        channelState.set(channel.id)
+        channelState.set(props.channel.id)
 
         // Redriect to the selected channel page.
-        if (res) router.push(`/chats/channel/${channel.id}/`)
+        if (res) router.push(`/chats/channel/${props.channel.id}/`)
       } catch (err) {
         console.error(err)
         messageDialog.show("data_retrieval")
@@ -80,9 +82,11 @@ export const Channel = ({ channel }: ChannelProps) => {
       onClick={handleEnterChannel}
       className={` ${!isFull ? "cursor-pointer" : "cursor-not-allowed opacity-50"} flex flex-col gap-2 rounded-lg bg-white p-4 shadow-md transition duration-300 ease-in-out hover:bg-gray-100`}
     >
-      <h3 className="text-lg font-semibold text-gray-800">{channel.name}</h3>
+      <h3 className="text-lg font-semibold text-gray-800">
+        {props.channel.name}
+      </h3>
       <p className="text-sm text-gray-600">
-        Capacity: {value?.numMembers} / {channel.capacity}
+        Capacity: {value?.numMembers} / {props.channel.capacity}
       </p>
     </div>
   )

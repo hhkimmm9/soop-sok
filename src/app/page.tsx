@@ -2,19 +2,19 @@
 
 import "firebaseui/dist/firebaseui.css"
 
-import { GoogleAuthProvider } from "firebase/auth"
-import firebaseui from "firebaseui"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
-import Cookies from "universal-cookie"
-
 import useDialogs from "@/utils/dispatcher"
-import { auth } from "@/utils/firebase/firebase"
+import { auth as firebaseAuth } from "@/utils/firebase/firebase"
 import {
   registerUserWithUID,
   updateUserStatus,
 } from "@/utils/firebase/firestore"
+import { GoogleAuthProvider } from "firebase/auth"
+import firebaseui, { auth } from "firebaseui"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
+import type { JSX } from "react"
+import Cookies from "universal-cookie"
 
 type TFirebaseUI = {
   default: typeof firebaseui
@@ -23,7 +23,7 @@ type TFirebaseUI = {
 
 const BACKGROUND_IMAGE_URL: string = "/images/background.png"
 
-export default function Home() {
+export default function Home(): JSX.Element | null {
   const [firebaseui, setFirebaseUI] = useState<TFirebaseUI | null>(null)
 
   const router = useRouter()
@@ -36,8 +36,8 @@ export default function Home() {
     // Initialize the FirebaseUI widget using Firebase.
     return {
       callbacks: {
-        signInSuccessWithAuthResult: (authResult: any) => {
-          ;(async () => {
+        signInSuccessWithAuthResult: (authResult: any): boolean => {
+          ;(async (): Promise<void> => {
             cookies.set("auth-token", authResult.credential.accessToken)
 
             const isNewUser = authResult.additionalUserInfo.isNewUser
@@ -99,7 +99,7 @@ export default function Home() {
   }, [router, messageDialog])
 
   useEffect(() => {
-    const loadFirebaseUI = async () => {
+    const loadFirebaseUI = async (): Promise<void> => {
       try {
         const firebaseui = await import("firebaseui")
         setFirebaseUI(firebaseui)
@@ -112,8 +112,7 @@ export default function Home() {
 
   useEffect(() => {
     if (firebaseui) {
-      const ui =
-        firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth)
+      const ui = auth.AuthUI.getInstance() || new auth.AuthUI(firebaseAuth)
       ui.start("#firebaseui-auth-container", uiConfig)
     }
   }, [firebaseui, uiConfig])

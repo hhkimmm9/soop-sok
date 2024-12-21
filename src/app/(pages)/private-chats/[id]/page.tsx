@@ -1,17 +1,17 @@
 "use client"
 
+import PrivateChat from "@/app/(pages)/private-chats/[id]/PrivateChat"
+import SearchBar from "@/app/_components/SearchBar"
+import { TPrivateChat } from "@/types"
+import { auth, firestore } from "@/utils/firebase/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { collection } from "firebase/firestore"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import type { JSX } from "react"
 import { useCollection } from "react-firebase-hooks/firestore"
 
-import SearchBar from "@/app/_components/SearchBar"
-import PrivateChat from "@/app/(pages)/private-chats/[id]/PrivateChat"
-import { TPrivateChat } from "@/types"
-import { auth, firestore } from "@/utils/firebase/firebase"
-
-const Page = () => {
+const PrivateChatPage = (): JSX.Element => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   // const [isLoading, setIsLoading] = useState(true);
   const [privateChats, setPrivateChats] = useState<TPrivateChat[]>([])
@@ -86,4 +86,6 @@ const Page = () => {
   )
 }
 
-export default Page
+PrivateChatPage.displayName = "PrivateChatPage"
+
+export default PrivateChatPage

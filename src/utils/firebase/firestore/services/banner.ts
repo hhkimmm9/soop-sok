@@ -18,7 +18,7 @@ export async function addBanner(
   }
 }
 
-export async function getBanner() {
+export async function getBanner(): Promise<any> {
   try {
     const banner = await apiReqWithAuth("/api/banners", { method: "GET" })
     console.log("getBanner", banner)

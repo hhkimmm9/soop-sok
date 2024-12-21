@@ -1,6 +1,5 @@
+import admin from "firebase-admin"
 import { FieldValue } from "firebase-admin/firestore"
-
-const admin = require("firebase-admin")
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
   console.error(

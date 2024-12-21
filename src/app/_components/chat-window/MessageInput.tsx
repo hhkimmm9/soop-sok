@@ -1,19 +1,19 @@
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline"
-import { useState } from "react"
-
 import useDialog from "@/utils/dispatcher"
 import { auth } from "@/utils/firebase/firebase"
 import { sendMessage } from "@/utils/firebase/firestore"
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline"
+import React, { useState } from "react"
+import type { JSX } from "react"
 
 type MessageInputProps = {
   cid: string
 }
 
-const MessageInput = ({ cid }: MessageInputProps) => {
+const MessageInput = ({ cid }: MessageInputProps): JSX.Element => {
   const [message, setMessage] = useState("")
   const { messageDialog } = useDialog()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
 
     if (!auth?.currentUser || !message.trim()) return

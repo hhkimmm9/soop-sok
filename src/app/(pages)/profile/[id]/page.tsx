@@ -1,18 +1,17 @@
 "use client"
 
-// eslint-disable-next-line simple-import-sort/imports
+import OthersProfile from "./OthersProfile"
+import { TUser } from "@/types"
+import useDialogs from "@/utils/dispatcher"
+import { auth } from "@/utils/firebase/firebase"
+import { fetchUser } from "@/utils/firebase/firestore"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import type { JSX } from "react"
 
-import { TUser } from "@/types"
-import { auth } from "@/utils/firebase/firebase"
-import { fetchUser } from "@/utils/firebase/firestore"
-import OthersProfile from "./OthersProfile"
-import useDialogs from "@/utils/dispatcher"
-
-const Page = () => {
+const ProfilePage = (): JSX.Element => {
   // const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<TUser | null>(null)
 
@@ -21,7 +20,7 @@ const Page = () => {
   const { messageDialog } = useDialogs()
 
   useEffect(() => {
-    const getUser = async () => {
+    const getUser = async (): Promise<void> => {
       try {
         const res = await fetchUser(id.toString())
         console.log(res)
@@ -36,9 +35,8 @@ const Page = () => {
         messageDialog.show("data_retrieval")
       }
     }
-
     getUser()
-  }, [id, profile?.uid])
+  }, [id, messageDialog, profile?.uid])
 
   return (
     <div className="flex flex-col gap-4 pt-10">
@@ -89,4 +87,6 @@ const Page = () => {
   )
 }
 
-export default Page
+ProfilePage.displayName = "ProfilePage"
+
+export default ProfilePage

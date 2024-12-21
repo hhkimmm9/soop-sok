@@ -1,18 +1,20 @@
 "use client"
 
-import {
-  ArrowLeftStartOnRectangleIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  MegaphoneIcon,
-  PlusIcon,
-  UsersIcon,
-} from "@heroicons/react/24/outline"
-import { useRouter } from "next/navigation"
-
 import { useAppState } from "@/utils/AppStateProvider"
 import useDialogs from "@/utils/dispatcher"
 import { auth } from "@/utils/firebase/firebase"
 import { updateChannel, updateChat } from "@/utils/firebase/firestore"
+import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ArrowLeftStartOnRectangleIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  MegaphoneIcon,
+  PlusIcon,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  UsersIcon,
+} from "@heroicons/react/24/outline"
+import { useRouter } from "next/navigation"
+import type { JSX } from "react"
 
 type TFeatures =
   | "create-chat"
@@ -28,19 +30,19 @@ type PageProps = {
   }
 }
 
-const Page = ({ params }: PageProps) => {
+const FeaturesPage = ({ params }: PageProps): JSX.Element => {
   const router = useRouter()
   const { state } = useAppState()
   const { channelState } = useDialogs()
 
-  const redirectTo = (feature: TFeatures) => {
+  const redirectTo = (feature: TFeatures): void => {
     if (auth) {
       const path = feature === "cancel" ? "" : `/${feature}`
       router.push(`/chats/${params.type}/${params.id}${path}`)
     }
   }
 
-  const handleLeave = async () => {
+  const handleLeave = async (): Promise<void> => {
     const currentUserId = auth.currentUser?.uid
     if (currentUserId) {
       const leaveAction = params.type === "channel" ? updateChannel : updateChat
@@ -69,6 +71,7 @@ const Page = ({ params }: PageProps) => {
     <div className="flex h-full flex-col gap-4 py-8">
       <div className="flex grow flex-col gap-4 overflow-y-auto rounded-lg">
         {params.type === "channel" &&
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           features.map(({ feature, Icon, text }) => (
             <div
               key={feature}
@@ -116,4 +119,6 @@ const Page = ({ params }: PageProps) => {
   )
 }
 
-export default Page
+FeaturesPage.displayName = "FeaturesPage"
+
+export default FeaturesPage

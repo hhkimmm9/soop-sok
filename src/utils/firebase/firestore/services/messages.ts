@@ -6,7 +6,7 @@ export async function sendMessage(
   senderName: string | null,
   senderPhotoURL: string | null,
   message: string,
-) {
+): Promise<any> {
   try {
     const response = await apiReqWithAuth("/api/messages", {
       method: "POST",
@@ -16,9 +16,7 @@ export async function sendMessage(
       body: JSON.stringify({ uid, cid, senderName, senderPhotoURL, message }),
     })
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`)
-    }
+    if (!response.ok) throw new Error(`Error: ${response.statusText}`)
 
     const sendMessageAck = await response.json()
     console.log(sendMessageAck)

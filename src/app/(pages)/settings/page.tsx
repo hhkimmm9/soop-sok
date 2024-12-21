@@ -1,18 +1,18 @@
 "use client"
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useSignOut } from "react-firebase-hooks/auth"
-
 import { auth } from "@/utils/firebase/firebase"
 import { updateUserStatus } from "@/utils/firebase/firestore"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import type { JSX } from "react"
+import { useSignOut } from "react-firebase-hooks/auth"
 
-const Settings = () => {
+const Settings = (): JSX.Element => {
   const router = useRouter()
 
   const [signOut] = useSignOut(auth)
 
-  const handleSignout = async () => {
+  const handleSignout = async (): Promise<void> => {
     if (!auth?.currentUser) return
 
     try {

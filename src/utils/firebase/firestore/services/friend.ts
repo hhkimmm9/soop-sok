@@ -18,7 +18,10 @@ export async function makeFriend(
 }
 
 // TODO: can we make it more efficient?
-export async function checkIsMyFriend(uid: string, friendId: string) {
+export async function checkIsMyFriend(
+  uid: string,
+  friendId: string,
+): Promise<boolean | null> {
   try {
     const isMyFriend = await apiReqWithAuth(
       `/api/friends/${friendId}?senderId=${uid}`,

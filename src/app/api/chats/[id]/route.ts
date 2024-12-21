@@ -1,13 +1,12 @@
-import { type NextRequest, NextResponse } from "next/server"
-
 import { getToken } from "@/app/api/_utils/functions"
 import { TChat } from "@/types"
 import { FieldValue, firestore } from "@/utils/firebase/firebaseAdmin"
+import { type NextRequest, NextResponse } from "next/server"
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+  { params }: { params: Promise<{ id: string }> },
+): Promise<NextResponse> {
   console.log("Received PUT request")
   const token = getToken(req)
   if (!token) {
@@ -15,13 +14,13 @@ export async function PUT(
     return NextResponse.json({ error: "No token provided" }, { status: 401 })
   }
 
-  const { id } = params
-  console.log(`Chat ID: ${id}`)
+  const chatId = (await params).id
+  console.log(`Chat ID: ${chatId}`)
   const { uid } = await req.json()
   console.log(`User ID: ${uid}`)
   const searchParams = req.nextUrl.searchParams
 
-  const chatRef = firestore.collection("chats").doc(id)
+  const chatRef = firestore.collection("chats").doc(chatId)
 
   try {
     const chatDoc = await chatRef.get()

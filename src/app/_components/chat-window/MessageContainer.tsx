@@ -1,22 +1,21 @@
 "use client"
 
+import ChatMessage from "@/app/_components/chat-window/ChatMessage"
+import { TMessage } from "@/types"
+import { auth, firestore } from "@/utils/firebase/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { collection } from "firebase/firestore"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
+import type { JSX } from "react"
 import { useCollection } from "react-firebase-hooks/firestore"
 
-import ChatMessage from "@/app/_components/chat-window/ChatMessage"
-import { TMessage } from "@/types"
-import { auth, firestore } from "@/utils/firebase/firebase"
+const MessageContainer = (): JSX.Element => {
+  const router = useRouter()
 
-const MessageContainer = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [messages, setMessages] = useState<TMessage[]>([])
-
   const chatWindowRef = useRef<HTMLDivElement>(null)
-
-  const router = useRouter()
 
   // check rules in Cloud Firestore for security concerns.
   const [value, loading, error] = useCollection(
@@ -29,11 +28,8 @@ const MessageContainer = () => {
   // If it's an authenticated user, fetch messages.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/")
-      } else {
-        setIsAuthenticated(true)
-      }
+      if (!user) router.push("/")
+      else setIsAuthenticated(true)
     })
 
     if (isAuthenticated && value) {
@@ -57,9 +53,7 @@ const MessageContainer = () => {
   useEffect(() => {
     if (loading) {
       console.log("Loading messages...")
-    }
-
-    if (error) {
+    } else if (error) {
       console.error("Error fetching messages:", error)
     }
   }, [loading, error])

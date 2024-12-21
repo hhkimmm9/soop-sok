@@ -1,26 +1,43 @@
-import { useMemo } from "react"
-
 import { TBanner } from "@/types"
 import { useAppState } from "@/utils/AppStateProvider"
+import { useMemo } from "react"
 
-const useDialogs = () => {
+const useDialogs = (): {
+  actionsDialog: {
+    show: (type: "confirm" | "") => void
+    hide: () => void
+    setResponse: (option: boolean) => void
+  }
+  messageDialog: {
+    show: (
+      type: "data_retrieval" | "data_update" | "signin" | "general",
+    ) => void
+    hide: () => void
+  }
+  channelState: {
+    set: (cid: string | null) => void
+  }
+  bannerState: {
+    set: (banner: TBanner) => void
+  }
+} => {
   const { dispatch } = useAppState()
 
   const actionsDialog = useMemo(
     () => ({
-      show: (type: "confirm" | "") => {
+      show: (type: "confirm" | ""): void => {
         dispatch({
           type: "SHOW_ACTIONS_DIALOG",
           payload: { show: true, type },
         })
       },
-      hide: () => {
+      hide: (): void => {
         dispatch({
           type: "SHOW_ACTIONS_DIALOG",
           payload: { show: false, type: null },
         })
       },
-      setResponse: (option: boolean) => {
+      setResponse: (option: boolean): void => {
         dispatch({ type: "SET_ACTIONS_DIALOG_RESPONSE", payload: option })
       },
     }),
@@ -29,13 +46,15 @@ const useDialogs = () => {
 
   const messageDialog = useMemo(
     () => ({
-      show: (type: "data_retrieval" | "data_update" | "signin" | "general") => {
+      show: (
+        type: "data_retrieval" | "data_update" | "signin" | "general",
+      ): void => {
         dispatch({
           type: "SHOW_MESSAGE_DIALOG",
           payload: { show: true, type },
         })
       },
-      hide: () => {
+      hide: (): void => {
         dispatch({
           type: "SHOW_MESSAGE_DIALOG",
           payload: { show: false, type: null },
@@ -47,7 +66,7 @@ const useDialogs = () => {
 
   const channelState = useMemo(
     () => ({
-      set: (cid: string | null) => {
+      set: (cid: string | null): void => {
         dispatch({ type: "SET_CHANNEL_ID", payload: cid })
       },
     }),
@@ -56,7 +75,7 @@ const useDialogs = () => {
 
   const bannerState = useMemo(
     () => ({
-      set: (banner: TBanner) => {
+      set: (banner: TBanner): void => {
         dispatch({ type: "SET_CURRENT_BANNER", payload: banner })
       },
     }),

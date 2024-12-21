@@ -1,32 +1,39 @@
 {
+  "plugins": ["@typescript-eslint", "react", "prettier", "import"],
   "extends": [
+    "next/core-web-vitals",
     "eslint:recommended",
-    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript"
   ],
-  "plugins": ["prettier", "import", "simple-import-sort"],
   "rules": {
+    "no-undef": "warn",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-var-requires": "off",
-    "prettier/prettier": [
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/no-unused-vars": [
       "error",
-      {
-        "singleQuote": false,
-        "semi": false
-      }
+      { "argsIgnorePattern": "^_" }
     ],
-    "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error",
+    "react/react-in-jsx-scope": "off",
+    "prettier/prettier": "error",
     "import/order": [
       "error",
       {
-        "groups": [["builtin", "external", "internal"]],
-        "newlines-between": "always"
+        "groups": [
+          ["external", "builtin", "internal", "sibling", "parent", "index"]
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
       }
-    ],
-    "no-undef": "off",
-    "react/react-in-jsx-scope": "off"
+    ]
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

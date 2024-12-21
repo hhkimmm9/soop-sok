@@ -1,22 +1,19 @@
+import { auth } from "@/utils/firebase/firebase"
 import { ArrowLeftIcon, Bars3Icon } from "@heroicons/react/24/outline"
 import { useRouter } from "next/navigation"
+import type { JSX } from "react"
 
-import { auth } from "@/utils/firebase/firebase"
-
-interface IconBesideInputContainerProps {
+interface IconInputContainerProps {
   type: string
   cid: string
 }
 
-const IconBesideInputContainer = ({
-  type,
-  cid,
-}: IconBesideInputContainerProps) => {
+const IconInputContainer = (props: IconInputContainerProps): JSX.Element => {
   const router = useRouter()
 
-  const handleClick = () => {
-    if (type === "channel" || type === "chatroom") {
-      router.push(`/chats/${type}/${cid}/features`)
+  const handleClick = (): void => {
+    if (props.type === "channel" || props.type === "chatroom") {
+      router.push(`/chats/${props.type}/${props.cid}/features`)
     } else {
       router.push(`/private-chats/${auth.currentUser?.uid}`)
     }
@@ -27,7 +24,7 @@ const IconBesideInputContainer = ({
       className="flex items-center rounded-lg bg-white p-2 shadow-sm"
       onClick={handleClick}
     >
-      {type === "channel" || type === "chatroom" ? (
+      {props.type === "channel" || props.type === "chatroom" ? (
         <Bars3Icon className="h-5 w-5" />
       ) : (
         <ArrowLeftIcon className="h-5 w-5" />
@@ -36,4 +33,4 @@ const IconBesideInputContainer = ({
   )
 }
 
-export default IconBesideInputContainer
+export default IconInputContainer

@@ -1,11 +1,11 @@
 "use client"
 
-// eslint-disable-next-line simple-import-sort/imports
-import { useAppState } from "@/utils/AppStateProvider"
 import MUIActionsDialog from "./MUIActionsDialog"
 import MUIMessageDialog from "./MUIMessageDialog"
+import { useAppState } from "@/utils/AppStateProvider"
+import type { JSX } from "react"
 
-const DialogWrapper = () => {
+const DialogWrapper = (): JSX.Element => {
   const { state, dispatch } = useAppState()
 
   return (

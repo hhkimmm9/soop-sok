@@ -1,6 +1,5 @@
-// eslint-disable-next-line simple-import-sort/imports
-import { TUser } from "@/types"
 import { apiReqWithAuth } from "./apiReqWithAuth"
+import { TUser } from "@/types"
 
 export async function registerUserWithUID(
   displayName: string,

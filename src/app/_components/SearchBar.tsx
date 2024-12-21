@@ -1,16 +1,17 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"
 import { useState } from "react"
+import type { JSX } from "react"
 
-type SearchBarProps = {
+type searchBarProps = {
   onSubmit: (searchQuery: string) => void
 }
 
-const SearchBar = ({ onSubmit }: SearchBarProps) => {
+const SearchBar = (props: searchBarProps): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState<string>("")
 
-  const handleChange = async (searchQuery: string) => {
+  const handleChange = async (searchQuery: string): Promise<void> => {
     setSearchQuery(searchQuery)
-    onSubmit(searchQuery)
+    props.onSubmit(searchQuery)
   }
 
   return (

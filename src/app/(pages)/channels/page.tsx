@@ -1,17 +1,17 @@
 "use client"
 
-import { collection } from "firebase/firestore"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { useCollection } from "react-firebase-hooks/firestore"
-
+import { Channel } from "@/app/(pages)/channels/Channel"
 import PageTitle from "@/app/_components/PageTitle"
-import Channel from "@/app/(pages)/channels/Channel"
 import { TChannel } from "@/types"
 import useDialogs from "@/utils/dispatcher" // Adjust the import path as necessary
 import { auth, firestore } from "@/utils/firebase/firebase"
+import { collection } from "firebase/firestore"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import type { JSX } from "react"
+import { useCollection } from "react-firebase-hooks/firestore"
 
-const Page = () => {
+const ChannelPage = (): JSX.Element => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   // const [isLoading, setIsLoading] = useState(true);
   const [channels, setChannels] = useState<TChannel[]>([])
@@ -77,4 +77,6 @@ const Page = () => {
   )
 }
 
-export default Page
+ChannelPage.displayName = "ChannelPage"
+
+export default ChannelPage

@@ -1,22 +1,22 @@
 "use client"
 
-import { doc } from "firebase/firestore"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { useDocument } from "react-firebase-hooks/firestore"
-
 import User from "@/app/(pages)/chats/[type]/[id]/user-list/User"
 import useDialogs from "@/utils/dispatcher"
 import { auth, firestore } from "@/utils/firebase/firebase"
+import { doc } from "firebase/firestore"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import type { JSX } from "react"
+import { useDocument } from "react-firebase-hooks/firestore"
 
-type pageProps = {
+type userListPageProps = {
   params: {
     type: string
     id: string
   }
 }
 
-const Page = ({ params }: pageProps) => {
+const UserListPage = ({ params }: userListPageProps): JSX.Element => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [users, setUsers] = useState([])
 
@@ -43,7 +43,7 @@ const Page = ({ params }: pageProps) => {
     if (snapshot && snapshot.exists() && !loading) {
       setUsers(snapshot.data().members)
     }
-  }, [snapshot])
+  }, [loading, snapshot])
 
   // Error handling
   useEffect(() => {
@@ -53,7 +53,7 @@ const Page = ({ params }: pageProps) => {
     }
   }, [router, error, params.type, params.id, messageDialog])
 
-  const redirectToFeaturesPage = () => {
+  const redirectToFeaturesPage = (): void => {
     if (auth) {
       router.push(`/chats/${params.type}/${params.id}/features`)
     }
@@ -85,4 +85,6 @@ const Page = ({ params }: pageProps) => {
   )
 }
 
-export default Page
+UserListPage.displayName = "UserListPage"
+
+export default UserListPage

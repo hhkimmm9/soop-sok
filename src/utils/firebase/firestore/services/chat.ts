@@ -8,7 +8,7 @@ export async function createChat(
   tag: string,
   isPrivate: boolean,
   password: string,
-) {
+): Promise<string | null> {
   try {
     const data = await apiReqWithAuth("/api/chats", {
       method: "POST",

@@ -1,9 +1,9 @@
 import "./globals.css"
-
+import ProviderWrapper from "@/app/_components/ProviderWrapper"
 import type { Metadata } from "next"
 import { Dhurjati, Inter } from "next/font/google"
-
-import ProviderWrapper from "@/app/_components/ProviderWrapper"
+import React from "react"
+import type { JSX } from "react"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 // https://nextjs.org/docs/app/building-your-application/optimizing/fonts#with-tailwind-css
@@ -22,7 +22,9 @@ type Props = {
   children: React.ReactNode
 }
 
-export default async function RootLayout({ children }: Readonly<Props>) {
+export default async function RootLayout({
+  children,
+}: Readonly<Props>): Promise<JSX.Element> {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${dhurjati.variable}`}>

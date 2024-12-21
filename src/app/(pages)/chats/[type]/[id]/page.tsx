@@ -1,9 +1,10 @@
 "use client"
 
+import IconInputContainer from "@/app/(pages)/chats/_components/IconInputContainer"
 import Banner from "@/app/_components/chat-window/Banner"
 import MessageContainer from "@/app/_components/chat-window/MessageContainer"
 import MessageInput from "@/app/_components/chat-window/MessageInput"
-import IconBesideInputContainer from "@/app/(pages)/chats/_components/IconBesideInputContainer"
+import type { JSX } from "react"
 
 interface ChatPageProps {
   params: {
@@ -12,7 +13,7 @@ interface ChatPageProps {
   }
 }
 
-const ChatPage = ({ params }: ChatPageProps) => {
+const ChatPage = ({ params }: ChatPageProps): JSX.Element => {
   return (
     <div className="grid h-full grid-rows-12">
       {(params.type === "channel" || params.type === "chatroom") && <Banner />}
@@ -26,11 +27,11 @@ const ChatPage = ({ params }: ChatPageProps) => {
               "row-span-12 row-start-1"
         } `}
       >
-        <MessageContainer type={params.type} cid={params.id} />
+        <MessageContainer />
 
         {/* features / leave and message input container */}
         <div className="flex justify-between gap-3">
-          <IconBesideInputContainer type={params.type} cid={params.id} />
+          <IconInputContainer type={params.type} cid={params.id} />
           <MessageInput cid={params.id} />
         </div>
       </div>
