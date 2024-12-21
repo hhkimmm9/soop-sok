@@ -1,4 +1,4 @@
-import { getToken } from "@/app/api/_utils/functions"
+import { getToken } from "@/app/api/(utils)/functions"
 import { TChat } from "@/types"
 import { FieldValue, firestore } from "@/utils/firebase/firebaseAdmin"
 import { type NextRequest, NextResponse } from "next/server"
