@@ -1,6 +1,3 @@
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-
 import { TUser } from "@/types"
 import useDialogs from "@/utils/dispatcher"
 import { auth } from "@/utils/firebase/firebase"
@@ -9,8 +6,11 @@ import {
   getOrCreateChatId,
   makeFriend,
 } from "@/utils/firebase/firestore"
+import { useRouter } from "next/navigation"
+import type { JSX } from "react"
+import { useEffect, useState } from "react"
 
-const OthersProfile = ({ profile }: { profile: TUser | null }) => {
+const OthersProfile = ({ profile }: { profile: TUser | null }): JSX.Element => {
   const [isMyFriend, setIsMyFriend] = useState(false)
 
   const router = useRouter()
@@ -18,7 +18,7 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
   const { messageDialog } = useDialogs()
 
   useEffect(() => {
-    const initCheckIsMyFriend = async () => {
+    const initCheckIsMyFriend = async (): Promise<void> => {
       if (auth?.currentUser && profile?.uid) {
         try {
           const friends = await checkIsMyFriend(
@@ -37,26 +37,32 @@ const OthersProfile = ({ profile }: { profile: TUser | null }) => {
     initCheckIsMyFriend()
   }, [messageDialog, profile?.uid])
 
-  const redirectToDMChat = async () => {
+  const redirectToDMChat = async (): Promise<void> => {
     const myId = auth.currentUser?.uid
     const friendId = profile?.uid
 
-    if (!myId || !friendId) return
+    if (!myId || !friendId) {
+      // TODO: Provide feedback to the user
+      return
+    }
 
-    try {
-      const chat = await getOrCreateChatId(myId, friendId)
+    // Redirect to the chat page if the chat exists
+    if (auth) {
+      try {
+        const chat = await getOrCreateChatId(myId, friendId)
 
-      if (chat) {
-        router.push(`/chats/private-chat/${chat.id}`)
-        return
+        if (chat) {
+          router.push(`/chats/private-chat/${chat.id}`)
+          return
+        }
+      } catch (err) {
+        console.error(err)
+        messageDialog.show("data_retrieval")
       }
-    } catch (err) {
-      console.error(err)
-      messageDialog.show("data_retrieval")
     }
   }
 
-  const addUserToFriendList = async () => {
+  const addUserToFriendList = async (): Promise<void> => {
     if (auth?.currentUser && profile) {
       try {
         await makeFriend(auth.currentUser?.uid, profile?.uid)

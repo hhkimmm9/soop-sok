@@ -1,19 +1,19 @@
-import { collection, limit, orderBy, query, where } from "firebase/firestore"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { useCollection } from "react-firebase-hooks/firestore"
-
 import { TMessage, TPrivateChat } from "@/types"
 import useDialogs from "@/utils/dispatcher" // Adjust the import path as necessary
 import { auth, firestore } from "@/utils/firebase/firebase"
 import { formatTimeAgo } from "@/utils/functions"
+import { collection, limit, orderBy, query, where } from "firebase/firestore"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import type { JSX } from "react"
+import { useCollection } from "react-firebase-hooks/firestore"
 
 type PrivateChatProps = {
   privateChat: TPrivateChat
 }
 
-const PrivateChat = ({ privateChat }: PrivateChatProps) => {
+const PrivateChat = (props: PrivateChatProps): JSX.Element => {
   const [latestMessage, setLatestMessage] = useState<TMessage | null>(null)
 
   const router = useRouter()
@@ -21,7 +21,7 @@ const PrivateChat = ({ privateChat }: PrivateChatProps) => {
 
   const messageRef = query(
     collection(firestore, "messages"),
-    where("cid", "==", privateChat.id),
+    where("cid", "==", props.privateChat.id),
     orderBy("createdAt", "desc"),
     limit(1),
   )
@@ -49,41 +49,41 @@ const PrivateChat = ({ privateChat }: PrivateChatProps) => {
   // fetch the latest message associated with this private chat
   // to display when it is sent and the content of it.
 
-  const enterPrivateChat = () => {
+  const enterPrivateChat = (): void => {
     if (auth && auth.currentUser) {
-      router.push(`/chats/private-chat/${privateChat.id}`)
+      router.push(`/chats/private-chat/${props.privateChat.id}`)
     }
   }
 
-  if (latestMessage)
-    return (
-      <div onClick={enterPrivateChat}>
-        <div className="flex items-center gap-3 rounded-lg bg-white p-4 shadow-sm">
-          <Image
-            src={latestMessage.senderPhotoURL}
-            alt=""
-            width={1324}
-            height={1827}
-            className="h-16 w-16 rounded-full object-cover"
-          />
+  return (
+    <div onClick={enterPrivateChat}>
+      <div className="flex items-center gap-3 rounded-lg bg-white p-4 shadow-sm">
+        <Image
+          // TODO: Add a default profile picture
+          src={latestMessage?.senderPhotoURL || "/default-profile.png"}
+          alt=""
+          width={1324}
+          height={1827}
+          className="h-16 w-16 rounded-full object-cover"
+        />
 
-          <div className="w-min grow">
-            <div className="flex justify-between">
-              {/* Sender's name. */}
-              <p className="font-medium">{latestMessage.senderName}</p>
+        <div className="w-min grow">
+          <div className="flex justify-between">
+            {/* Sender's name. */}
+            <p className="font-medium">{latestMessage?.senderName}</p>
 
-              {/* the time last message was received. */}
-              {latestMessage && <p>{formatTimeAgo(latestMessage.createdAt)}</p>}
-            </div>
-
-            {/* the content of the last message. */}
-            <p className="mt-1 line-clamp-2 h-[3rem] overflow-hidden">
-              {latestMessage.message}
-            </p>
+            {/* the time last message was received. */}
+            {latestMessage && <p>{formatTimeAgo(latestMessage?.createdAt)}</p>}
           </div>
+
+          {/* the content of the last message. */}
+          <p className="mt-1 line-clamp-2 h-[3rem] overflow-hidden">
+            {latestMessage?.message}
+          </p>
         </div>
       </div>
-    )
+    </div>
+  )
 }
 
 export default PrivateChat

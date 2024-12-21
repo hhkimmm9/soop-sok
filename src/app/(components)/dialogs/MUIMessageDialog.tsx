@@ -7,6 +7,7 @@ import Slide from "@mui/material/Slide"
 import { TransitionProps } from "@mui/material/transitions"
 import Typography from "@mui/material/Typography"
 import React, { useEffect, useState } from "react"
+import type { JSX } from "react"
 
 const GENERAL_TITLE = "Error: Oops, Something Went Wrong!"
 const GENERAL_MESSAGE =
@@ -43,7 +44,7 @@ const MUIMessageDialog = ({
   show,
   type,
   handleClose,
-}: DialogComponentProps) => {
+}: DialogComponentProps): JSX.Element => {
   const [content, setContent] = useState({
     title: "",
     message: "",

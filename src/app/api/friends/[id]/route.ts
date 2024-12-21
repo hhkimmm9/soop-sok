@@ -1,16 +1,18 @@
+import { getToken } from "@/app/api/(utils)/functions"
+import { firestore } from "@/utils/firebase/firebaseAdmin"
 import { Filter } from "firebase-admin/firestore"
 import { type NextRequest, NextResponse } from "next/server"
 
-import { getToken } from "@/app/api/_utils/functions"
-import { firestore } from "@/utils/firebase/firebaseAdmin"
-
-export async function GET(req: NextRequest, params: { id: string }) {
+export async function GET(
+  req: NextRequest,
+  params: Promise<{ id: string }>,
+): Promise<NextResponse> {
   const token = getToken(req)
   if (!token) {
     return NextResponse.json({ error: "No token provided." }, { status: 401 })
   }
 
-  const friendId = params.id
+  const friendId = (await params).id
   const searchParams = req.nextUrl.searchParams
   const senderId = searchParams.get("senderId")
 

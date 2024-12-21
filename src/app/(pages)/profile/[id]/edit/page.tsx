@@ -1,20 +1,20 @@
 "use client"
 
-import { useParams, useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
-
-import IntroductionField from "@/app/(pages)/profile/[id]/edit/_components/IntroductionField"
-import MBTISelect from "@/app/(pages)/profile/[id]/edit/_components/MBTISelector"
-import ProfilePicture from "@/app/(pages)/profile/[id]/edit/_components/ProfilePicture"
-import UpdateButton from "@/app/(pages)/profile/[id]/edit/_components/UpdateButton"
-import UsernameField from "@/app/(pages)/profile/[id]/edit/_components/UsernameField"
+import IntroductionField from "@/app/(pages)/profile/[id]/edit/(components)/IntroductionField"
+import MBTISelect from "@/app/(pages)/profile/[id]/edit/(components)/MBTISelector"
+import ProfilePicture from "@/app/(pages)/profile/[id]/edit/(components)/ProfilePicture"
+import UpdateButton from "@/app/(pages)/profile/[id]/edit/(components)/UpdateButton"
+import UsernameField from "@/app/(pages)/profile/[id]/edit/(components)/UsernameField"
 import { TUser } from "@/types"
 import { useAppState } from "@/utils/AppStateProvider"
 import useDialogs from "@/utils/dispatcher"
 import { auth } from "@/utils/firebase/firebase"
 import { fetchUser, updateUserProfile } from "@/utils/firebase/firestore"
+import { useParams, useRouter } from "next/navigation"
+import { useCallback, useEffect, useState } from "react"
+import type { JSX } from "react"
 
-const ProfileEdit = () => {
+const ProfileEditPage = (): JSX.Element => {
   const { id } = useParams()
   const router = useRouter()
 
@@ -24,7 +24,7 @@ const ProfileEdit = () => {
   const { actionsDialog, messageDialog } = useDialogs()
 
   useEffect(() => {
-    const getUser = async () => {
+    const getUser = async (): Promise<void | null> => {
       const currentUser = auth.currentUser
 
       if (currentUser) {
@@ -50,7 +50,7 @@ const ProfileEdit = () => {
 
   // Update user profile when the user confirms the action dialog.
   useEffect(() => {
-    const handleUpdate = async () => {
+    const handleUpdate = async (): Promise<void> => {
       const currentUser = auth.currentUser
 
       if (currentUser?.uid && user) {
@@ -122,6 +122,6 @@ const ProfileEdit = () => {
   )
 }
 
-ProfileEdit.displayName = "ProfileEdit"
+ProfileEditPage.displayName = "ProfileEditPage"
 
-export default ProfileEdit
+export default ProfileEditPage

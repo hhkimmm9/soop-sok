@@ -1,6 +1,7 @@
-import ProgressIndicator from "@/app/_components/ProgressIndicator"
+import ProgressIndicator from "@/app/(components)/ProgressIndicator"
+import type { JSX } from "react"
 
-const Loading = () => {
+const UserListPageLoading = (): JSX.Element => {
   return (
     <div className="flex h-full items-center justify-center">
       <ProgressIndicator />
@@ -8,4 +9,4 @@ const Loading = () => {
   )
 }
 
-export default Loading
+export default UserListPageLoading

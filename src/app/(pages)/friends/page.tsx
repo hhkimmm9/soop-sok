@@ -1,16 +1,16 @@
 "use client"
 
-import { collection, or, query, where } from "firebase/firestore"
-import { useEffect, useState } from "react"
-import { useCollection } from "react-firebase-hooks/firestore"
-
-import PageTitle from "@/app/_components/PageTitle"
-import Friend from "@/app/(pages)/friends/Friend"
+import PageTitle from "@/app/(components)/PageTitle"
+import { Friend } from "@/app/(pages)/friends/Friend"
 import { TFriend } from "@/types"
 import useDialogs from "@/utils/dispatcher"
 import { auth, firestore } from "@/utils/firebase/firebase"
+import { collection, or, query, where } from "firebase/firestore"
+import { useEffect, useState } from "react"
+import type { JSX } from "react"
+import { useCollection } from "react-firebase-hooks/firestore"
 
-const Friends = () => {
+const FriendsPage = (): JSX.Element => {
   const [friends, setFriends] = useState<TFriend[]>([])
 
   const { messageDialog } = useDialogs()
@@ -70,4 +70,6 @@ const Friends = () => {
   )
 }
 
-export default Friends
+FriendsPage.displayName = "FriendsPage"
+
+export default FriendsPage

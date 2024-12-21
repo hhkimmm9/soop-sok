@@ -18,21 +18,21 @@
 //   response.send('Hello from Firebase!');
 // });
 
-const functions = require("firebase-functions")
-const admin = require("firebase-admin")
-// const { v4: uuidv4 } = require('uuid');
+import * as admin from "firebase-admin"
+import * as functions from "firebase-functions/v1"
+// import { v4 as uuidv4 } from "uuid";
 
 admin.initializeApp()
 
 const db = admin.firestore()
 
-async function updateBanner() {
+async function updateBanner(): Promise<void> {
   try {
     // banners 컬렉션에서 각 cid 별로 그룹화하여 배너를 랜덤하게 선택합니다.
-    const bannersByCid = {}
+    const bannersByCid: { [key: string]: any[] } = {}
     const snapshot = await db.collection("banners").get()
     snapshot.forEach((doc) => {
-      const banner = { id: doc.id, ...doc.data() }
+      const banner = { id: doc.id, ...(doc.data() as { cid: string }) }
       const cid = banner.cid
       if (!bannersByCid[cid]) {
         bannersByCid[cid] = [banner]

@@ -1,13 +1,12 @@
-import { type NextRequest, NextResponse } from "next/server"
-
-import { getToken } from "@/app/api/_utils/functions"
+import { getToken } from "@/app/api/(utils)/functions"
 import { TChannel } from "@/types"
 import { FieldValue, firestore } from "@/utils/firebase/firebaseAdmin"
+import { type NextRequest, NextResponse } from "next/server"
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+  { params }: { params: Promise<{ id: string }> },
+): Promise<NextResponse> {
   console.log("Received PUT request")
   const token = getToken(req)
   if (!token) {
@@ -15,15 +14,15 @@ export async function PUT(
     return NextResponse.json({ error: "No token provided" }, { status: 401 })
   }
 
-  const { id } = params
-  console.log(`Channel ID: ${id}`)
+  const channelId = (await params).id
+  console.log(`Channel ID: ${channelId}`)
   const { uid } = await req.json()
   console.log(`User ID: ${uid}`)
   const searchParams = req.nextUrl.searchParams
   const action = searchParams.get("action")
   console.log(`Action: ${action}`)
 
-  const channelRef = firestore.collection("channels").doc(id)
+  const channelRef = firestore.collection("channels").doc(channelId)
 
   try {
     const channelDoc = await channelRef.get()

@@ -1,6 +1,5 @@
-// eslint-disable-next-line simple-import-sort/imports
+import { fetchWithAuth } from "./fetchWithAuth"
 import { TUser } from "@/types"
-import { apiReqWithAuth } from "./apiReqWithAuth"
 
 export async function registerUserWithUID(
   displayName: string,
@@ -9,7 +8,7 @@ export async function registerUserWithUID(
   uid: string,
 ): Promise<boolean> {
   try {
-    const ack = await apiReqWithAuth(`/api/users/${uid}`, {
+    const ack = await fetchWithAuth(`/api/users/${uid}`, {
       method: "POST",
       body: JSON.stringify({ displayName, email, photoURL }),
     })
@@ -26,7 +25,7 @@ export async function updateUserStatus(
   status: string,
 ): Promise<boolean> {
   try {
-    const ack = await apiReqWithAuth(`/api/users/${uid}?type=${status}`, {
+    const ack = await fetchWithAuth(`/api/users/${uid}?type=${status}`, {
       method: "PUT",
     })
     console.log(ack.message)
@@ -42,7 +41,7 @@ export async function updateUserProfile(
   user: TUser,
 ): Promise<boolean> {
   try {
-    const ack = await apiReqWithAuth(`/api/users/${uid}`, {
+    const ack = await fetchWithAuth(`/api/users/${uid}`, {
       method: "PUT",
       body: JSON.stringify({ user }),
     })
@@ -56,7 +55,7 @@ export async function updateUserProfile(
 
 export async function fetchUser(uid: string): Promise<TUser | null> {
   try {
-    const user = await apiReqWithAuth(`/api/users/${uid}`, { method: "GET" })
+    const user = await fetchWithAuth(`/api/users/${uid}`, { method: "GET" })
     console.log("fetchUser", user)
     return user
   } catch (err) {

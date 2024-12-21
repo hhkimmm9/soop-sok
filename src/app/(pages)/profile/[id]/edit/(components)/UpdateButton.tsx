@@ -1,11 +1,11 @@
+import useDialogs from "@/utils/dispatcher"
+import { auth } from "@/utils/firebase/firebase"
 import { Button } from "@mui/material"
 import Link from "next/link"
 import React, { useCallback } from "react"
+import type { JSX } from "react"
 
-import useDialogs from "@/utils/dispatcher"
-import { auth } from "@/utils/firebase/firebase"
-
-const UpdateButtons: React.FC = React.memo(() => {
+const UpdateButtons = React.memo((): JSX.Element => {
   const { actionsDialog } = useDialogs()
 
   const askConfirm = useCallback(() => {

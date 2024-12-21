@@ -1,4 +1,11 @@
-const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
+import React from "react"
+import type { JSX } from "react"
+
+type SettingsLayoutProps = {
+  children: React.ReactNode
+}
+
+const SettingsLayout = ({ children }: SettingsLayoutProps): JSX.Element => {
   return <div className="p-4">{children}</div>
 }
 

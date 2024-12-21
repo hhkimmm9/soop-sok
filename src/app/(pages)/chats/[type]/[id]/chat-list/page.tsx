@@ -1,14 +1,14 @@
 "use client"
 
+import Chat from "@/app/(pages)/chats/[type]/[id]/chat-list/Chat"
+import { TChat } from "@/types"
+import { auth, firestore } from "@/utils/firebase/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { collection } from "firebase/firestore"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import type { JSX } from "react"
 import { useCollection } from "react-firebase-hooks/firestore"
-
-import Chat from "@/app/(pages)/chats/[type]/[id]/chat-list/Chat"
-import { TChat } from "@/types"
-import { auth, firestore } from "@/utils/firebase/firebase"
 
 type pageProps = {
   params: {
@@ -17,7 +17,7 @@ type pageProps = {
   }
 }
 
-const Page = ({ params }: pageProps) => {
+const ChatListPage = ({ params }: pageProps): JSX.Element => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   // const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<TChat[]>([])
@@ -70,7 +70,7 @@ const Page = ({ params }: pageProps) => {
   }, [loading, error])
 
   // Local functions ----------------------------------------------------------
-  const handleCancelClick = () => {
+  const handleCancelClick = (): void => {
     if (auth) router.push(`/chats/${params.type}/${params.id}/features`)
   }
 
@@ -101,4 +101,6 @@ const Page = ({ params }: pageProps) => {
   )
 }
 
-export default Page
+ChatListPage.displayName = "ChatListPage"
+
+export default ChatListPage

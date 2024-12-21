@@ -1,5 +1,7 @@
 "use client"
 
+import { useAppState } from "@/utils/AppStateProvider"
+import { auth } from "@/utils/firebase/firebase"
 import {
   ChatBubbleBottomCenterIcon,
   Cog6ToothIcon,
@@ -8,9 +10,7 @@ import {
 } from "@heroicons/react/24/outline"
 import { Badge } from "@mui/material"
 import { usePathname, useRouter } from "next/navigation"
-
-import { useAppState } from "@/utils/AppStateProvider"
-import { auth } from "@/utils/firebase/firebase"
+import type { JSX } from "react"
 
 const tabs = [
   { tab: "public-chat", icon: <QueueListIcon className="h-5 w-5" />, badge: 1 },
@@ -23,13 +23,13 @@ const tabs = [
   { tab: "settings", icon: <Cog6ToothIcon className="h-5 w-5" />, badge: 4 },
 ]
 
-const NavBar = () => {
+const NavBar = (): JSX.Element => {
   const router = useRouter()
   const pathname = usePathname()
 
   const { state, dispatch } = useAppState()
 
-  const redirectTo = (tab: string) => {
+  const redirectTo = (tab: string): void => {
     const { currentUser } = auth
     const { publicChatURL, privateChatURL } = state
 

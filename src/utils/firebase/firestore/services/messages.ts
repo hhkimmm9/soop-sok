@@ -1,4 +1,4 @@
-import { apiReqWithAuth } from "./apiReqWithAuth"
+import { fetchWithAuth } from "./fetchWithAuth"
 
 export async function sendMessage(
   uid: string,
@@ -6,9 +6,9 @@ export async function sendMessage(
   senderName: string | null,
   senderPhotoURL: string | null,
   message: string,
-) {
+): Promise<any> {
   try {
-    const response = await apiReqWithAuth("/api/messages", {
+    const response = await fetchWithAuth("/api/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,9 +16,7 @@ export async function sendMessage(
       body: JSON.stringify({ uid, cid, senderName, senderPhotoURL, message }),
     })
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`)
-    }
+    if (!response.ok) throw new Error(`Error: ${response.statusText}`)
 
     const sendMessageAck = await response.json()
     console.log(sendMessageAck)

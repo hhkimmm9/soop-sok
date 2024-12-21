@@ -1,13 +1,13 @@
 "use client"
 
-import { BackspaceIcon } from "@heroicons/react/24/outline"
-import { Button, TextField } from "@mui/material"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-
 import useDialogs from "@/utils/dispatcher"
 import { auth } from "@/utils/firebase/firebase"
 import { addBanner } from "@/utils/firebase/firestore"
+import { BackspaceIcon } from "@heroicons/react/24/outline"
+import { Button, TextField } from "@mui/material"
+import { useRouter } from "next/navigation"
+import React, { useState } from "react"
+import type { JSX } from "react"
 
 type pageProps = {
   params: {
@@ -16,7 +16,7 @@ type pageProps = {
   }
 }
 
-const Page = ({ params }: pageProps) => {
+const Page = ({ params }: pageProps): JSX.Element => {
   const [bannerContent, setBannerContent] = useState("")
   const [tagInput, setTagInput] = useState("")
   const [tagOptions, setTagOptions] = useState<string[]>([])
@@ -25,7 +25,7 @@ const Page = ({ params }: pageProps) => {
 
   const { messageDialog } = useDialogs()
 
-  const addToList = () => {
+  const addToList = (): void => {
     if (tagOptions.length < 5) {
       setTagOptions((prev) => {
         if (!prev.includes(tagInput)) {
@@ -37,18 +37,18 @@ const Page = ({ params }: pageProps) => {
     }
   }
 
-  const deleteFromList = (tagOption: string) => {
+  const deleteFromList = (tagOption: string): void => {
     if (auth && tagOptions.length > 0) {
       setTagOptions((prev) => prev.filter((option) => option !== tagOption))
     }
   }
 
-  const redirectToFeaturesPage = () => {
+  const redirectToFeaturesPage = (): void => {
     if (auth) router.push(`/chats/${params.type}/${params.id}/features`)
     else router.push("/")
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
 
     const currentUser = auth.currentUser
@@ -148,16 +148,14 @@ const Page = ({ params }: pageProps) => {
           onClick={redirectToFeaturesPage}
           className="w-full rounded-lg bg-white py-4 text-xl font-semibold text-earth-400 shadow transition duration-300 ease-in-out hover:bg-earth-50"
         >
-          {" "}
-          Cancel{" "}
+          Cancel
         </button>
 
         <button
           type="submit"
           className="w-full rounded-lg bg-earth-100 py-4 text-xl font-semibold text-earth-600 shadow transition duration-300 ease-in-out hover:bg-earth-200"
         >
-          {" "}
-          Create{" "}
+          Create
         </button>
       </div>
     </form>

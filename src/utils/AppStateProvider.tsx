@@ -1,5 +1,6 @@
 "use client"
 
+import { TBanner } from "@/types"
 import React, {
   createContext,
   ReactNode,
@@ -7,8 +8,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react"
-
-import { TBanner } from "@/types"
+import type { JSX } from "react"
 
 interface AppState {
   publicChatURL: string
@@ -23,9 +23,18 @@ interface AppState {
 }
 
 type Action =
-  | { type: "SET_PUBLIC_URL"; payload: string }
-  | { type: "SET_PRIVATE_URL"; payload: string }
-  | { type: "SET_CURRENT_BANNER"; payload: TBanner }
+  | {
+      type: "SET_PUBLIC_URL"
+      payload: string
+    }
+  | {
+      type: "SET_PRIVATE_URL"
+      payload: string
+    }
+  | {
+      type: "SET_CURRENT_BANNER"
+      payload: TBanner
+    }
   | {
       type: "SHOW_MESSAGE_DIALOG"
       payload: { show: boolean; type: string | null }
@@ -34,8 +43,14 @@ type Action =
       type: "SHOW_ACTIONS_DIALOG"
       payload: { show: boolean; type: string | null }
     }
-  | { type: "SET_ACTIONS_DIALOG_RESPONSE"; payload: boolean }
-  | { type: "SET_CHANNEL_ID"; payload: string | null }
+  | {
+      type: "SET_ACTIONS_DIALOG_RESPONSE"
+      payload: boolean
+    }
+  | {
+      type: "SET_CHANNEL_ID"
+      payload: string | null
+    }
 
 const initialState: AppState = {
   publicChatURL: "",
@@ -86,9 +101,11 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
   }
 }
 
-export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
+export const AppStateProvider = ({
   children,
-}) => {
+}: {
+  children: ReactNode
+}): JSX.Element => {
   const [state, dispatch] = useReducer(appStateReducer, initialState)
 
   const contextValue = useMemo(() => ({ state, dispatch }), [state, dispatch])
@@ -100,7 +117,10 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   )
 }
 
-export const useAppState = () => {
+export const useAppState = (): {
+  state: AppState
+  dispatch: React.Dispatch<Action>
+} => {
   const context = useContext(AppStateContext)
   if (!context) {
     throw new Error("useAppState must be used within an AppStateProvider")

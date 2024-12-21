@@ -1,6 +1,7 @@
-import ProgressIndicator from "@/app/_components/ProgressIndicator"
+import ProgressIndicator from "@/app/(components)/ProgressIndicator"
+import type { JSX } from "react"
 
-const FriendsPageLoading = () => {
+const FriendsPageLoading = (): JSX.Element => {
   return (
     <div className="flex h-full items-center justify-center">
       <ProgressIndicator />

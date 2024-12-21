@@ -1,19 +1,19 @@
 "use client"
 
-import "@/app/_components/Marquee.css"
-
-import { useEffect } from "react"
+import "@/app/(components)/Marquee.css"
 
 import { useAppState } from "@/utils/AppStateProvider"
 import useDialogs from "@/utils/dispatcher"
 import { getBanner } from "@/utils/firebase/firestore"
+import { useEffect } from "react"
+import type { JSX } from "react"
 
-const Banner = () => {
+const Banner = (): JSX.Element => {
   const { state } = useAppState()
   const { bannerState } = useDialogs()
 
   useEffect(() => {
-    const fetchBanner = async () => {
+    const fetchBanner = async (): Promise<void> => {
       try {
         const res = await getBanner()
         bannerState.set(res)
