@@ -3,7 +3,7 @@ import Cookies from "universal-cookie"
 const cookies = new Cookies()
 const token = cookies.get("auth-token")
 
-export async function apiReqWithAuth(
+export async function fetchWithAuth(
   url: string,
   // eslint-disable-next-line no-undef
   options: RequestInit,

@@ -1,11 +1,11 @@
-import { apiReqWithAuth } from "./apiReqWithAuth"
+import { fetchWithAuth } from "./fetchWithAuth"
 
 export async function makeFriend(
   friendId: string,
   senderId: string,
 ): Promise<boolean> {
   try {
-    const ack = await apiReqWithAuth("/api/friends", {
+    const ack = await fetchWithAuth("/api/friends", {
       method: "POST",
       body: JSON.stringify({ friendId, senderId }),
     })
@@ -23,7 +23,7 @@ export async function checkIsMyFriend(
   friendId: string,
 ): Promise<boolean | null> {
   try {
-    const isMyFriend = await apiReqWithAuth(
+    const isMyFriend = await fetchWithAuth(
       `/api/friends/${friendId}?senderId=${uid}`,
       { method: "GET" },
     )

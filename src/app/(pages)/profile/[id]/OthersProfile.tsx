@@ -41,18 +41,24 @@ const OthersProfile = ({ profile }: { profile: TUser | null }): JSX.Element => {
     const myId = auth.currentUser?.uid
     const friendId = profile?.uid
 
-    if (!myId || !friendId) return
+    if (!myId || !friendId) {
+      // TODO: Provide feedback to the user
+      return
+    }
 
-    try {
-      const chat = await getOrCreateChatId(myId, friendId)
+    // Redirect to the chat page if the chat exists
+    if (auth) {
+      try {
+        const chat = await getOrCreateChatId(myId, friendId)
 
-      if (chat) {
-        router.push(`/chats/private-chat/${chat.id}`)
-        return
+        if (chat) {
+          router.push(`/chats/private-chat/${chat.id}`)
+          return
+        }
+      } catch (err) {
+        console.error(err)
+        messageDialog.show("data_retrieval")
       }
-    } catch (err) {
-      console.error(err)
-      messageDialog.show("data_retrieval")
     }
   }
 

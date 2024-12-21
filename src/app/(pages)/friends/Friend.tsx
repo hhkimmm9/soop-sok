@@ -47,9 +47,12 @@ export const Friend = (props: FriendProp): JSX.Element => {
     const myId = auth.currentUser?.uid
     const opponentId = props.friendId
 
-    if (!myId || !opponentId) return
+    if (!myId || !opponentId) {
+      // TODO: Provide feedback to the user
+      return
+    }
 
-    // check if their dm chat exists
+    // Redirect to the chat page if the chat exists
     if (auth) {
       try {
         const chat = await getOrCreateChatId(myId, props.friendId)

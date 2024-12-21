@@ -1,4 +1,4 @@
-import { apiReqWithAuth } from "./apiReqWithAuth"
+import { fetchWithAuth } from "./fetchWithAuth"
 
 export async function getOrCreateChatId(
   myId: string,
@@ -7,19 +7,24 @@ export async function getOrCreateChatId(
   if (!myId || !friendId) return null
 
   try {
+    // create the url for the request
     const url = `/api/private-chats?myId=${myId}&friendId=${friendId}`
 
-    let data = await apiReqWithAuth(url, { method: "GET" })
+    // check if chat exists
+    let data = await fetchWithAuth(url, { method: "GET" })
     console.log(data.message)
 
-    if (!data.id) {
-      data = await apiReqWithAuth(url, { method: "POST" })
+    // if no chat exists, create a new chat
+    if (data.id == undefined) {
+      data = await fetchWithAuth(url, { method: "POST" })
       console.log(data.message)
     }
 
+    // return the chat id
     return data
   } catch (err) {
+    // handle any errors that occur during the process
     console.error(err)
-    return null
+    return
   }
 }

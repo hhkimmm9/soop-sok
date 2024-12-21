@@ -1,4 +1,4 @@
-export * from "./services/apiReqWithAuth"
+export * from "./services/fetchWithAuth"
 export * from "./services/banner"
 export * from "./services/channel"
 export * from "./services/chat"
