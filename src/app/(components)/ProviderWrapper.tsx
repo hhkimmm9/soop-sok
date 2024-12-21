@@ -1,4 +1,4 @@
-import NavBar from "@/app/_components/NavBar"
+import NavBar from "@/app/(components)/NavBar"
 import { AppStateProvider } from "@/utils/AppStateProvider"
 import theme from "@/utils/ThemeProvider"
 import { ThemeProvider } from "@mui/material"
@@ -8,7 +8,7 @@ import React from "react"
 import type { JSX } from "react"
 
 const DialogWrapper = dynamic(
-  () => import("@/app/_components/dialogs/DialogWrapper"),
+  () => import("@/app/(components)/dialogs/DialogWrapper"),
   { ssr: false },
 )
 

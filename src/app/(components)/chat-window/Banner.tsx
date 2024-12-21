@@ -1,6 +1,6 @@
 "use client"
 
-import "@/app/_components/Marquee.css"
+import "@/app/(components)/Marquee.css"
 
 import { useAppState } from "@/utils/AppStateProvider"
 import useDialogs from "@/utils/dispatcher"

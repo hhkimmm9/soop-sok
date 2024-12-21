@@ -1,6 +1,6 @@
 "use client"
 
-import ChatMessage from "@/app/_components/chat-window/ChatMessage"
+import ChatMessage from "@/app/(components)/chat-window/ChatMessage"
 import { TMessage } from "@/types"
 import { auth, firestore } from "@/utils/firebase/firebase"
 import { onAuthStateChanged } from "firebase/auth"

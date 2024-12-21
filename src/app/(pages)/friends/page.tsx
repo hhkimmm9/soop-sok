@@ -1,7 +1,7 @@
 "use client"
 
+import PageTitle from "@/app/(components)/PageTitle"
 import { Friend } from "@/app/(pages)/friends/Friend"
-import PageTitle from "@/app/_components/PageTitle"
 import { TFriend } from "@/types"
 import useDialogs from "@/utils/dispatcher"
 import { auth, firestore } from "@/utils/firebase/firebase"

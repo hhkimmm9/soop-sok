@@ -1,5 +1,5 @@
 import "./globals.css"
-import ProviderWrapper from "@/app/_components/ProviderWrapper"
+import ProviderWrapper from "@/app/(components)/ProviderWrapper"
 import type { Metadata } from "next"
 import { Dhurjati, Inter } from "next/font/google"
 import React from "react"

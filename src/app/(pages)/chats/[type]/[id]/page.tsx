@@ -1,9 +1,9 @@
 "use client"
 
-import IconInputContainer from "@/app/(pages)/chats/_components/IconInputContainer"
-import Banner from "@/app/_components/chat-window/Banner"
-import MessageContainer from "@/app/_components/chat-window/MessageContainer"
-import MessageInput from "@/app/_components/chat-window/MessageInput"
+import Banner from "@/app/(components)/chat-window/Banner"
+import MessageContainer from "@/app/(components)/chat-window/MessageContainer"
+import MessageInput from "@/app/(components)/chat-window/MessageInput"
+import IconInputContainer from "@/app/(pages)/chats/(components)/IconInputContainer"
 import type { JSX } from "react"
 
 interface ChatPageProps {

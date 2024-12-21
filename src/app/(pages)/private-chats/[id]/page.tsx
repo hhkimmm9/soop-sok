@@ -1,7 +1,7 @@
 "use client"
 
+import SearchBar from "@/app/(components)/SearchBar"
 import PrivateChat from "@/app/(pages)/private-chats/[id]/PrivateChat"
-import SearchBar from "@/app/_components/SearchBar"
 import { TPrivateChat } from "@/types"
 import { auth, firestore } from "@/utils/firebase/firebase"
 import { onAuthStateChanged } from "firebase/auth"

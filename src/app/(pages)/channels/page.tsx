@@ -1,7 +1,7 @@
 "use client"
 
+import PageTitle from "@/app/(components)/PageTitle"
 import { Channel } from "@/app/(pages)/channels/Channel"
-import PageTitle from "@/app/_components/PageTitle"
 import { TChannel } from "@/types"
 import useDialogs from "@/utils/dispatcher" // Adjust the import path as necessary
 import { auth, firestore } from "@/utils/firebase/firebase"

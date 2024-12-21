@@ -1,4 +1,4 @@
-import ProgressIndicator from "@/app/_components/ProgressIndicator"
+import ProgressIndicator from "@/app/(components)/ProgressIndicator"
 import type { JSX } from "react"
 
 const Loading = (): JSX.Element => {
